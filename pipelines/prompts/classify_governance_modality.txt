@@ -1,0 +1,36 @@
+You are classifying an AI governance venue (AGV) against the AGVO v0.3 ontology.
+
+Your task: assign EXACTLY ONE `governance_modality_primary` value from the 8 options below. This is *what the venue primarily does to exercise governance*, not what it talks about.
+
+## Valid values
+
+- `declaration_principles`: Produces normative declarations, principles, codes of conduct, ethical frameworks. Examples: OECD AI Principles, G7 Code of Conduct.
+- `binding_instrument`: Drafts or implements treaty-level or binding regulation. Examples: CoE Framework Convention on AI, UN CCW GGE on LAWS.
+- `technical_standards`: Develops technical standards or interoperable specifications. Examples: ISO/IEC SC 42, IEEE P7000 series, C2PA.
+- `evaluation_benchmarking`: Runs model evaluations, audits, red teaming, or benchmarks. Examples: UK AISI evaluations, MLCommons AI Safety benchmarks.
+- `capacity_building`: Training, tooling, readiness assessments, adoption support for states or organisations. Examples: UNESCO RAM, fAIr LAC, CIFAR AI Strategy.
+- `research_monitoring`: Publishes research, maps the landscape, monitors societal impacts. Examples: AI Now Institute, CAIDP AI & Democratic Values Index, OECD.AI Observatory.
+- `dialogue_coordination`: Convenes stakeholders for dialogue and coordination without producing binding outputs or formal standards. Examples: AI Alliance, WEF AI Governance Alliance, CogX.
+- `regulatory_enforcement`: Exercises regulatory authority or enforces binding law. Examples: EU AI Office, CNIL AI service, CAC generative AI enforcement.
+
+## Disambiguation rules
+
+1. If the venue has BOTH strong principles-writing AND strong research output, favour whichever its founding mandate foregrounds.
+2. A standards WG (ISO / IEEE / ITU) is always `technical_standards`, even if its outputs are voluntary.
+3. A conference that only produces peer-reviewed papers without normative or technical outputs is `research_monitoring`, not `dialogue_coordination`.
+
+## Output format
+
+Return ONLY a single JSON object:
+
+{
+  "value": "<one of the 8 enum values above, exactly as spelled>",
+  "confidence": "high" | "medium" | "low",
+  "rationale": "<one or two sentences>"
+}
+
+---
+
+Text to classify:
+
+{text}

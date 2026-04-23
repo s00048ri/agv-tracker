@@ -1,0 +1,44 @@
+You are classifying an AI governance venue (AGV) against the AGVO v0.3 ontology.
+
+Your task: assign EXACTLY ONE `entity_type` value from the 13 options below to the venue described in the input text.
+
+## Valid values
+
+- `igo_initiative`: An initiative or programme within an established intergovernmental organization (IGO) whose mandate includes AI. Examples: OECD.AI, UNESCO Recommendation on AI Ethics, WHO Global Initiative on AI for Health, AU Continental AI Strategy.
+- `intergov_forum`: A state-to-state forum with AI as a standing agenda item but without the status of a treaty body. Examples: G7 Hiroshima AI Process, G20 Digital Economy WG AI stream, EU-US TTC AI WG.
+- `treaty_body`: A body operating under a binding international legal instrument (treaty, regulation, formal charter with hard-law status). Examples: Council of Europe Committee on AI (CAI), EU AI Board under Regulation 2024/1689, UN CCW GGE on LAWS.
+- `multistakeholder_coalition`: A formal cross-sector coalition bringing together government, industry, academia, and civil society. Examples: Partnership on AI, WEF AI Governance Alliance, Responsible AI Institute.
+- `industry_consortium`: An industry-led standing body (corporate members primarily). Examples: Frontier Model Forum, MLCommons AI Safety WG, Coalition for Secure AI (CoSAI), AI Alliance.
+- `intl_ngo_thinktank`: An international or internationally-influential non-governmental organization, think tank, or advocacy group. Examples: Future of Life Institute, CAIDP, Ada Lovelace Institute, AI Now.
+- `academic_consortium`: A cross-institutional academic body. MUST span multiple institutions; a single-institute research centre is NOT `academic_consortium`. Examples: ELLIS, CIFAR Pan-Canadian AI Strategy, IRCAI.
+- `standards_body_wg`: A working group within a formal standards organization (ISO, IEEE, ITU, ETSI, etc.). Examples: ISO/IEC JTC 1/SC 42 WGs, IEEE P7000 series, ITU-T FG-AI4H.
+- `national_regulator_intl`: A national regulator or safety institute with explicit international coordination role. Examples: UK AISI, US AISI, EU AI Office, Korea AISI.
+- `conference_policy_track`: A policy/governance track, workshop, or session nested within a larger recurring conference. Examples: NeurIPS ML Safety Workshop, AAAI Safe AI Special Track.
+- `standalone_governance_conference`: An independent recurring conference whose entire scope is AI governance / ethics / safety / accountability, with its own organizing committee and CFP. Examples: FAccT, AIES, EAAMO, FORC.
+- `industry_conference`: An industry-oriented commercial convening with governance content. Examples: World Summit AI, Web Summit AI track, CogX London.
+- `one_off_summit`: A named summit producing durable outputs but not (yet) recurring under the same mandate. Examples: Asilomar 2017, Bletchley Park 2023, REAIM 2023.
+
+## Disambiguation rules (binding)
+
+1. **`standalone_governance_conference` vs `conference_policy_track`**: if the venue's entire scope is AI governance/ethics/safety with its own organizing committee and CFP, choose `standalone_governance_conference`. If it is a track or workshop within a broader conference (e.g., a NeurIPS workshop), choose `conference_policy_track`.
+2. **`standalone_governance_conference` vs `industry_conference`**: `standalone_governance_conference` is primarily academic/multistakeholder with peer-reviewed proceedings. `industry_conference` is commercial with sponsorship-driven programming.
+3. **`one_off_summit` vs `intergov_forum`**: a summit becomes an `intergov_forum` only when held ≥ 2 times under the same mandate. Individual editions remain `one_off_summit`.
+4. **`academic_consortium` vs `intl_ngo_thinktank`**: `academic_consortium` REQUIRES multi-institution membership. A single university research centre is `intl_ngo_thinktank` with `lead_actor=academia`.
+5. **`treaty_body` vs `intergov_forum`**: `treaty_body` requires a binding legal instrument (treaty, regulation). If outputs are soft-law declarations only, it is `intergov_forum`.
+6. **`national_regulator_intl` vs `treaty_body`**: a national safety institute or regulator created by national legislation is `national_regulator_intl` even if it has international coordination duties. `treaty_body` is reserved for bodies created *by* an international instrument.
+
+## Output format
+
+Return ONLY a single JSON object, with no prose before or after:
+
+{
+  "value": "<one of the 13 enum values above, exactly as spelled>",
+  "confidence": "high" | "medium" | "low",
+  "rationale": "<one or two sentences explaining the classification; name the specific disambiguation rule applied if any>"
+}
+
+---
+
+Text to classify:
+
+{text}

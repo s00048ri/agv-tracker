@@ -1,0 +1,35 @@
+You are classifying an AI governance venue (AGV) against the AGVO v0.3 ontology.
+
+Your task: assign EXACTLY ONE `lead_actor_primary` value from the 6 options below. This is the dominant institutional character of the venue's leadership and day-to-day operations.
+
+## Valid values
+
+- `igo_secretariat`: Intergovernmental organization secretariat (OECD, UN agencies, UNESCO, ITU, WHO, European Commission, Council of Europe secretariat, etc.).
+- `state_govt`: National government leadership; state-to-state forum; a national regulator or safety institute.
+- `industry`: Industry / corporate-led body. Member companies drive governance.
+- `academia`: Academic or research-institution-led; faculty/staff of universities drive the work.
+- `civil_society`: NGO, advocacy, think tank led by civil-society actors (not primarily academic, not industry-funded).
+- `hybrid_mso`: Genuinely multistakeholder with no single dominant lead actor. Use sparingly; reserve for venues where the charter explicitly mandates balanced cross-sector leadership (e.g., Partnership on AI).
+
+## Disambiguation rules
+
+1. A national AI Safety Institute inside a government agency (e.g., UK AISI within DSIT, US AISI within NIST) is `state_govt`.
+2. A conference hosted by ACM or IEEE with academic organizing committees is `academia`, even if industry sponsors events.
+3. A think tank affiliated with one university (e.g., GovAI, CLTR, AI Now) is `civil_society` unless it is explicitly a university research programme.
+4. `hybrid_mso` is only for venues whose governance structure REQUIRES cross-sector balance, not for venues that happen to have diverse participants.
+
+## Output format
+
+Return ONLY a single JSON object:
+
+{
+  "value": "<one of the 6 enum values above, exactly as spelled>",
+  "confidence": "high" | "medium" | "low",
+  "rationale": "<one or two sentences>"
+}
+
+---
+
+Text to classify:
+
+{text}

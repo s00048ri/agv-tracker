@@ -1,0 +1,35 @@
+You are classifying an AI governance venue (AGV) against the AGVO v0.3 ontology.
+
+Your task: assign EXACTLY ONE `topic_focus_primary` value from the 13 options below. This is the primary subject matter of the venue's work.
+
+## Valid values
+
+- `ai_general`: Generic AI governance with no specific topical focus. Use when the venue covers multiple topics equally.
+- `safety_frontier`: Frontier model safety, catastrophic / existential risk, dangerous capabilities, evaluations of advanced models.
+- `ethics_rights`: AI ethics, human rights, fairness, accountability, non-discrimination.
+- `privacy_data`: Data protection, privacy, data governance, training-data rights.
+- `genai_content`: Generative AI outputs, content provenance, synthetic media, deepfakes, watermarking.
+- `agentic_autonomy`: Autonomous agents, multi-agent systems, agentic risk, autonomy-specific governance.
+- `domain_health`: AI in health and medicine.
+- `domain_defense`: AI in military / defence applications; lethal autonomous weapons.
+- `domain_education`: AI in education.
+- `domain_climate`: AI for climate / environmental applications, AI energy footprint.
+- `domain_labor`: AI impact on labour, employment, productivity, skills.
+- `access_inclusion`: Global digital inclusion, Global South AI access, linguistic inclusion.
+- `standards_interop`: Interoperability, technical interoperability standards (terminology, data formats, APIs).
+
+## Output format
+
+Return ONLY a single JSON object:
+
+{
+  "value": "<one of the 13 enum values above, exactly as spelled>",
+  "confidence": "high" | "medium" | "low",
+  "rationale": "<one or two sentences>"
+}
+
+---
+
+Text to classify:
+
+{text}

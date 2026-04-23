@@ -12,6 +12,17 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: LLM-assisted AGVO classifier online (Task 5). Six per-dimension
+  prompt templates; `Classifier` with content-hash cache, monthly budget
+  guard, and pluggable backends (Anthropic live / deterministic mock);
+  evidence emission (`source_type=llm_classification`,
+  `source_url=internal://classifier-run/{run_id}`, reviewer=model version);
+  CLI `python -m pipelines.classify` with `--input/--output/--evidence-out`
+  and `--eval` subcommand. Against the 10 shipped gold examples the mock
+  backend achieves 100% on all six dimensions (deterministic plumbing
+  check); live Claude accuracy (≥80% entity_type, ≥70% others) TBD on first
+  online run. pyproject.toml adds `[classifier]` extras = anthropic.
+  pytest: 78/78 green (54 + 24 new).
 - **pipelines**: OECD.AI Policy Navigator discovery fetcher online (Task 4).
   `BaseFetcher` ABC + `RawVenue` dataclass + `fetch_html_with_fallback`
   (static HTTP → Playwright) + throttle + robots.txt + disk cache;

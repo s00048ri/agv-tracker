@@ -1,0 +1,34 @@
+You are classifying an AI governance venue (AGV) against the AGVO v0.3 ontology.
+
+Your task: assign EXACTLY ONE `legal_character` value from the 4 options below. This describes the legal status of the venue's *outputs*, not the venue's own legal form.
+
+## Valid values
+
+- `soft_law`: Non-binding declarations, principles, guidance, codes of conduct. Examples: OECD AI Principles, G7 Hiroshima Code of Conduct, UNESCO Recommendation.
+- `hard_law`: Binding legal instruments (treaties, regulations, statutes). Examples: EU AI Act (Regulation 2024/1689), CoE Framework Convention on AI, China Interim Measures for GenAI.
+- `mixed`: Produces both binding and non-binding outputs, or operates in a hybrid hard/soft-law regime. Example: a national safety institute that issues both regulatory guidance (soft) AND enforces law (hard).
+- `n/a`: No normative or legal output. Examples: research institutes (AI Now, CLTR), academic conferences (FAccT, EAAMO), benchmarking consortia (MLCommons without a certification programme).
+
+## Disambiguation rules
+
+1. Declarations, principles, and codes of conduct adopted by an IGO are `soft_law`, even if signed by member states.
+2. A national regulator's AI enforcement activity is `hard_law` (enforcing domestic law); its guidance documents are `soft_law`. If the venue does both, use `mixed`.
+3. Research-only and dialogue-only venues are `n/a`.
+4. Standards-body working groups that publish voluntary standards are `soft_law`.
+5. Treaty bodies drafting a binding instrument but not yet in force are `mixed` (drafting soft-law interim outputs, heading for hard-law).
+
+## Output format
+
+Return ONLY a single JSON object:
+
+{
+  "value": "<one of the 4 enum values above, exactly as spelled>",
+  "confidence": "high" | "medium" | "low",
+  "rationale": "<one or two sentences>"
+}
+
+---
+
+Text to classify:
+
+{text}

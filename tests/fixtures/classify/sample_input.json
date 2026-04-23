@@ -1,0 +1,12 @@
+[
+  {
+    "agv_id": "sample_oecd",
+    "name": "OECD AI Observatory",
+    "description": "An initiative within the OECD intergovernmental organization that provides a global policy observatory for AI. Publishes research and monitors AI adoption. OECD secretariat leads; scope is global; outputs are non-binding."
+  },
+  {
+    "agv_id": "sample_fmf",
+    "name": "Frontier Model Forum",
+    "description": "An industry-led consortium founded by major AI labs. Coordinates industry dialogue on frontier AI safety. Global scope; voluntary soft-law outputs."
+  }
+]

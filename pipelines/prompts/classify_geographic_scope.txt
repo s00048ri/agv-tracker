@@ -1,0 +1,33 @@
+You are classifying an AI governance venue (AGV) against the AGVO v0.3 ontology.
+
+Your task: assign EXACTLY ONE `geographic_scope` value from the 5 options below.
+
+## Valid values
+
+- `global`: Global remit; open membership or participants drawn from all world regions without geographic gating. Examples: UN bodies, FLI, ISO, FAccT.
+- `transregional`: Spans multiple regions but not fully global (e.g., OECD member states + some partners — broader than G7 but not universal).
+- `regional`: Single UN M49 region or regional bloc. Examples: Council of Europe bodies (Europe), AU initiatives (Africa), ASEAN (Southeast Asia), LAC bodies.
+- `plurilateral`: A fixed small club of states that is not region-based. Examples: G7, G20, QUAD, BRICS, GPAI member states, OECD-only ministerials.
+- `bilateral_plus`: Two primary parties (typically state blocs) with possible observers. Example: EU-US Trade and Technology Council.
+
+## Disambiguation rules
+
+1. If the venue is hosted by a global IGO (UN, UNESCO, WHO, ITU, ISO) and participation is open, choose `global`.
+2. `plurilateral` is reserved for *named-membership* groups of states (G7, G20, BRICS, QUAD, ASEAN when acting collectively). If the membership is a UN region (e.g., AU, EU, CoE), use `regional`.
+3. National regulators (UK AISI, US AISI, EU AI Office) that coordinate internationally are `global` if their network is open; `regional` if scoped to EU / region.
+
+## Output format
+
+Return ONLY a single JSON object:
+
+{
+  "value": "<one of the 5 enum values above, exactly as spelled>",
+  "confidence": "high" | "medium" | "low",
+  "rationale": "<one or two sentences>"
+}
+
+---
+
+Text to classify:
+
+{text}
