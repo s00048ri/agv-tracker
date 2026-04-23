@@ -1,0 +1,3 @@
+agv_id,name,name_type,valid_from,valid_to,source_url
+uk_aisi,UK AI Safety Institute,former_official_en,2023-11-02,2025-02-14,https://www.aisi.gov.uk/
+uk_aisi,UK AI Security Institute,official_en,2025-02-14,,https://www.aisi.gov.uk/

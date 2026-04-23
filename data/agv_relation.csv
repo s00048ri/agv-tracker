@@ -1,0 +1,4 @@
+source_agv,target_agv,relation_type,start_date,end_date,source_url,notes
+gpai_2020,gpai_integrated,absorbed_into,2024-07-01,,https://oecd.ai/en/gpai,GPAI 2020 coalition integrated into OECD as GPAI Integrated Partnership
+seoul_summit,bletchley_summit,succeeds,2024-05-21,,https://www.gov.uk/government/topical-events/ai-seoul-summit-2024,Second in AI safety summit series
+paris_action_summit,seoul_summit,succeeds,2025-02-10,,https://www.elysee.fr/en/sommet-pour-l-action-sur-l-ia,Third in safety summit series; broader scope

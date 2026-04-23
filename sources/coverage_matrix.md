@@ -20,8 +20,8 @@
 | `academic_consortium` | 0 | `mila_official` | `evalcommunity_map` |
 | `standards_body_wg` | 1 | `iso_iec_sc42`, `ieee_sa_ai`, `itu_ai_for_good_official` | — |
 | `national_regulator_intl` | 3 | `uk_aisi_official`, `us_aisi_official`, `japan_aisi_official` | `oecd_ai_navigator`, `unesco_gaigo`, `iapp_ai_law_tracker` |
-| `conference_policy_track` | 3 | `neurips_workshops`, `aaai_safety_track` | `ai_deadlines` |
-| `standalone_governance_conference` | 0 | `facct_conference_official`, `aies_conference_official` | `ai_deadlines` |
+| `conference_policy_track` | 1 | `neurips_workshops`, `aaai_safety_track` | `ai_deadlines` |
+| `standalone_governance_conference` | 2 | `facct_conference_official`, `aies_conference_official` | `ai_deadlines` |
 | `industry_conference` | 1 | `itu_ai_for_good_official`, `world_summit_ai` | `ai_deadlines` |
 | `one_off_summit` | 4 | `bletchley_summit_gov_uk`, `elysee_paris_action_summit` | `tech_policy_press` |
 
@@ -38,8 +38,8 @@
 | `academic_consortium` | · | · | · | · | · | 0 |
 | `standards_body_wg` | 1 | · | · | · | · | 1 |
 | `national_regulator_intl` | 3 | · | · | · | · | 3 |
-| `conference_policy_track` | 3 | · | · | · | · | 3 |
-| `standalone_governance_conference` | · | · | · | · | · | 0 |
+| `conference_policy_track` | 1 | · | · | · | · | 1 |
+| `standalone_governance_conference` | 2 | · | · | · | · | 2 |
 | `industry_conference` | 1 | · | · | · | · | 1 |
 | `one_off_summit` | 4 | · | · | · | · | 4 |
 
