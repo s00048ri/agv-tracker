@@ -5,43 +5,43 @@
 - Generated: `2026-04-23`
 - Registry: `sources/registry.yml` (35 entries)
 - Layer counts: discovery=6, verification=25, background=4
-- Data snapshot: `data/agv.csv` (30 AGVs)
+- Data snapshot: `data/agv.csv` (106 AGVs)
 
 ## Per entity_type
 
 | entity_type | AGVs | verification sources | discovery sources |
 |---|---:|---|---|
-| `igo_initiative` | 7 | `oecd_ai_official`, `unesco_ai_ethics_official` | `oecd_ai_navigator`, `unesco_gaigo`, `evalcommunity_map` |
-| `intergov_forum` | 2 | `mofa_g7_hiroshima`, `g20_official` | `oecd_ai_navigator`, `tech_policy_press` |
-| `treaty_body` | 1 | `coe_cai` | `iapp_ai_law_tracker` |
-| `multistakeholder_coalition` | 3 | `partnership_on_ai_official`, `ai_verify_foundation` | `oecd_ai_navigator`, `evalcommunity_map`, `tech_policy_press` |
-| `industry_consortium` | 2 | `frontier_model_forum_official`, `mlcommons_official` | — |
-| `intl_ngo_thinktank` | 3 | `fli_official`, `caidp_official` | `evalcommunity_map` |
-| `academic_consortium` | 0 | `mila_official` | `evalcommunity_map` |
-| `standards_body_wg` | 1 | `iso_iec_sc42`, `ieee_sa_ai`, `itu_ai_for_good_official` | — |
-| `national_regulator_intl` | 3 | `uk_aisi_official`, `us_aisi_official`, `japan_aisi_official` | `oecd_ai_navigator`, `unesco_gaigo`, `iapp_ai_law_tracker` |
-| `conference_policy_track` | 1 | `neurips_workshops`, `aaai_safety_track` | `ai_deadlines` |
-| `standalone_governance_conference` | 2 | `facct_conference_official`, `aies_conference_official` | `ai_deadlines` |
-| `industry_conference` | 1 | `itu_ai_for_good_official`, `world_summit_ai` | `ai_deadlines` |
-| `one_off_summit` | 4 | `bletchley_summit_gov_uk`, `elysee_paris_action_summit` | `tech_policy_press` |
+| `igo_initiative` | 15 | `oecd_ai_official`, `unesco_ai_ethics_official` | `oecd_ai_navigator`, `unesco_gaigo`, `evalcommunity_map` |
+| `intergov_forum` | 7 | `mofa_g7_hiroshima`, `g20_official` | `oecd_ai_navigator`, `tech_policy_press` |
+| `treaty_body` | 5 | `coe_cai` | `iapp_ai_law_tracker` |
+| `multistakeholder_coalition` | 9 | `partnership_on_ai_official`, `ai_verify_foundation` | `oecd_ai_navigator`, `evalcommunity_map`, `tech_policy_press` |
+| `industry_consortium` | 8 | `frontier_model_forum_official`, `mlcommons_official` | — |
+| `intl_ngo_thinktank` | 11 | `fli_official`, `caidp_official` | `evalcommunity_map` |
+| `academic_consortium` | 5 | `mila_official` | `evalcommunity_map` |
+| `standards_body_wg` | 11 | `iso_iec_sc42`, `ieee_sa_ai`, `itu_ai_for_good_official` | — |
+| `national_regulator_intl` | 13 | `uk_aisi_official`, `us_aisi_official`, `japan_aisi_official` | `oecd_ai_navigator`, `unesco_gaigo`, `iapp_ai_law_tracker` |
+| `conference_policy_track` | 5 | `neurips_workshops`, `aaai_safety_track` | `ai_deadlines` |
+| `standalone_governance_conference` | 5 | `facct_conference_official`, `aies_conference_official` | `ai_deadlines` |
+| `industry_conference` | 4 | `itu_ai_for_good_official`, `world_summit_ai` | `ai_deadlines` |
+| `one_off_summit` | 8 | `bletchley_summit_gov_uk`, `elysee_paris_action_summit` | `tech_policy_press` |
 
 ## entity_type × geographic_scope (AGV counts)
 
 | entity_type | `global` | `transregional` | `regional` | `plurilateral` | `bilateral_plus` | total |
 |---|---:|---:|---:|---:|---:|---:|
-| `igo_initiative` | 6 | · | 1 | · | · | 7 |
-| `intergov_forum` | 1 | · | · | 1 | · | 2 |
-| `treaty_body` | · | · | 1 | · | · | 1 |
-| `multistakeholder_coalition` | 3 | · | · | · | · | 3 |
-| `industry_consortium` | 2 | · | · | · | · | 2 |
-| `intl_ngo_thinktank` | 3 | · | · | · | · | 3 |
-| `academic_consortium` | · | · | · | · | · | 0 |
-| `standards_body_wg` | 1 | · | · | · | · | 1 |
-| `national_regulator_intl` | 3 | · | · | · | · | 3 |
-| `conference_policy_track` | 1 | · | · | · | · | 1 |
-| `standalone_governance_conference` | 2 | · | · | · | · | 2 |
-| `industry_conference` | 1 | · | · | · | · | 1 |
-| `one_off_summit` | 4 | · | · | · | · | 4 |
+| `igo_initiative` | 12 | · | 3 | · | · | 15 |
+| `intergov_forum` | 1 | · | 1 | 5 | · | 7 |
+| `treaty_body` | 1 | · | 4 | · | · | 5 |
+| `multistakeholder_coalition` | 9 | · | · | · | · | 9 |
+| `industry_consortium` | 8 | · | · | · | · | 8 |
+| `intl_ngo_thinktank` | 10 | · | 1 | · | · | 11 |
+| `academic_consortium` | 3 | · | 2 | · | · | 5 |
+| `standards_body_wg` | 11 | · | · | · | · | 11 |
+| `national_regulator_intl` | 10 | · | 3 | · | · | 13 |
+| `conference_policy_track` | 5 | · | · | · | · | 5 |
+| `standalone_governance_conference` | 5 | · | · | · | · | 5 |
+| `industry_conference` | 4 | · | · | · | · | 4 |
+| `one_off_summit` | 6 | · | · | 2 | · | 8 |
 
 _`·` = empty cell. `⚠` = AGVs present but no verification source assigned for this `entity_type` (blocks release per §5.4)._
 

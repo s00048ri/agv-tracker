@@ -12,3 +12,13 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **data**: expanded seed dataset to 106 AGVs (Task 3). +76 new rows across
+  all 13 entity_types — every type now has ≥4 (min industry_conference=4;
+  academic_consortium 0→5; treaty_body 1→5; standards_body_wg 1→11;
+  national_regulator_intl 3→13). Regional coverage added: AF (AU Continental
+  AI Strategy), LAC (IDB fAIr LAC), ASEAN (ASEAN AI Guide), Pacific (APRU AI).
+  +304 evidence rows (all `human_verification` / reviewer=s00048ri),
+  +81 lifecycle rows (76 initial + 5 later transitions: CAHAI→succeeded,
+  UN HLP→terminated, REAIM Hague→succeeded, ITU FG-AI4H/AI4EE→terminated),
+  +2 relations (coe_ai_convention succeeds cahai; reaim_seoul_2024 succeeds
+  reaim_hague_2023). Release gate PASS.
