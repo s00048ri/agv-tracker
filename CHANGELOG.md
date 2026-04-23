@@ -12,6 +12,14 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: OECD.AI Policy Navigator discovery fetcher online (Task 4).
+  `BaseFetcher` ABC + `RawVenue` dataclass + `fetch_html_with_fallback`
+  (static HTTP → Playwright) + throttle + robots.txt + disk cache;
+  `OECDFetcher` CLI returns 60 records from the shipped 60-card fixture
+  (`source_role=discovery`). Live strategy (static vs Playwright) TBD on
+  first online run — see `pipelines/fetchers/oecd_ai.py` docstring.
+  pyproject.toml adds deps (httpx, bs4, pyyaml) + `[scraping]` / `[dev]`
+  extras. pytest: 54/54 green (41 existing + 13 new fetcher tests).
 - **data**: expanded seed dataset to 106 AGVs (Task 3). +76 new rows across
   all 13 entity_types — every type now has ≥4 (min industry_conference=4;
   academic_consortium 0→5; treaty_body 1→5; standards_body_wg 1→11;
