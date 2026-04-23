@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "observable preview",
-    "build": "observable build",
+    "build": "observable build && bash scripts/post_build.sh",
     "deploy": "observable deploy",
     "clean": "observable clean"
   },

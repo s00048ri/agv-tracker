@@ -12,6 +12,23 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **ci**: Cloudflare Pages deployment configuration complete (Task 11).
+  New `src/_headers` ships security headers (CSP tuned for Observable's
+  runtime JS eval, X-Frame-Options DENY, Referrer-Policy, Permissions-
+  Policy, nosniff) and long-cache rules for `/_file/* /_import/*
+  /_observablehq/* /_npm/*` hashed assets. New `src/robots.txt`
+  (allow-all + sitemap hint), `wrangler.toml` (name=`agv-tracker`,
+  `pages_build_output_dir="dist"`), `scripts/verify_deployment.sh`
+  (curl smoke over 7 routes with non-zero exit on any failure), and
+  `scripts/post_build.sh` (copies `_headers`/`robots.txt` into `dist/`
+  since Observable Framework does not emit them). `npm run build` now
+  chains `observable build && bash scripts/post_build.sh`.
+  `.github/CI_SETUP.md` rewritten into a task-by-task runbook covering
+  secrets, first-deploy, custom domain + DNS + HTTPS, recurring
+  workflow verification, and troubleshooting. README gains a "Live
+  site" section. pytest: 238/238 green (216 + 22 new deployment-config
+  tests). Production URL + custom domain verification deferred to
+  first online deploy and recorded here at that point.
 - **site**: force-directed relations network on the dashboard (Task 10).
   New `src/data/network.json.py` loader emits deterministic
   `{nodes, links}` from `agv.csv` (106 nodes) + `agv_relation.csv`

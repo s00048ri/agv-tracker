@@ -2,7 +2,19 @@
 
 A static web tracker for **AI Governance Venues** — international organizations, intergovernmental fora, multistakeholder coalitions, and recurring conferences whose mandate addresses the governance of AI.
 
-This is a **v0.1 pilot** with 30 hand-curated seed venues, intended primarily to validate the AGVO ontology against real-world entities.
+This is a **v0.3 working dataset** with 106 verified seed venues produced
+under the AGVO v0.3 ontology (see `CLAUDE.md` for the spec and `CHANGELOG.md`
+for the dataset history).
+
+## Live site
+
+- **Production**: <https://agv-tracker.pages.dev/> — auto-deployed from
+  `main` by `.github/workflows/deploy.yml`. First public URL + custom
+  domain TBD; recorded in `CHANGELOG.md` on first successful deploy.
+- **Smoke-check the deploy** (any URL):
+  ```bash
+  scripts/verify_deployment.sh https://agv-tracker.pages.dev/
+  ```
 
 ## Quickstart
 

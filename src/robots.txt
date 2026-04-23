@@ -1,0 +1,9 @@
+# AGV Tracker — public crawling policy.
+# Change to `Disallow: /` if the site ever needs to go non-public.
+User-agent: *
+Allow: /
+
+# Observable Framework does not currently emit a sitemap.xml out of the box,
+# but Cloudflare Pages will serve one at this path if we add it. Leaving the
+# reference as a forward-looking hint so crawlers pick it up once present.
+Sitemap: https://agv-tracker.pages.dev/sitemap.xml

@@ -1,0 +1,17 @@
+# Cloudflare Pages project configuration (CLAUDE.md §9 Task 11).
+#
+# Used by:
+#   - `wrangler pages deploy` — without this file the project name + output
+#     directory must be passed as CLI flags; with it, the deploy command is
+#     a bare `wrangler pages deploy`.
+#   - `wrangler pages dev` — local preview of the built dist/ with the same
+#     _headers / _redirects / routing that production uses.
+#
+# The GitHub Actions deploy workflow (`.github/workflows/deploy.yml`) still
+# passes --project-name + the dist path explicitly so this file is optional
+# from a CI standpoint; its value is local parity + explicit documentation
+# of the deployment target.
+
+name = "agv-tracker"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-10-01"
