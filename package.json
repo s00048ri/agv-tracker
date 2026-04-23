@@ -1,0 +1,20 @@
+{
+  "name": "agv-tracker",
+  "version": "0.1.0",
+  "description": "A tracker for AI Governance Venues — quantifying the proliferation of international AI governance organizations, conferences, and initiatives since 2015.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "observable preview",
+    "build": "observable build",
+    "deploy": "observable deploy",
+    "clean": "observable clean"
+  },
+  "dependencies": {
+    "@observablehq/framework": "^1.13.0",
+    "d3": "^7.9.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
