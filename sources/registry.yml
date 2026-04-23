@@ -1,0 +1,471 @@
+# AGV Tracker — Source Registry
+#
+# Single source of truth for external sources used by the pipeline.
+# See CLAUDE.md §5 for the three-layer model (discovery | verification | background).
+#
+# Schema for each entry:
+#   id                     required, snake_case, globally unique
+#   name                   required, human-readable
+#   url                    required
+#   role                   required, one of: discovery | verification | background
+#   entity_types_covered   required for discovery/verification; list of AGVO §3.3 D1 values
+#                          (use [] for background or if role=discovery but not entity-scoped)
+#   fetcher_module         optional; Python dotted path (null if no fetcher yet / manual only)
+#   fetch_strategy         one of: http_static | http_with_playwright_fallback | manual
+#                          (required for discovery sources that are or will be fetched)
+#   update_frequency       human-readable cadence label (e.g. monthly, quarterly, annual, ad_hoc)
+#   last_verified_alive    ISO date; last day the URL was manually confirmed reachable
+#   notes                  optional freeform
+#
+# Invariants (enforced by scripts/generate_coverage_matrix.py):
+#   - Every AGVO §3.3 entity_type must appear in entity_types_covered of ≥1 verification entry.
+#   - Background sources never populate data/*.csv; they are for methodology.md citation only.
+#   - A source may be listed as both discovery and verification only via TWO separate entries
+#     with different ids (e.g., oecd_ai_discovery + oecd_ai_official_pages).
+
+sources:
+
+  # ------------------------------------------------------------------
+  # DISCOVERY LAYER
+  # Helps find candidate AGVs. Never acceptable as primary_reference_url.
+  # ------------------------------------------------------------------
+
+  - id: oecd_ai_navigator
+    name: "OECD.AI Policy Observatory (Policy Navigator)"
+    url: "https://oecd.ai/"
+    role: discovery
+    entity_types_covered:
+      - igo_initiative
+      - intergov_forum
+      - multistakeholder_coalition
+      - national_regulator_intl
+    fetcher_module: pipelines.fetchers.oecd_ai
+    fetch_strategy: http_with_playwright_fallback
+    update_frequency: monthly
+    last_verified_alive: 2026-04-23
+    notes: "Best general-purpose discovery for international initiatives; Task 4 target."
+
+  - id: unesco_gaigo
+    name: "UNESCO Global AI Ethics and Governance Observatory"
+    url: "https://www.unesco.org/ethics-ai/en"
+    role: discovery
+    entity_types_covered:
+      - igo_initiative
+      - national_regulator_intl
+    fetcher_module: pipelines.fetchers.unesco_gaigo
+    fetch_strategy: http_with_playwright_fallback
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Country-level entities and emerging regional bodies."
+
+  - id: iapp_ai_law_tracker
+    name: "IAPP Global AI Law and Policy Tracker"
+    url: "https://iapp.org/resources/article/global-ai-legislation-tracker"
+    role: discovery
+    entity_types_covered:
+      - national_regulator_intl
+      - treaty_body
+    fetcher_module: pipelines.fetchers.iapp
+    fetch_strategy: http_with_playwright_fallback
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Regulatory authorities and laws; surfaces new treaty bodies early."
+
+  - id: evalcommunity_map
+    name: "EvalCommunity Global AI Governance Map"
+    url: "https://academy.evalcommunity.com/global-ai-governance-map-140-institutions/"
+    role: discovery
+    entity_types_covered:
+      - igo_initiative
+      - multistakeholder_coalition
+      - intl_ngo_thinktank
+      - academic_consortium
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: ad_hoc
+    last_verified_alive: 2026-04-23
+    notes: "On probation; re-evaluate before v0.4 per §12.7."
+
+  - id: ai_deadlines
+    name: "AI Conference Deadlines"
+    url: "https://aideadlin.es/"
+    role: discovery
+    entity_types_covered:
+      - conference_policy_track
+      - standalone_governance_conference
+      - industry_conference
+    fetcher_module: null
+    fetch_strategy: http_static
+    update_frequency: ad_hoc
+    last_verified_alive: 2026-04-23
+    notes: "Seeds candidate recurring conferences with governance tracks."
+
+  - id: tech_policy_press
+    name: "Tech Policy Press (AI governance coverage)"
+    url: "https://www.techpolicy.press/"
+    role: discovery
+    entity_types_covered:
+      - intergov_forum
+      - multistakeholder_coalition
+      - one_off_summit
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: ad_hoc
+    last_verified_alive: 2026-04-23
+    notes: "Early signal for emerging venues and summits."
+
+  # ------------------------------------------------------------------
+  # VERIFICATION LAYER
+  # Authoritative first-party sources for primary_reference_url and evidence.
+  # Every AGVO §3.3 entity_type must be covered by ≥1 entry here.
+  # ------------------------------------------------------------------
+
+  - id: oecd_ai_official
+    name: "OECD.AI — official programme pages"
+    url: "https://oecd.ai/en/ai-principles"
+    role: verification
+    entity_types_covered:
+      - igo_initiative
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for OECD AI Principles, GPAI Integrated, OECD.AI Observatory itself."
+
+  - id: unesco_ai_ethics_official
+    name: "UNESCO — Recommendation on the Ethics of AI"
+    url: "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics"
+    role: verification
+    entity_types_covered:
+      - igo_initiative
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for UNESCO AI Ethics Recommendation and follow-up bodies."
+
+  - id: mofa_g7_hiroshima
+    name: "MOFA Japan — G7 Hiroshima AI Process"
+    url: "https://www.mofa.go.jp/policy/economy/g7_hiroshima/"
+    role: verification
+    entity_types_covered:
+      - intergov_forum
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Canonical Japanese presidency record; cross-check with g7.gc.ca for later presidencies."
+
+  - id: g20_official
+    name: "G20 — official AI working group communiques"
+    url: "https://www.g20.org/"
+    role: verification
+    entity_types_covered:
+      - intergov_forum
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Presidency rotates annually; use official host-country site per year."
+
+  - id: coe_cai
+    name: "Council of Europe — Committee on AI (CAI) and Framework Convention"
+    url: "https://www.coe.int/en/web/artificial-intelligence/cai"
+    role: verification
+    entity_types_covered:
+      - treaty_body
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for CoE Framework Convention on AI + drafting groups."
+
+  - id: partnership_on_ai_official
+    name: "Partnership on AI — official site"
+    url: "https://partnershiponai.org/"
+    role: verification
+    entity_types_covered:
+      - multistakeholder_coalition
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for PAI and its workstreams; bylaws page for founding details."
+
+  - id: ai_verify_foundation
+    name: "AI Verify Foundation (Singapore) — official site"
+    url: "https://aiverifyfoundation.sg/"
+    role: verification
+    entity_types_covered:
+      - multistakeholder_coalition
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for AI Verify Foundation and its members."
+
+  - id: frontier_model_forum_official
+    name: "Frontier Model Forum — official site"
+    url: "https://www.frontiermodelforum.org/"
+    role: verification
+    entity_types_covered:
+      - industry_consortium
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for FMF membership, governance structure, outputs."
+
+  - id: mlcommons_official
+    name: "MLCommons — AI Safety Working Group"
+    url: "https://mlcommons.org/working-groups/ai-safety/"
+    role: verification
+    entity_types_covered:
+      - industry_consortium
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for MLCommons AI Safety WG charter and benchmark outputs."
+
+  - id: fli_official
+    name: "Future of Life Institute — official site"
+    url: "https://futureoflife.org/"
+    role: verification
+    entity_types_covered:
+      - intl_ngo_thinktank
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for FLI and its AI-safety programme history."
+
+  - id: caidp_official
+    name: "Center for AI and Digital Policy (CAIDP) — official site"
+    url: "https://www.caidp.org/"
+    role: verification
+    entity_types_covered:
+      - intl_ngo_thinktank
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for CAIDP programme and AI & Democratic Values Index."
+
+  - id: mila_official
+    name: "Mila — Quebec AI Institute, governance programme"
+    url: "https://mila.quebec/en/"
+    role: verification
+    entity_types_covered:
+      - academic_consortium
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for Mila-led academic consortia and AI-for-humanity initiatives."
+
+  - id: iso_iec_sc42
+    name: "ISO/IEC JTC 1/SC 42 — Artificial Intelligence"
+    url: "https://www.iso.org/committee/6794475.html"
+    role: verification
+    entity_types_covered:
+      - standards_body_wg
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for SC 42 and its sub-WGs."
+
+  - id: ieee_sa_ai
+    name: "IEEE Standards Association — Intelligent Systems practices"
+    url: "https://standards.ieee.org/practices/intelligent-systems/"
+    role: verification
+    entity_types_covered:
+      - standards_body_wg
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for IEEE P7000 series and related AI WGs."
+
+  - id: itu_ai_for_good_official
+    name: "ITU AI for Good — official site"
+    url: "https://aiforgood.itu.int/"
+    role: verification
+    entity_types_covered:
+      - standards_body_wg
+      - industry_conference
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for ITU Focus Groups (FG-AI4H etc.) and the annual AI for Good Summit."
+
+  - id: uk_aisi_official
+    name: "UK AI Security Institute — official site"
+    url: "https://www.aisi.gov.uk/"
+    role: verification
+    entity_types_covered:
+      - national_regulator_intl
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for UK AISI (formerly AI Safety Institute); anchors AISI Network."
+
+  - id: us_aisi_official
+    name: "US AI Safety Institute (NIST) — official site"
+    url: "https://www.nist.gov/aisi"
+    role: verification
+    entity_types_covered:
+      - national_regulator_intl
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for US AISI within NIST."
+
+  - id: japan_aisi_official
+    name: "Japan AI Safety Institute — official site"
+    url: "https://aisi.go.jp/"
+    role: verification
+    entity_types_covered:
+      - national_regulator_intl
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for Japan AISI within IPA."
+
+  - id: facct_conference_official
+    name: "ACM FAccT Conference — official site"
+    url: "https://facctconference.org/"
+    role: verification
+    entity_types_covered:
+      - standalone_governance_conference
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for FAccT (formerly FAT*); full governance/ethics scope."
+
+  - id: aies_conference_official
+    name: "AAAI/ACM Conference on AI, Ethics, and Society (AIES) — official site"
+    url: "https://www.aies-conference.com/"
+    role: verification
+    entity_types_covered:
+      - standalone_governance_conference
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for AIES; reclassify from conference_policy_track in Task 2."
+
+  - id: world_summit_ai
+    name: "World Summit AI — official site"
+    url: "https://worldsummit.ai/"
+    role: verification
+    entity_types_covered:
+      - industry_conference
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Commercial industry conference with governance content."
+
+  - id: neurips_workshops
+    name: "NeurIPS Workshops (safety/governance tracks)"
+    url: "https://neurips.cc/"
+    role: verification
+    entity_types_covered:
+      - conference_policy_track
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for NeurIPS ML Safety Workshop and related governance tracks."
+
+  - id: aaai_safety_track
+    name: "AAAI Conference — Safety / Governance track CFPs"
+    url: "https://aaai.org/conference/aaai/"
+    role: verification
+    entity_types_covered:
+      - conference_policy_track
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for AAAI governance-focused tracks and workshops."
+
+  - id: bletchley_summit_gov_uk
+    name: "UK Government — AI Safety Summit (Bletchley Park) topical page"
+    url: "https://www.gov.uk/government/topical-events/ai-safety-summit-2023"
+    role: verification
+    entity_types_covered:
+      - one_off_summit
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: ad_hoc
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for Bletchley 2023. Pattern for other host-government summit pages."
+
+  - id: elysee_paris_action_summit
+    name: "Élysée — AI Action Summit (Paris)"
+    url: "https://www.elysee.fr/en/sommet-pour-l-action-sur-l-ia"
+    role: verification
+    entity_types_covered:
+      - one_off_summit
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: ad_hoc
+    last_verified_alive: 2026-04-23
+    notes: "Canonical for Paris 2025 edition of the safety-summit series."
+
+  # ------------------------------------------------------------------
+  # BACKGROUND LAYER
+  # Cited in methodology.md and companion paper. Never populated into data/*.csv.
+  # ------------------------------------------------------------------
+
+  - id: stanford_ai_index
+    name: "Stanford AI Index Report (annual)"
+    url: "https://hai.stanford.edu/ai-index/"
+    role: background
+    entity_types_covered: []
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: annual
+    last_verified_alive: 2026-04-23
+    notes: "Legislation/policy trend context; not entity-level data."
+
+  - id: berkman_principled_ai
+    name: "Berkman Klein — Principled AI (2020)"
+    url: "https://cyber.harvard.edu/publication/2020/principled-ai"
+    role: background
+    entity_types_covered: []
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: ad_hoc
+    last_verified_alive: 2026-04-23
+    notes: "Historical mapping of AI principles documents."
+
+  - id: lawfare_three_layer
+    name: "Lawfare — Understanding Global AI Governance Through a Three-Layer Framework"
+    url: "https://www.lawfaremedia.org/article/understanding-global-ai-governance-through-a-three-layer-framework"
+    role: background
+    entity_types_covered: []
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: ad_hoc
+    last_verified_alive: 2026-04-23
+    notes: "Conceptual organization of governance layers."
+
+  - id: cihon_maas_kemp_2020
+    name: "Cihon, Maas & Kemp (2020) — Should AI Governance be Centralised?"
+    url: "https://dl.acm.org/doi/10.1145/3375627.3375857"
+    role: background
+    entity_types_covered: []
+    fetcher_module: null
+    fetch_strategy: manual
+    update_frequency: ad_hoc
+    last_verified_alive: 2026-04-23
+    notes: "AAAI/ACM AIES 2020; centralization debate for companion paper."
