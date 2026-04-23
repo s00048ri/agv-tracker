@@ -12,6 +12,23 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **site**: force-directed relations network on the dashboard (Task 10).
+  New `src/data/network.json.py` loader emits deterministic
+  `{nodes, links}` from `agv.csv` (106 nodes) + `agv_relation.csv`
+  (5 links). New `src/components/networkGraph.js` implements a D3
+  force-directed graph with `forceSimulation` (link/manyBody/center/
+  collide), drag via `d3.drag()` with simulation re-warm, pan/zoom
+  via `d3.zoom()` (0.3× … 4×) on an inner `<g>`, native `<title>`
+  hover tooltips on nodes and edges, a 13-colour `entity_type` palette
+  (Tableau10 + 3 extras), relation-weighted edge widths
+  (parent_of 2.5 → references_principles_of 0.9), inline legend,
+  and `invalidation`-driven simulation teardown for Observable's
+  cell re-eval. §7 section added to `dashboard.md` respecting the
+  Task 9 view toggle: both endpoints must be in the filtered node
+  set for an edge to survive. Interactivity (drag/zoom/hover) is
+  verified only in a browser — tests enforce the D3 wiring and
+  dashboard integration. `npm run build` green; dashboard.html
+  22 kB → 26 kB. pytest: 216/216 green (192 + 24 new).
 - **site**: sensitivity-view dashboard online (Task 9). New
   `src/components/viewToggle.js` exposes `CONTINUOUS_ENTITY_TYPES`
   (the 8 §6.2 view-1 entity_types), `RECURRING_FREQUENCIES`

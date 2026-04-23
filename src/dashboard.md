@@ -10,7 +10,9 @@ import {
   VIEW_LABELS,
   VIEW_DESCRIPTIONS,
 } from "./components/viewToggle.js";
+import {networkGraph} from "./components/networkGraph.js";
 const agv = await FileAttachment("./data/agv.json").json();
+const network = await FileAttachment("./data/network.json").json();
 ```
 
 # Analytical dashboard
@@ -275,6 +277,50 @@ ${agvFiltered.length
 
   </div>
 </div>
+
+## 7. Relations network
+
+Force-directed graph of the `agv_relation.csv` edges (succeeds,
+absorbed_into, parent_of, coordinates_with, convenes_within, member_of,
+references_principles_of). Node colour encodes `entity_type`; edge
+stroke width encodes relation strength (hierarchy and succession are
+drawn thicker than referencing relations). Terminated venues are drawn
+semi-transparent.
+
+The graph respects the current view toggle: nodes are restricted to the
+filtered set, and edges are kept only when **both** endpoints are visible.
+
+**Interactions.** Drag a node to reposition it (release to let the force
+re-settle). Scroll / pinch to zoom (0.3× … 4×); drag empty canvas to pan.
+Hover a node or edge for a native tooltip.
+
+**Edge density note.** The v0.3 seed ships only ${network.links.length}
+relations across ${network.nodes.length} venues; most nodes are therefore
+isolated dots. This is expected — relation data will densify as
+v0.4 backfills `member_of` / `parent_of` / `coordinates_with` edges
+(CLAUDE.md §3.7).
+
+```js
+const filteredNodeIds = new Set(agvFiltered.map((d) => d.agv_id));
+const filteredNetwork = {
+  nodes: network.nodes.filter((n) => filteredNodeIds.has(n.id)),
+  links: network.links.filter((l) => {
+    const s = typeof l.source === "string" ? l.source : l.source.id;
+    const t = typeof l.target === "string" ? l.target : l.target.id;
+    return filteredNodeIds.has(s) && filteredNodeIds.has(t);
+  }),
+};
+```
+
+<div class="card">
+${resize((width) => networkGraph(filteredNetwork, {
+  width,
+  height: Math.min(620, Math.max(360, width * 0.62)),
+  invalidation,
+}))}
+</div>
+
+<small><strong>${filteredNetwork.nodes.length}</strong> nodes · <strong>${filteredNetwork.links.length}</strong> edges in current view.</small>
 
 ---
 
