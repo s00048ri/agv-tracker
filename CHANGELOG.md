@@ -12,6 +12,17 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: normalize → diff → PR pipeline online (Task 6). `Normalizer`
+  (RawVenue → v0.3 candidate + classifier-backed evidence + registry
+  verification-source pairing), `Differ` (§4.7 four-case logic with
+  `human_verified_fields` / `override_policy` respect, §3.5 dynamic stale
+  detection excluding `one_off`, rename detection via
+  `agv_name_history.csv`), and `candidates_to_pr.render_pr_body`
+  (Markdown with three-checkbox conflict sections per §4.7 and
+  conflict-ratio 5% gauge). Three CLIs chained as
+  `oecd_ai → normalize → diff → candidates_to_pr` produce a full PR body
+  from the shipped OECD.AI fixture (60 new, 17 stale). pytest: 131/131
+  green; `diff.py` coverage 99%.
 - **pipelines**: LLM-assisted AGVO classifier online (Task 5). Six per-dimension
   prompt templates; `Classifier` with content-hash cache, monthly budget
   guard, and pluggable backends (Anthropic live / deterministic mock);
