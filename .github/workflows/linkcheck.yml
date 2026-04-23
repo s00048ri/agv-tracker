@@ -1,0 +1,49 @@
+# Weekly full link check of every URL in the dataset and registry
+# (CLAUDE.md §9 Task 7 step 4). Opens a tracking issue if any URL is broken.
+
+name: linkcheck
+
+on:
+  schedule:
+    # Mondays 03:00 UTC
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lychee — check every URL in data + registry + published docs
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --accept 200..=299,429
+            --exclude-mail
+            --exclude "^internal://"
+            --exclude-path node_modules
+            sources/registry.yml
+            data/agv.csv
+            data/agv_relation.csv
+            data/agv_evidence.csv
+            data/agv_name_history.csv
+            data/agv_lifecycle.csv
+            src/**/*.md
+          output: ./lychee-out.md
+          fail: false
+
+      - name: Open or update issue on broken links
+        if: steps.lychee.outputs.exit_code != 0
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Weekly linkcheck: broken URLs detected"
+          content-filepath: ./lychee-out.md
+          labels: linkcheck, bug

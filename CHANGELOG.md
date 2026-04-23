@@ -12,6 +12,21 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **ci**: four GitHub Actions workflows online (Task 7). `monthly_fetch.yml`
+  (cron `0 9 1 * *` UTC + `workflow_dispatch`; runs `scripts/monthly_update.sh`
+  and opens a PR via `peter-evans/create-pull-request@v7`), `deploy.yml`
+  (push to main → Observable Framework build → Cloudflare Pages via
+  `wrangler-action@v3`), `validate.yml` (PR: pytest + ruff +
+  `--cov-fail-under=90` on `pipelines.diff` + npm build + lychee on changed
+  files), `linkcheck.yml` (weekly full-dataset lychee with issue creation
+  on breakage). Setup guide at `.github/CI_SETUP.md` covers required
+  secrets (`ANTHROPIC_API_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`)
+  and Cloudflare Pages project bootstrap. `monthly_update.sh` driver
+  chains fetcher → normalize → diff → candidates_to_pr with a mock
+  fallback when `ANTHROPIC_API_KEY` is unset; local dry-run produces
+  a 1001-line PR body. First-run PR URL + Cloudflare preview URL to be
+  recorded here after `workflow_dispatch`. pytest: 155/155 green
+  (131 + 24 new workflow structural tests).
 - **pipelines**: normalize → diff → PR pipeline online (Task 6). `Normalizer`
   (RawVenue → v0.3 candidate + classifier-backed evidence + registry
   verification-source pairing), `Differ` (§4.7 four-case logic with

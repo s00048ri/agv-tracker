@@ -1,0 +1,55 @@
+# Build + deploy to Cloudflare Pages (CLAUDE.md §9 Task 7 step 2).
+#
+# First-run verification note: on the first successful main-branch push after
+# provisioning `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`, record the
+# preview URL in CHANGELOG.md to formally close Task 7 Done-when #2.
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "data/**"
+      - "sources/**"
+      - "observablehq.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Observable Framework site
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=agv-tracker --branch=${{ github.ref_name }}

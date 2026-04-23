@@ -1,0 +1,75 @@
+# PR validation — pytest + ruff + npm build + link check on changed URLs
+# (CLAUDE.md §9 Task 7 step 3).
+
+name: validate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+      - name: Install Python project (all extras)
+        run: uv sync --extra dev --extra scraping --extra classifier
+      - name: Ruff
+        run: uv run ruff check pipelines scripts tests
+      - name: Pytest (with diff.py coverage gate ≥90%)
+        run: |
+          uv run pytest tests/ -q \
+            --cov=pipelines.diff \
+            --cov-report=term-missing \
+            --cov-fail-under=90
+
+  node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - run: npm ci
+      - name: Build Observable Framework site
+        run: npm run build
+
+  linkcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Detect changed files
+        id: changed
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            sources/**/*.yml
+            sources/**/*.md
+            data/**/*.csv
+            src/**/*.md
+      - name: Lychee link check on changed files
+        if: steps.changed.outputs.any_changed == 'true'
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --accept 200..=299,429
+            --exclude-mail
+            --exclude-path node_modules
+            ${{ steps.changed.outputs.all_changed_files }}
+          fail: true

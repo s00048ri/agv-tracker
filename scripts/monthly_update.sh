@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# Monthly update driver (CLAUDE.md §9 Task 7).
+#
+# Chains:
+#   1. pipelines.fetchers.oecd_ai   — discovery fetch
+#   2. pipelines.normalize          — RawVenue → v0.3 candidates + classifier
+#   3. pipelines.diff               — lock-aware diff vs. data/agv.csv
+#   4. pipelines.candidates_to_pr   — Markdown body for the PR
+#
+# Output (relative to repo root):
+#   monthly_pr_body.md  — consumed by peter-evans/create-pull-request
+#   monthly_report.json — raw DiffReport (committed via peter-evans --add-paths
+#                         only if we choose to track it; default is to keep it
+#                         as a PR attachment only)
+#
+# Fallback behaviour:
+#   - If ANTHROPIC_API_KEY is unset, the classifier silently switches to
+#     --mock. The PR body will say `model: mock` via provenance.
+#   - If Playwright/Chromium is not installed, the OECD.AI fetcher falls
+#     back to its shipped fixture (Task 4 contract).
+#   - Either way, this script should exit 0 and produce a well-formed PR body.
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
+WORK="${RUNNER_TEMP:-$(mktemp -d)}/monthly-update"
+mkdir -p "$WORK"
+
+TODAY="$(date -u +%Y-%m-%d)"
+echo "::group::monthly_update — workspace"
+echo "  REPO_ROOT = $REPO_ROOT"
+echo "  WORK      = $WORK"
+echo "  TODAY     = $TODAY"
+echo "::endgroup::"
+
+echo "::group::1/4 fetch (OECD.AI)"
+uv run python -m pipelines.fetchers.oecd_ai \
+    --cache-dir "$WORK/oecd-cache" \
+    --quiet \
+    > "$WORK/raw.jsonl"
+echo "  fetched $(wc -l < "$WORK/raw.jsonl" | tr -d ' ') RawVenue record(s)"
+echo "::endgroup::"
+
+CLASSIFY_FLAG="--live"
+if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
+    echo "::warning::ANTHROPIC_API_KEY is unset; classifier will run in --mock mode"
+    CLASSIFY_FLAG="--mock"
+fi
+
+echo "::group::2/4 normalize"
+uv run python -m pipelines.normalize \
+    --input "$WORK/raw.jsonl" \
+    --output "$WORK/candidates.json" \
+    --registry "$REPO_ROOT/sources/registry.yml" \
+    --cache-dir "$WORK/classifier-cache" \
+    $CLASSIFY_FLAG \
+    --quiet
+echo "  normalized $(python3 -c 'import json,sys; print(len(json.load(open(sys.argv[1]))))' "$WORK/candidates.json") candidate(s)"
+echo "::endgroup::"
+
+echo "::group::3/4 diff"
+uv run python -m pipelines.diff \
+    --candidates "$WORK/candidates.json" \
+    --canonical  "$REPO_ROOT/data/agv.csv" \
+    --name-history "$REPO_ROOT/data/agv_name_history.csv" \
+    --output "$REPO_ROOT/monthly_report.json" \
+    --today "$TODAY" \
+    --quiet
+echo "  report saved to monthly_report.json"
+echo "::endgroup::"
+
+echo "::group::4/4 render PR body"
+uv run python -m pipelines.candidates_to_pr \
+    --report "$REPO_ROOT/monthly_report.json" \
+    --output "$REPO_ROOT/monthly_pr_body.md"
+echo "  body: $(wc -l < "$REPO_ROOT/monthly_pr_body.md" | tr -d ' ') line(s)"
+echo "::endgroup::"
+
+echo "monthly_update: OK"

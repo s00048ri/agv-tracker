@@ -1,0 +1,82 @@
+# Monthly fetch → normalize → diff → PR (CLAUDE.md §9 Task 7 step 1).
+#
+# First-run verification note: this workflow has NOT yet been exercised
+# on GitHub Actions. On the first `workflow_dispatch`, record the resulting
+# PR URL in CHANGELOG.md so that the Task 7 Done-when #1 ("produces a real
+# PR") is formally closed.
+
+name: monthly-fetch
+
+on:
+  schedule:
+    # 09:00 UTC on the first of each month
+    - cron: "0 9 1 * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Skip PR creation; only upload the generated body as an artifact"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: monthly-fetch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  monthly-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Install Python project (with scraping + classifier extras)
+        run: uv sync --extra dev --extra scraping --extra classifier
+
+      - name: Install Playwright Chromium
+        run: uv run playwright install --with-deps chromium
+
+      - name: Run monthly update pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: bash scripts/monthly_update.sh
+
+      - name: Compute PR metadata
+        id: meta
+        run: |
+          echo "month=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+          echo "title=chore: monthly AGV update $(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload PR body as artifact (always)
+        uses: actions/upload-artifact@v4
+        with:
+          name: monthly-pr-body-${{ steps.meta.outputs.month }}
+          path: |
+            monthly_pr_body.md
+            monthly_report.json
+
+      - name: Open / update PR
+        if: ${{ !inputs.dry_run }}
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: monthly-update/${{ steps.meta.outputs.month }}
+          title: ${{ steps.meta.outputs.title }}
+          body-path: monthly_pr_body.md
+          labels: monthly-update
+          commit-message: "chore(monthly): ${{ steps.meta.outputs.month }} fetch + diff"
+          # Only stage changes that belong in a committed monthly update;
+          # monthly_pr_body.md is NOT staged (it lives only as the PR body).
+          add-paths: |
+            data/
+            sources/coverage_matrix.md
+          delete-branch: true
