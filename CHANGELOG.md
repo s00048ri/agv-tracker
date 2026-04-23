@@ -12,6 +12,26 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **analysis**: companion notebook online (Task 13).
+  `notebooks/founding_rate_analysis.ipynb` is a deterministic
+  `.ipynb` built from `scripts/generate_analysis_notebook.py` (same
+  generator pattern as `generate_venue_pages.py`). It loads the v0.3
+  CSVs, reproduces the dashboard's cumulative-active-population and
+  annual founding-rate charts, fits a Hannan-&-Freeman-style
+  density-dependent Poisson GLM
+  (`foundings ~ density_prev + density_prev²`), runs the same fit
+  under each of the three §6.2 views, and runs an explicit
+  likelihood-ratio test against an intercept-only null model —
+  χ² = 115.48, df = 2, p < 0.0001 on the v0.3 seed. Publication-
+  ready PDFs (cumulative_active_population.pdf,
+  founding_rate_by_view.pdf, density_dependence_poisson.pdf) are
+  written to `notebooks/figures/` (git-ignored). New `[notebook]`
+  extras in pyproject.toml (pandas, numpy, matplotlib, statsmodels,
+  scipy, jupyter, nbformat, nbclient, ipykernel); validate.yml's
+  python job now installs them, so `tests/test_notebook.py` executes
+  the notebook end-to-end on CI. pytest: 280/280 green (267 + 13
+  new notebook tests). Notebook contents locked by the generator's
+  `--check` gate (regenerate + commit to change the analysis).
 - **meta**: Zenodo DOI integration ready (Task 12). `.zenodo.json` +
   `CITATION.cff` at the repo root supply Zenodo deposit metadata and
   the GitHub "Cite this repository" widget; `data/citation.json` is the

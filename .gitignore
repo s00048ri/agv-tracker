@@ -12,3 +12,5 @@ build/
 .pytest_cache/
 .ruff_cache/
 .coverage
+.ipynb_checkpoints/
+notebooks/figures/

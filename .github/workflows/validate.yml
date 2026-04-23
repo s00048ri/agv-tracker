@@ -23,7 +23,7 @@ jobs:
         with:
           enable-cache: true
       - name: Install Python project (all extras)
-        run: uv sync --extra dev --extra scraping --extra classifier
+        run: uv sync --extra dev --extra scraping --extra classifier --extra notebook
       - name: Ruff
         run: uv run ruff check pipelines scripts tests
       - name: Pytest (with diff.py coverage gate ≥90%)
