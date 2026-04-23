@@ -33,6 +33,9 @@ jobs:
             --cov-report=term-missing \
             --cov-fail-under=90
 
+      - name: Venue pages in sync with data/
+        run: uv run python scripts/generate_venue_pages.py --check
+
   node:
     runs-on: ubuntu-latest
     timeout-minutes: 10

@@ -12,6 +12,23 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **site**: per-venue detail pages + evidence + verification components
+  online (Task 8). `scripts/generate_venue_pages.py` emits 106
+  deterministic `src/venues/{agv_id}.md` files from the CSVs (sorted,
+  byte-stable, `--check` mode for CI). Pages render the prominent
+  `verificationBadge` (§6.4: "Human-verified … by @reviewer" vs.
+  "Awaiting human review") and `evidencePanel` (grouped by `field_name`,
+  with source-type icons distinguishing `human_verification` /
+  `llm_classification` / upstream registries and confidence colour
+  badges). Three new JSON loaders (`evidence.json.py`, `lifecycle.json.py`,
+  `name_history.json.py`) power the pages. Observable Framework
+  `npm run build` now green end-to-end (0 warnings), producing 107
+  venue pages + the existing top-level pages. `validate.yml` gates on
+  `generate_venue_pages.py --check`; `deploy.yml` regenerates before
+  build. Pre-existing scaffold blockers fixed: `src/venues/index.md`
+  relative-path FileAttachment; `src/data-download.md` download link
+  via `FileAttachment.href`; `package-lock.json` now committed.
+  pytest: 177/177 green (155 + 22 new venue-page tests).
 - **ci**: four GitHub Actions workflows online (Task 7). `monthly_fetch.yml`
   (cron `0 9 1 * *` UTC + `workflow_dispatch`; runs `scripts/monthly_update.sh`
   and opens a PR via `peter-evans/create-pull-request@v7`), `deploy.yml`

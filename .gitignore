@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .observablehq/cache/
+src/.observablehq/
 *.pyc
 __pycache__/
 .DS_Store

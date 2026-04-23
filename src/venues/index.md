@@ -3,12 +3,13 @@ title: Venues
 ---
 
 ```js
-const agv = await FileAttachment("data/agv.json").json();
+const agv = await FileAttachment("../data/agv.json").json();
 ```
 
 # Venues directory
 
-${agv.length} venues in the current dataset. Click any column header to sort.
+${agv.length} venues in the current dataset. Click any column header to sort,
+or click a venue's name to open its detail page.
 
 ```js
 const search = view(Inputs.search(agv, {placeholder: "Search by name, type, topic, or notes…"}));
@@ -35,6 +36,10 @@ view(Inputs.table(search, {
     primary_reference_url: "Source"
   },
   format: {
+    name_en: (name, i) => {
+      const row = search[i];
+      return htl.html`<a href="./${row.agv_id}">${name}</a>`;
+    },
     primary_reference_url: (url) => htl.html`<a href="${url}" target="_blank" rel="noreferrer">link</a>`,
     founded_year: (y) => y
   },

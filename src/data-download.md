@@ -7,14 +7,17 @@ title: Data download
 The canonical dataset is version-controlled in Git; downloads here are snapshots from the latest build.
 
 ```js
-const agv = await FileAttachment("data/agv.json").json();
+const agvFile = FileAttachment("./data/agv.json");
+const agv = await agvFile.json();
 ```
 
 ## Files
 
-- **AGV master table** — ${agv.length} venues, all six AGVO classification dimensions plus lifecycle and source metadata.
+**AGV master table** — ${agv.length} venues, all six AGVO classification dimensions plus lifecycle and source metadata.
 
-  [Download as JSON](data/agv.json) · [View on GitHub](https://github.com/your-handle/agv-tracker/blob/main/data/agv.csv)
+```js
+display(html`<a href="${agvFile.href}" download="agv.json">Download as JSON</a> · <a href="https://github.com/s00048ri/agv-tracker/blob/main/data/agv.csv" target="_blank" rel="noreferrer">View on GitHub</a>`);
+```
 
 ## Schema
 

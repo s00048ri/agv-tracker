@@ -41,6 +41,14 @@ jobs:
           node-version: "22"
           cache: "npm"
 
+      - name: Set up Python (for venue-page generator)
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Regenerate per-venue detail pages from data/
+        run: uv run python scripts/generate_venue_pages.py
+
       - name: Install dependencies
         run: npm ci
 

@@ -78,4 +78,12 @@ uv run python -m pipelines.candidates_to_pr \
 echo "  body: $(wc -l < "$REPO_ROOT/monthly_pr_body.md" | tr -d ' ') line(s)"
 echo "::endgroup::"
 
+# The monthly PR doesn't edit data/ directly (data edits happen via human
+# review on the PR), so per-venue pages rarely need regenerating here.
+# We still run the generator defensively — it's a no-op when the committed
+# pages are already in sync with data/.
+echo "::group::5/5 regenerate venue pages (no-op if in sync)"
+uv run python scripts/generate_venue_pages.py
+echo "::endgroup::"
+
 echo "monthly_update: OK"
