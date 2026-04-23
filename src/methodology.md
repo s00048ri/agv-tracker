@@ -54,10 +54,46 @@ This is a **v0.1 pilot release** with a hand-curated seed sample of 30 venues. T
 - Standards bodies beyond ISO/IEC SC 42 (IEEE working groups, ITU AI focus groups).
 - Many academic conference policy tracks.
 
-## Citation
+## Cite this release
 
-Until a stable release with a Zenodo DOI is published, please cite this site as: *AGV Tracker v0.1 (pilot), accessed [date], [URL]*.
+```js
+const citation = await FileAttachment("./data/citation.json").json();
+const isPlaceholder = citation.doi.includes("PLACEHOLDER");
+```
+
+${isPlaceholder
+  ? md`_A Zenodo DOI has not yet been minted for this release. The block
+below shows the citation layout that will be populated once the first
+tagged release lands on Zenodo (see \`.github/CI_SETUP.md\` §7)._`
+  : md`This release carries a citable Zenodo DOI. Please cite as below.`}
+
+```js
+display(html`
+  <div class="cite-release" style="
+    padding: 0.9rem 1.1rem;
+    margin: 0.75rem 0 1.25rem;
+    border-left: 4px solid var(--theme-foreground-focus, #3b82f6);
+    background: var(--theme-background-alt, #f6f8fa);
+    border-radius: 4px;
+  ">
+    <div><strong>Version ${citation.version}</strong> · released ${citation.released_at}</div>
+    <div>Version DOI:
+      <a href="${citation.doi_url}" target="_blank" rel="noreferrer"><code>${citation.doi}</code></a>
+    </div>
+    <div>Concept DOI (always latest):
+      <a href="${citation.concept_doi_url}" target="_blank" rel="noreferrer"><code>${citation.concept_doi}</code></a>
+    </div>
+    <hr>
+    <div><strong>Preferred citation</strong></div>
+    <div style="margin: 0.35rem 0 0.75rem; font-family: serif;">${citation.citation_text}</div>
+    <div><strong>BibTeX</strong></div>
+    <pre style="white-space: pre-wrap; font-size: 0.88em;">${citation.bibtex}</pre>
+  </div>
+`);
+```
 
 ## Source code
 
-Repository: <https://github.com/your-handle/agv-tracker> (replace with actual URL on deployment).
+Repository: <https://github.com/s00048ri/agv-tracker>. See `CITATION.cff`
+at the repo root for the GitHub-native citation widget, and `.zenodo.json`
+for the Zenodo deposit metadata.

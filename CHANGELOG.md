@@ -12,6 +12,22 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **meta**: Zenodo DOI integration ready (Task 12). `.zenodo.json` +
+  `CITATION.cff` at the repo root supply Zenodo deposit metadata and
+  the GitHub "Cite this repository" widget; `data/citation.json` is the
+  canonical DOI + citation text + BibTeX consumed by the site via
+  `src/data/citation.json.py`. "Cite this release" blocks added to
+  `src/methodology.md` and `src/data-download.md` render version DOI,
+  concept DOI, preferred citation, and BibTeX with graceful
+  pre-release placeholder messaging. `scripts/update_citation.sh
+  VERSION VERSION_DOI CONCEPT_DOI` atomically rewrites the three
+  citation-carrying files after Zenodo mints a DOI; validated against
+  a 10.5281/… pattern. `.github/CI_SETUP.md §7` documents the end-to-
+  end first-release flow (GitHub↔Zenodo toggle, tag + push, update
+  script, commit to surface the DOI on-site). `npm run build` green
+  (methodology 10 kB → 12 kB with the citation renderer). pytest:
+  267/267 green (238 + 29 new citation/Zenodo tests). First DOI minting
+  happens at the first `v0.3.0` tag push and will be recorded here.
 - **ci**: Cloudflare Pages deployment configuration complete (Task 11).
   New `src/_headers` ships security headers (CSP tuned for Observable's
   runtime JS eval, X-Frame-Options DENY, Referrer-Policy, Permissions-

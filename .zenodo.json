@@ -1,0 +1,41 @@
+{
+  "title": "AGV Tracker: AI Governance Venues",
+  "description": "A structured, version-controlled dataset of international organizations, intergovernmental fora, multistakeholder coalitions, standards working groups, think tanks, and recurring conferences whose mandate addresses the governance of AI. Released under AGVO v0.3 (AI Governance Venue Ontology v0.3), with full per-field evidence trails and human-verification audit logs. Companion static site at https://agv-tracker.pages.dev/.",
+  "upload_type": "dataset",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Iida, Ren",
+      "affiliation": "GPAI Tokyo Centre / NICT"
+    }
+  ],
+  "keywords": [
+    "artificial intelligence",
+    "AI governance",
+    "AI policy",
+    "international organizations",
+    "intergovernmental fora",
+    "standards",
+    "multistakeholder",
+    "organizational ecology",
+    "regime complex",
+    "OECD",
+    "UNESCO",
+    "Council of Europe",
+    "G7",
+    "AI Safety Institute"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/s00048ri/agv-tracker",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://agv-tracker.pages.dev/",
+      "relation": "isDocumentedBy",
+      "scheme": "url"
+    }
+  ]
+}

@@ -158,7 +158,56 @@ Each of the four workflows carries its own Done-when item from Tasks 7 /
 
 ---
 
-## 6. File map (what lives where)
+## 7. Zenodo integration + first DOI (Task 12)
+
+Goal: every tagged `v*.*.*` GitHub release auto-mints a Zenodo DOI, and
+the site's "Cite this release" blocks on `/methodology` and
+`/data-download` show the minted DOI after a short manual sync step.
+
+### 7.1 One-time Zenodo ↔ GitHub link
+
+1. Sign in to <https://zenodo.org/> using the GitHub login (same account
+   that owns the repo).
+2. **Menu → GitHub**. The page lists the account's repos. Flip the
+   toggle next to `s00048ri/agv-tracker` to **on**.
+3. Zenodo now watches that repo for releases. `.zenodo.json` at the
+   repo root controls the deposit metadata; do not remove it.
+
+### 7.2 First release
+
+1. Make sure `CHANGELOG.md` has the release notes at the top.
+2. Tag the release and push:
+   ```bash
+   git tag -a v0.3.0 -m "AGV Tracker v0.3.0 — first public release"
+   git push origin v0.3.0
+   ```
+3. Create a GitHub Release from the tag (Releases → Draft a new release
+   → select tag → publish). Zenodo's webhook fires on this event.
+4. Wait ~30 seconds. Zenodo's GitHub page will show the new deposit
+   and both DOIs (version + concept).
+5. Copy both DOIs.
+
+### 7.3 Sync the DOIs into the repo
+
+```bash
+scripts/update_citation.sh 0.3.0 10.5281/zenodo.<version> 10.5281/zenodo.<concept>
+```
+
+The script rewrites `data/citation.json` and `CITATION.cff`. Commit,
+push to `main`, and the next `deploy.yml` run will publish the updated
+"Cite this release" blocks. At that point **record the DOI in
+`CHANGELOG.md`** — this closes Task 12 Done-when #1 and #2.
+
+### 7.4 Recurring releases
+
+Every subsequent release repeats §7.2 + §7.3 for that version. The
+concept DOI stays stable (only the version DOI changes), and the site's
+BibTeX automatically points at the latest version DOI once
+`scripts/update_citation.sh` runs.
+
+---
+
+## 8. File map (what lives where)
 
 | File | Purpose |
 |---|---|
@@ -171,3 +220,7 @@ Each of the four workflows carries its own Done-when item from Tasks 7 /
 | `wrangler.toml` | Cloudflare Pages project config (`name = "agv-tracker"`, `pages_build_output_dir = "dist"`). |
 | `src/_headers` | Security + cache headers applied by Cloudflare Pages. |
 | `src/robots.txt` | Allow-all crawl policy + sitemap hint. |
+| `.zenodo.json` | Zenodo deposit metadata (title, creators, license, keywords). |
+| `CITATION.cff` | GitHub-native "Cite this repository" widget metadata. |
+| `data/citation.json` | Canonical DOI + citation text + BibTeX (consumed by the site). |
+| `scripts/update_citation.sh` | Post-release syncer: `VERSION VERSION_DOI CONCEPT_DOI → citation.json + CITATION.cff`. |

@@ -1,0 +1,38 @@
+# GitHub-native citation metadata (Citation File Format 1.2.0).
+# Rendered by the "Cite this repository" widget on the repo homepage.
+# `identifiers[0].value` is the placeholder DOI until the first Zenodo
+# release; run `scripts/update_citation.sh VERSION VERSION_DOI CONCEPT_DOI`
+# after Zenodo mints one to replace it.
+cff-version: "1.2.0"
+message: "If you use this dataset, please cite it using the metadata below."
+type: dataset
+title: "AGV Tracker: AI Governance Venues"
+abstract: >-
+  A structured, version-controlled dataset of international organizations,
+  intergovernmental fora, multistakeholder coalitions, standards working
+  groups, think tanks, and recurring conferences whose mandate addresses
+  the governance of AI. Released under the AGVO v0.3 ontology with full
+  per-field evidence trails and human-verification audit logs.
+authors:
+  - family-names: Iida
+    given-names: Ren
+    affiliation: GPAI Tokyo Centre / NICT
+version: "0.3.0"
+date-released: "2026-04-23"
+license: CC-BY-4.0
+repository-code: "https://github.com/s00048ri/agv-tracker"
+url: "https://agv-tracker.pages.dev/"
+keywords:
+  - artificial intelligence
+  - AI governance
+  - AI policy
+  - international organizations
+  - organizational ecology
+  - regime complex
+identifiers:
+  - description: "Zenodo DOI for this version"
+    type: doi
+    value: "10.5281/zenodo.PLACEHOLDER"
+  - description: "Zenodo concept DOI (always resolves to the latest version)"
+    type: doi
+    value: "10.5281/zenodo.PLACEHOLDER"
