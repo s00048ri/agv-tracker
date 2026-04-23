@@ -12,6 +12,19 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **site**: sensitivity-view dashboard online (Task 9). New
+  `src/components/viewToggle.js` exposes `CONTINUOUS_ENTITY_TYPES`
+  (the 8 §6.2 view-1 entity_types), `RECURRING_FREQUENCIES`
+  (annual/biennial), `VIEW_VALUES` / `VIEW_LABELS` / `VIEW_DESCRIPTIONS`
+  tables, and the pure `filterByView(agvs, view)` function.
+  `src/dashboard.md` rewritten around `Inputs.radio` reactive toggle
+  driving all six analytical sections: cumulative active population,
+  founding rate by entity_type (small multiples), founding rate by
+  topic_focus_primary (small multiples, previously absent), lifecycle
+  state distribution, topic × entity_type heatmap, and geographic_scope
+  + lead_actor breakdowns. View-specific explanatory paragraph renders
+  above every chart. `npm run build` green (dashboard: 22 kB). pytest:
+  192/192 green (177 + 15 new dashboard/toggle structural tests).
 - **site**: per-venue detail pages + evidence + verification components
   online (Task 8). `scripts/generate_venue_pages.py` emits 106
   deterministic `src/venues/{agv_id}.md` files from the CSVs (sorted,
