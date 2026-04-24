@@ -12,6 +12,25 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: government-pages discovery fetcher online (follow-on
+  to Task 4). One Python module (`pipelines/fetchers/government_pages.py`)
+  + one YAML config (`sources/government_pages.yml`) covers N
+  government AI pages without a per-country fetcher. Initial MVP ships
+  6 English-native targets: UK DSIT (Atom), US NIST news, EU AI Office,
+  Singapore IMDA, Canada ISED, Australia DISR. Per-target schema:
+  `id / country / language / url / list_selector / title_selector /
+  link_selector / description_selector / include_if_regex / priority`.
+  Extend by appending ~10 YAML lines; no Python change required.
+  Per-target failures are isolated (other targets keep going). Atom
+  feeds parse via BS4 html.parser fallback (no lxml dependency).
+  Synthetic per-target fixtures under `tests/fixtures/government_pages/`
+  (one `<target_id>.html` each) drive the offline tests.
+  `scripts/monthly_update.sh` chains all 3 fetchers now; fixture-mode
+  E2E: 143 RawVenue records (60 OECD + 60 UNESCO + 23 gov) → 143
+  candidates → 2329-line PR body. `sources/registry.yml` gains a
+  `government_pages` discovery entry; coverage matrix regenerated
+  (36 sources). pytest: 301/301 green (289 + 12 new government-pages
+  tests).
 - **pipelines**: UNESCO GAIGO discovery fetcher online (follow-on to
   Task 4). `pipelines/fetchers/unesco_gaigo.py` (`UNESCOGaigoFetcher`)
   targets the Global AI Ethics & Governance Observatory and extracts

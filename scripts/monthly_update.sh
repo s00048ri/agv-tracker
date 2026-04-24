@@ -2,8 +2,9 @@
 # Monthly update driver (CLAUDE.md §9 Task 7).
 #
 # Chains:
-#   1a. pipelines.fetchers.oecd_ai       — discovery fetch (OECD Policy Navigator)
-#   1b. pipelines.fetchers.unesco_gaigo  — discovery fetch (UNESCO GAIGO)
+#   1a. pipelines.fetchers.oecd_ai           — discovery fetch (OECD Policy Navigator)
+#   1b. pipelines.fetchers.unesco_gaigo      — discovery fetch (UNESCO GAIGO)
+#   1c. pipelines.fetchers.government_pages  — discovery fetch (config-driven government pages)
 #       → RawVenue JSONL from all fetchers concatenated as the normalizer input
 #   2. pipelines.normalize          — RawVenue → v0.3 candidates + classifier
 #   3. pipelines.diff               — lock-aware diff vs. data/agv.csv
@@ -53,8 +54,16 @@ uv run python -m pipelines.fetchers.unesco_gaigo \
 echo "  UNESCO GAIGO: $(wc -l < "$WORK/raw-unesco.jsonl" | tr -d ' ') RawVenue record(s)"
 echo "::endgroup::"
 
+echo "::group::1c/4 fetch (government pages)"
+uv run python -m pipelines.fetchers.government_pages \
+    --cache-dir "$WORK/gov-cache" \
+    --quiet \
+    > "$WORK/raw-gov.jsonl"
+echo "  government pages: $(wc -l < "$WORK/raw-gov.jsonl" | tr -d ' ') RawVenue record(s)"
+echo "::endgroup::"
+
 # Concatenate per-source RawVenue streams for the normalizer.
-cat "$WORK/raw-oecd.jsonl" "$WORK/raw-unesco.jsonl" > "$WORK/raw.jsonl"
+cat "$WORK/raw-oecd.jsonl" "$WORK/raw-unesco.jsonl" "$WORK/raw-gov.jsonl" > "$WORK/raw.jsonl"
 echo "  combined: $(wc -l < "$WORK/raw.jsonl" | tr -d ' ') RawVenue record(s)"
 
 CLASSIFY_FLAG="--live"

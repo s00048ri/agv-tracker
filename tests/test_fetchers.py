@@ -23,6 +23,13 @@ from pipelines.fetchers.unesco_gaigo import (
     UNESCOGaigoFetcher,
     main as unesco_main,
 )
+from pipelines.fetchers.government_pages import (
+    DEFAULT_CONFIG_PATH as GOV_CONFIG_PATH,
+    DEFAULT_FIXTURE_DIR as GOV_FIXTURE_DIR,
+    GovernmentPagesFetcher,
+    load_targets,
+    main as gov_main,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -292,3 +299,139 @@ def test_unesco_fetcher_source_id_distinct_from_oecd():
     u_ids = {v.source_id for v in unesco}
     o_ids = {v.source_id for v in oecd}
     assert not (u_ids & o_ids), "source_id collision between fetchers"
+
+
+# ---- GovernmentPagesFetcher ----
+
+def test_gov_config_loads_and_has_targets():
+    targets = load_targets(GOV_CONFIG_PATH)
+    assert len(targets) >= 5
+    # Required schema fields per target.
+    for t in targets:
+        for k in ("id", "country", "language", "url",
+                  "list_selector", "title_selector"):
+            assert k in t, (t["id"], k)
+
+
+def test_gov_config_target_ids_unique():
+    from collections import Counter
+    ids = [t["id"] for t in load_targets(GOV_CONFIG_PATH)]
+    dupes = [i for i, n in Counter(ids).items() if n > 1]
+    assert not dupes, dupes
+
+
+def test_gov_fixture_dir_has_one_file_per_target():
+    target_ids = {t["id"] for t in load_targets(GOV_CONFIG_PATH)}
+    fixture_files = {p.stem for p in GOV_FIXTURE_DIR.glob("*.html")}
+    missing = target_ids - fixture_files
+    assert not missing, (
+        f"fixture files missing for targets: {sorted(missing)}"
+    )
+
+
+def test_gov_fetcher_from_fixture_returns_records():
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    venues = fetcher.fetch()
+    assert len(venues) >= 20  # 6 targets × ~4 records average
+    for v in venues:
+        assert v.source_role == "discovery"
+        assert v.source_registry == "government_pages"
+        assert v.source_id.startswith("gov.")
+        assert v.fetch_strategy == FETCH_STRATEGY_FIXTURE
+
+
+def test_gov_fetcher_covers_all_configured_targets():
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    venues = fetcher.fetch()
+    targets_hit = {v.raw_blob["target_id"] for v in venues}
+    config_ids = {t["id"] for t in load_targets(GOV_CONFIG_PATH)}
+    assert targets_hit == config_ids, (
+        f"expected records from all {len(config_ids)} targets; got {len(targets_hit)}"
+    )
+
+
+def test_gov_fetcher_regex_filter_drops_non_ai_entries():
+    """A UK entry with 'Health policy update' must NOT be emitted;
+    the include_if_regex gates it out."""
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    venues = fetcher.fetch()
+    names = {v.name for v in venues}
+    for v in venues:
+        assert "Health policy update" not in v.name, v
+    # Positive: a confidently-AI entry is present.
+    assert any("AI Security Institute" in n for n in names)
+
+
+def test_gov_fetcher_only_flag_scopes_targets():
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    venues = fetcher.fetch(only_ids={"uk_dsit_ai_news"})
+    assert venues
+    target_ids = {v.raw_blob["target_id"] for v in venues}
+    assert target_ids == {"uk_dsit_ai_news"}
+
+
+def test_gov_fetcher_multi_country_coverage():
+    """The fixture should cover GB/US/EU/SG/CA/AU — the six MVP countries."""
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    countries = {v.country for v in fetcher.fetch()}
+    for c in ("GB", "US", "EU", "SG", "CA", "AU"):
+        assert c in countries, f"missing country in fixture coverage: {c}"
+
+
+def test_gov_fetcher_atom_feed_target_parses():
+    """The UK target is an Atom feed; make sure it comes out non-empty."""
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    venues = fetcher.fetch(only_ids={"uk_dsit_ai_news"})
+    assert len(venues) >= 3, (
+        f"expected multiple UK DSIT records, got {len(venues)}"
+    )
+    # Atom <link href="..."/> was parsed into the url field.
+    for v in venues:
+        assert v.url.startswith("https://"), v
+
+
+def test_gov_cli_from_fixture_outputs_jsonl(capsys):
+    rc = gov_main(["--from-fixture", "--quiet"])
+    assert rc == 0
+    captured = capsys.readouterr()
+    import json
+    lines = [ln for ln in captured.out.splitlines() if ln.strip()]
+    assert len(lines) >= 20
+    for ln in lines:
+        obj = json.loads(ln)
+        assert obj["source_registry"] == "government_pages"
+    assert "source_role=discovery" in captured.err
+
+
+def test_gov_fetcher_fixture_mode_does_not_hit_network(monkeypatch):
+    import httpx
+    calls = []
+    monkeypatch.setattr(httpx, "get", lambda *a, **kw: calls.append((a, kw)))
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    fetcher.fetch()
+    assert calls == [], "fixture-mode fetcher must not call httpx.get"
+
+
+def test_gov_fetcher_source_ids_distinct_from_other_fetchers():
+    gov = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    ).fetch()
+    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
+    all_others = {v.source_id for v in oecd} | {v.source_id for v in unesco}
+    for v in gov:
+        assert v.source_id not in all_others, v

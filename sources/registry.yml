@@ -71,6 +71,21 @@ sources:
     last_verified_alive: 2026-04-23
     notes: "Regulatory authorities and laws; surfaces new treaty bodies early."
 
+  - id: government_pages
+    name: "Major-government AI pages (config-driven, multi-source)"
+    url: "https://github.com/s00048ri/agv-tracker/blob/main/sources/government_pages.yml"
+    role: discovery
+    entity_types_covered:
+      - igo_initiative
+      - intergov_forum
+      - national_regulator_intl
+      - one_off_summit
+    fetcher_module: pipelines.fetchers.government_pages
+    fetch_strategy: http_with_playwright_fallback
+    update_frequency: monthly
+    last_verified_alive: 2026-04-24
+    notes: "Aggregates 6 English-native government AI pages (UK DSIT / US NIST / EU AI Office / Singapore IMDA / Canada ISED / Australia DISR) via sources/government_pages.yml. Extend by appending YAML entries, not writing new Python modules."
+
   - id: evalcommunity_map
     name: "EvalCommunity Global AI Governance Map"
     url: "https://academy.evalcommunity.com/global-ai-governance-map-140-institutions/"

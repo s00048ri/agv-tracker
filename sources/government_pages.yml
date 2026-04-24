@@ -1,0 +1,104 @@
+# Config-driven government AI-page targets for
+# pipelines.fetchers.government_pages.
+#
+# One entry per government page that carries an authoritative listing
+# of AI-governance activities (strategies, AISI announcements,
+# ministerial events, national council outputs). Each entry is a small
+# per-page scrape rule; the fetcher itself is generic.
+#
+# Schema (see pipelines/fetchers/government_pages.py):
+#   id                 — snake_case, unique across this file
+#   country            — ISO 3166-1 alpha-2 (GB, US, SG, CA, AU) or
+#                        'EU' for Union-level entries
+#   language           — ISO 639-1 code of the page content
+#   url                — the page to fetch
+#   list_selector      — CSS selector that returns one element per
+#                        content item (news entry, policy listing, …)
+#   title_selector     — CSS selector, relative to each list element,
+#                        that yields the item title
+#   link_selector      — CSS selector yielding the item's <a> (the fetcher
+#                        reads its href); defaults to the title_selector
+#                        if not given
+#   description_selector — optional; summary / excerpt text
+#   include_if_regex   — optional; item kept only if this regex matches
+#                        against the title + description combined. Use
+#                        this to narrow broad government news indexes
+#                        to their AI subset.
+#   priority           — 1 (high) .. 3 (low); drives fetch ordering
+#                        when rate-limited.
+#
+# MVP scope: English-native, high-AGV-density governments.
+#
+# Live strategy: per-page; many government sites serve static HTML and
+# the BaseFetcher static path should suffice. The Playwright fallback
+# kicks in automatically if required_selectors are missing from the
+# static response.
+
+targets:
+
+  - id: uk_dsit_ai_news
+    country: GB
+    language: en
+    url: "https://www.gov.uk/government/organisations/department-for-science-innovation-and-technology.atom"
+    list_selector: "entry"
+    title_selector: "title"
+    link_selector: "link"
+    description_selector: "summary"
+    include_if_regex: "(?i)\\b(AI|artificial intelligence|AISI|AI Safety|AI Security)\\b"
+    priority: 1
+    notes: "DSIT Atom feed; hosts UK AI Safety/Security Institute announcements and AI strategy updates."
+
+  - id: us_nist_ai_news
+    country: US
+    language: en
+    url: "https://www.nist.gov/artificial-intelligence/news"
+    list_selector: "article.card-default"
+    title_selector: "h3.card-title a"
+    description_selector: "p.card-text"
+    include_if_regex: "(?i)\\b(AI|artificial intelligence|AISI|generative|foundation model|machine learning)\\b"
+    priority: 1
+    notes: "NIST AI programme news index — includes US AISI updates."
+
+  - id: eu_ai_office_news
+    country: EU
+    language: en
+    url: "https://digital-strategy.ec.europa.eu/en/policies/ai-office"
+    list_selector: "article"
+    title_selector: "h3 a, h2 a"
+    description_selector: "p"
+    include_if_regex: "(?i)\\b(AI Office|AI Act|GPAI|general-purpose|AI Board|scientific panel)\\b"
+    priority: 1
+    notes: "DG CNECT AI Office hub; AI Act implementation updates."
+
+  - id: sg_imda_ai
+    country: SG
+    language: en
+    url: "https://www.imda.gov.sg/how-we-can-help/ai-governance-and-testing"
+    list_selector: "div.teaser, article"
+    title_selector: "h2 a, h3 a"
+    description_selector: "p"
+    include_if_regex: "(?i)\\b(AI|artificial intelligence|AI Verify|model AI governance|IMDA)\\b"
+    priority: 2
+    notes: "IMDA AI governance hub — AI Verify toolkit + Model AI Governance Framework."
+
+  - id: ca_ised_ai
+    country: CA
+    language: en
+    url: "https://ised-isde.canada.ca/site/ised/en/artificial-intelligence-ai"
+    list_selector: "li.gc-list-item, article"
+    title_selector: "a"
+    description_selector: "p"
+    include_if_regex: "(?i)\\b(AI|artificial intelligence|CAISI|AIDA|Pan-Canadian)\\b"
+    priority: 2
+    notes: "ISED Canada AI portal; CAISI, AIDA, and Pan-Canadian AI Strategy."
+
+  - id: au_disr_ai
+    country: AU
+    language: en
+    url: "https://www.industry.gov.au/science-technology-and-innovation/technology/artificial-intelligence"
+    list_selector: "div.field-news, article"
+    title_selector: "a"
+    description_selector: "p"
+    include_if_regex: "(?i)\\b(AI|artificial intelligence|safe and responsible)\\b"
+    priority: 2
+    notes: "Department of Industry, Science and Resources AI page."

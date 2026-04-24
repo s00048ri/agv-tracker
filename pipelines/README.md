@@ -8,7 +8,7 @@ monthly PRs.
 
 | Subpackage | Purpose | Status |
 |---|---|---|
-| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — 2 of 6 discovery sources online (OECD.AI, UNESCO GAIGO); see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) for the remaining four |
+| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — 3 of 7 discovery sources online (OECD.AI, UNESCO GAIGO, government_pages); see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) for the remaining four |
 | `normalize.py` | RawVenue → AGV candidate rows | §9 Task 6 — online |
 | `classify.py` | LLM-assisted AGVO classification | §9 Task 5 — online |
 | `diff.py`     | Lock-aware diff + stale detection | §9 Task 6 — online |
@@ -94,9 +94,10 @@ Every fetcher inherits from `pipelines.fetchers.base.BaseFetcher`:
 
 ## Discovery fetcher roadmap
 
-Two fetchers are operational today (`oecd_ai_navigator`,
-`unesco_gaigo`); four other discovery sources are already declared in
-`sources/registry.yml` but have no fetcher yet. The monthly pipeline therefore currently surfaces only
+Three fetchers are operational today (`oecd_ai_navigator`,
+`unesco_gaigo`, and the config-driven `government_pages`); four other
+discovery sources are already declared in `sources/registry.yml` but
+have no fetcher yet. The monthly pipeline therefore currently surfaces only
 what OECD.AI's Policy Navigator catches — roughly *national AI
 strategies* and *major intergovernmental initiatives*. Non-OECD-orbit
 venues are systematically invisible to the fetcher until the
@@ -127,16 +128,24 @@ and what gap its fetcher would close.
    regional initiatives (AU / ASEAN / fAIr LAC / MENA / Pacific).
    Live strategy TBD on first online run; see
    `pipelines/fetchers/unesco_gaigo.py` docstring.
-2. **`tech_policy_press`** — news monitoring for newly-formed
+2. ~~**`government_pages`** — config-driven major-government AI pages.~~
+   **DONE.** `pipelines/fetchers/government_pages.py` is one module
+   driving N target pages listed in `sources/government_pages.yml`.
+   Initial MVP config ships UK DSIT / US NIST / EU AI Office /
+   Singapore IMDA / Canada ISED / Australia DISR. Extend to a new
+   country by appending ~10 YAML lines; no Python change required.
+   Live strategy TBD per target on first online run; see the module
+   docstring.
+3. **`tech_policy_press`** — news monitoring for newly-formed
    associations, alliances, and side events. Catches IASEAI / AI
    Safety Connect / similar. RSS + HTML; probably static-HTTP
    friendly.
-3. **`iapp_ai_law_tracker`** — Global AI Law & Policy Tracker.
+4. **`iapp_ai_law_tracker`** — Global AI Law & Policy Tracker.
    Catches emerging national regulators the OECD Observatory lags on.
-4. **`ai_deadlines`** — academic conference deadlines aggregator.
+5. **`ai_deadlines`** — academic conference deadlines aggregator.
    Catches new `conference_policy_track` venues (ICML, NeurIPS,
    ICLR, AAAI, ACL workshops on safety/ethics/trustworthy ML).
-5. **`evalcommunity_map`** — on probation per §12.7; re-evaluate
+6. **`evalcommunity_map`** — on probation per §12.7; re-evaluate
    cadence before v0.4.
 
 Each new fetcher is a single-file module under
