@@ -12,6 +12,25 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: Tech Policy Press RSS discovery fetcher online
+  (follow-on to Task 4). `pipelines/fetchers/tech_policy_press.py`
+  reads the site's AI-category RSS feed, preprocesses `<link>` tags
+  so html.parser keeps their URL content (no lxml dependency), then
+  filters items by an AI-governance relevance regex covering AI /
+  AISI / AI Office / AI Act / frontier model / generative AI /
+  content provenance / C2PA / watermark. Emits one RawVenue per
+  qualifying article; the article-vs-venue caveat (each record is an
+  article, reviewer filters which articles correspond to a new AGV)
+  is documented in the module docstring. Synthetic 30-item RSS
+  fixture at `tests/fixtures/tech_policy_press/feed.xml` includes
+  IASEAI / AI Safety Connect / CAISI / K-AISI / CoSAI / REAIM-3
+  announcement items plus 4 deliberate off-topic control items the
+  regex must reject. Fixture E2E: 26 records through the filter.
+  4-fetcher monthly dry-run: 169 RawVenue (60 OECD + 60 UNESCO +
+  23 gov + 26 TPP) → 169 candidates → 2745-line PR body. pytest:
+  314/314 green (301 + 13 new TPP tests). Registry entry updated
+  (fetcher_module wired; entity_types_covered broadened to include
+  intl_ngo_thinktank + industry_consortium).
 - **pipelines**: government-pages discovery fetcher online (follow-on
   to Task 4). One Python module (`pipelines/fetchers/government_pages.py`)
   + one YAML config (`sources/government_pages.yml`) covers N

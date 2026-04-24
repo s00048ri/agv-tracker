@@ -117,17 +117,19 @@ sources:
 
   - id: tech_policy_press
     name: "Tech Policy Press (AI governance coverage)"
-    url: "https://www.techpolicy.press/"
+    url: "https://www.techpolicy.press/category/artificial-intelligence/feed/"
     role: discovery
     entity_types_covered:
       - intergov_forum
       - multistakeholder_coalition
+      - intl_ngo_thinktank
+      - industry_consortium
       - one_off_summit
-    fetcher_module: null
-    fetch_strategy: manual
-    update_frequency: ad_hoc
-    last_verified_alive: 2026-04-23
-    notes: "Early signal for emerging venues and summits."
+    fetcher_module: pipelines.fetchers.tech_policy_press
+    fetch_strategy: http_with_playwright_fallback
+    update_frequency: monthly
+    last_verified_alive: 2026-04-24
+    notes: "AI category RSS feed. News-article-level candidates — reviewer filters to actual AGVs in monthly PR. See pipelines/README.md for the article-vs-venue caveat."
 
   # ------------------------------------------------------------------
   # VERIFICATION LAYER

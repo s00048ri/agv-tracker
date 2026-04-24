@@ -15,8 +15,8 @@
 | `intergov_forum` | 7 | `mofa_g7_hiroshima`, `g20_official` | `oecd_ai_navigator`, `government_pages`, `tech_policy_press` |
 | `treaty_body` | 5 | `coe_cai` | `iapp_ai_law_tracker` |
 | `multistakeholder_coalition` | 9 | `partnership_on_ai_official`, `ai_verify_foundation` | `oecd_ai_navigator`, `evalcommunity_map`, `tech_policy_press` |
-| `industry_consortium` | 8 | `frontier_model_forum_official`, `mlcommons_official` | — |
-| `intl_ngo_thinktank` | 11 | `fli_official`, `caidp_official` | `evalcommunity_map` |
+| `industry_consortium` | 8 | `frontier_model_forum_official`, `mlcommons_official` | `tech_policy_press` |
+| `intl_ngo_thinktank` | 11 | `fli_official`, `caidp_official` | `evalcommunity_map`, `tech_policy_press` |
 | `academic_consortium` | 5 | `mila_official` | `evalcommunity_map` |
 | `standards_body_wg` | 11 | `iso_iec_sc42`, `ieee_sa_ai`, `itu_ai_for_good_official` | — |
 | `national_regulator_intl` | 13 | `uk_aisi_official`, `us_aisi_official`, `japan_aisi_official` | `oecd_ai_navigator`, `unesco_gaigo`, `iapp_ai_law_tracker`, `government_pages` |

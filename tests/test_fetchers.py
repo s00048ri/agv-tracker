@@ -30,6 +30,12 @@ from pipelines.fetchers.government_pages import (
     load_targets,
     main as gov_main,
 )
+from pipelines.fetchers.tech_policy_press import (
+    DEFAULT_FIXTURE_PATH as TPP_FIXTURE_PATH,
+    INCLUDE_REGEX as TPP_INCLUDE_REGEX,
+    TechPolicyPressFetcher,
+    main as tpp_main,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -434,4 +440,142 @@ def test_gov_fetcher_source_ids_distinct_from_other_fetchers():
     unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
     all_others = {v.source_id for v in oecd} | {v.source_id for v in unesco}
     for v in gov:
+        assert v.source_id not in all_others, v
+
+
+# ---- TechPolicyPressFetcher ----
+
+def test_tpp_default_fixture_exists():
+    assert TPP_FIXTURE_PATH.exists(), (
+        f"default Tech Policy Press fixture missing at {TPP_FIXTURE_PATH}"
+    )
+
+
+def test_tpp_fetcher_fixture_returns_records():
+    fetcher = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    assert len(venues) >= 20
+    for v in venues:
+        assert v.source_role == "discovery"
+        assert v.source_registry == "tech_policy_press"
+        assert v.source_id.startswith("techpolicypress:")
+        assert v.fetch_strategy == FETCH_STRATEGY_FIXTURE
+
+
+def test_tpp_fetcher_record_shape():
+    fetcher = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    for v in venues:
+        assert v.name, v
+        assert v.url.startswith("https://"), v
+        assert v.fetched_at, v
+        # raw_blob carries RSS metadata
+        assert "pubdate" in v.raw_blob
+        assert "categories" in v.raw_blob
+
+
+def test_tpp_fetcher_catches_iaseai_announcement():
+    """The fixture includes an IASEAI announcement (the flagship example
+    the user pointed to as currently uncovered)."""
+    fetcher = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    names = [v.name for v in venues]
+    assert any("IASEAI" in n for n in names), (
+        "expected IASEAI announcement to pass the include regex"
+    )
+
+
+def test_tpp_fetcher_catches_ai_safety_connect():
+    """Paris AI Action Summit side-event (AI Safety Connect)."""
+    fetcher = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH)
+    names = [v.name for v in fetcher.fetch()]
+    assert any("AI Safety Connect" in n for n in names)
+
+
+def test_tpp_fetcher_filters_off_topic_noise():
+    """Control items that are clearly non-AI must be dropped."""
+    fetcher = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH)
+    names = {v.name for v in fetcher.fetch()}
+    for noise in (
+        "Broadband policy roundup",
+        "Content moderation reform",
+        "Privacy rights in the post-Schrems era",
+        "Tech antitrust: the Google case",
+    ):
+        for n in names:
+            assert noise not in n, f"noise leaked: {n}"
+
+
+def test_tpp_include_regex_matches_expected_keywords():
+    for kw in (
+        "artificial intelligence", "AI governance", "AI safety",
+        "AI Act", "frontier model", "generative AI", "AISI",
+        "content provenance", "C2PA",
+    ):
+        assert TPP_INCLUDE_REGEX.search(f"Story about {kw} today"), kw
+
+
+def test_tpp_include_regex_rejects_clearly_off_topic():
+    for text in (
+        "Broadband roundup, the quarter's cases",
+        "Content moderation reform: lessons from Europe",
+        "Tech antitrust: the Google case three years on",
+    ):
+        assert not TPP_INCLUDE_REGEX.search(text), text
+
+
+def test_tpp_fetcher_empty_fixture(tmp_path: Path):
+    empty = tmp_path / "empty.xml"
+    empty.write_text(
+        '<?xml version="1.0"?><rss><channel></channel></rss>',
+        encoding="utf-8",
+    )
+    fetcher = TechPolicyPressFetcher(fixture_path=empty)
+    assert fetcher.fetch() == []
+
+
+def test_tpp_fetcher_fixture_mode_does_not_hit_network(monkeypatch):
+    import httpx
+    calls = []
+    monkeypatch.setattr(httpx, "get", lambda *a, **kw: calls.append((a, kw)))
+    fetcher = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH)
+    fetcher.fetch()
+    assert calls == []
+
+
+def test_tpp_rss_link_preprocessing_recovers_urls():
+    """html.parser drops <link>...</link> text; the fetcher's
+    preprocessing must restore it."""
+    fetcher = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    for v in venues:
+        assert v.url.startswith("https://www.techpolicy.press/"), v
+
+
+def test_tpp_cli_from_fixture_outputs_jsonl(capsys):
+    rc = tpp_main(["--from-fixture", "--quiet"])
+    assert rc == 0
+    captured = capsys.readouterr()
+    import json
+    lines = [ln for ln in captured.out.splitlines() if ln.strip()]
+    assert len(lines) >= 20
+    for ln in lines:
+        obj = json.loads(ln)
+        assert obj["source_registry"] == "tech_policy_press"
+    assert "source_role=discovery" in captured.err
+
+
+def test_tpp_source_ids_distinct_from_other_fetchers():
+    tpp = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
+    gov = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    ).fetch()
+    all_others = (
+        {v.source_id for v in oecd}
+        | {v.source_id for v in unesco}
+        | {v.source_id for v in gov}
+    )
+    for v in tpp:
         assert v.source_id not in all_others, v

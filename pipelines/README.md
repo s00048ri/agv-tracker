@@ -8,7 +8,7 @@ monthly PRs.
 
 | Subpackage | Purpose | Status |
 |---|---|---|
-| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — 3 of 7 discovery sources online (OECD.AI, UNESCO GAIGO, government_pages); see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) for the remaining four |
+| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — 4 of 7 discovery sources online (OECD.AI, UNESCO GAIGO, government_pages, Tech Policy Press); see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) for the remaining three |
 | `normalize.py` | RawVenue → AGV candidate rows | §9 Task 6 — online |
 | `classify.py` | LLM-assisted AGVO classification | §9 Task 5 — online |
 | `diff.py`     | Lock-aware diff + stale detection | §9 Task 6 — online |
@@ -94,10 +94,10 @@ Every fetcher inherits from `pipelines.fetchers.base.BaseFetcher`:
 
 ## Discovery fetcher roadmap
 
-Three fetchers are operational today (`oecd_ai_navigator`,
-`unesco_gaigo`, and the config-driven `government_pages`); four other
-discovery sources are already declared in `sources/registry.yml` but
-have no fetcher yet. The monthly pipeline therefore currently surfaces only
+Four fetchers are operational today (`oecd_ai_navigator`,
+`unesco_gaigo`, the config-driven `government_pages`, and
+`tech_policy_press`); three other discovery sources are already
+declared in `sources/registry.yml` but have no fetcher yet. The monthly pipeline therefore currently surfaces only
 what OECD.AI's Policy Navigator catches — roughly *national AI
 strategies* and *major intergovernmental initiatives*. Non-OECD-orbit
 venues are systematically invisible to the fetcher until the
@@ -136,10 +136,16 @@ and what gap its fetcher would close.
    country by appending ~10 YAML lines; no Python change required.
    Live strategy TBD per target on first online run; see the module
    docstring.
-3. **`tech_policy_press`** — news monitoring for newly-formed
-   associations, alliances, and side events. Catches IASEAI / AI
-   Safety Connect / similar. RSS + HTML; probably static-HTTP
-   friendly.
+3. ~~**`tech_policy_press`** — news monitoring for newly-formed
+   associations, alliances, and side events.~~ **DONE.**
+   `pipelines/fetchers/tech_policy_press.py` reads the site's AI-
+   category RSS feed and filters to AI-governance relevance via
+   `INCLUDE_REGEX` (AI / AISI / AI Office / frontier model / content
+   provenance / C2PA / watermark / …). IASEAI and AI Safety Connect —
+   the two user-raised examples of pipeline blind spots — are now
+   caught at the first run. Article-vs-venue caveat: the fetcher
+   emits one RawVenue per article; a reviewer decides which of those
+   correspond to a new AGV. Live strategy TBD on first online run.
 4. **`iapp_ai_law_tracker`** — Global AI Law & Policy Tracker.
    Catches emerging national regulators the OECD Observatory lags on.
 5. **`ai_deadlines`** — academic conference deadlines aggregator.
@@ -156,12 +162,20 @@ to N sources.
 
 ### Pipeline-level implication
 
-With two fetchers live the `diff.py` stale-detection signal is
-already more reliable than with OECD.AI alone — the current e2e
-dry-run surfaces 120 candidate venues (60 from each fetcher) and
-still 17 stale candidates (AGVs whose existence lives on neither
-OECD.AI nor UNESCO GAIGO, e.g. industry consortia and standards
-WGs). Adding `tech_policy_press` next should cut that further.
+With four fetchers live the discovery surface now spans: OECD-member
+national AI strategies + policy initiatives (OECD.AI); Global-South /
+UNESCO-aligned RAM pilots + regional bodies (UNESCO GAIGO);
+English-native government news (government_pages); and newly-formed
+organization / summit announcements in AI-policy media
+(tech_policy_press). Fixture-mode E2E currently surfaces 169
+candidate venues per run (60 + 60 + 23 + 26), giving the monthly PR a
+much richer set to classify than the 60-record OECD-only baseline.
+Stale detection still shows 17 candidates on the committed seed —
+those are AGVs that live on none of our four sources (small standards
+WGs, narrow industry consortia, private-sector think tanks). Closing
+this requires either (a) expanding `sources/government_pages.yml` or
+adding more news feeds, or (b) `iapp_ai_law_tracker` for the
+regulator / enforcement side of the picture.
 
 ## Testing
 

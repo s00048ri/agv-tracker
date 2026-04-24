@@ -5,6 +5,7 @@
 #   1a. pipelines.fetchers.oecd_ai           — discovery fetch (OECD Policy Navigator)
 #   1b. pipelines.fetchers.unesco_gaigo      — discovery fetch (UNESCO GAIGO)
 #   1c. pipelines.fetchers.government_pages  — discovery fetch (config-driven government pages)
+#   1d. pipelines.fetchers.tech_policy_press  — discovery fetch (news monitor)
 #       → RawVenue JSONL from all fetchers concatenated as the normalizer input
 #   2. pipelines.normalize          — RawVenue → v0.3 candidates + classifier
 #   3. pipelines.diff               — lock-aware diff vs. data/agv.csv
@@ -62,8 +63,16 @@ uv run python -m pipelines.fetchers.government_pages \
 echo "  government pages: $(wc -l < "$WORK/raw-gov.jsonl" | tr -d ' ') RawVenue record(s)"
 echo "::endgroup::"
 
+echo "::group::1d/4 fetch (Tech Policy Press RSS)"
+uv run python -m pipelines.fetchers.tech_policy_press \
+    --cache-dir "$WORK/tpp-cache" \
+    --quiet \
+    > "$WORK/raw-tpp.jsonl"
+echo "  Tech Policy Press: $(wc -l < "$WORK/raw-tpp.jsonl" | tr -d ' ') RawVenue record(s)"
+echo "::endgroup::"
+
 # Concatenate per-source RawVenue streams for the normalizer.
-cat "$WORK/raw-oecd.jsonl" "$WORK/raw-unesco.jsonl" "$WORK/raw-gov.jsonl" > "$WORK/raw.jsonl"
+cat "$WORK/raw-oecd.jsonl" "$WORK/raw-unesco.jsonl" "$WORK/raw-gov.jsonl" "$WORK/raw-tpp.jsonl" > "$WORK/raw.jsonl"
 echo "  combined: $(wc -l < "$WORK/raw.jsonl" | tr -d ' ') RawVenue record(s)"
 
 CLASSIFY_FLAG="--live"
