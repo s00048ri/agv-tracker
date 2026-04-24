@@ -8,7 +8,7 @@ monthly PRs.
 
 | Subpackage | Purpose | Status |
 |---|---|---|
-| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — 1 of 6 discovery sources online (OECD.AI); see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) for the remaining five |
+| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — 2 of 6 discovery sources online (OECD.AI, UNESCO GAIGO); see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) for the remaining four |
 | `normalize.py` | RawVenue → AGV candidate rows | §9 Task 6 — online |
 | `classify.py` | LLM-assisted AGVO classification | §9 Task 5 — online |
 | `diff.py`     | Lock-aware diff + stale detection | §9 Task 6 — online |
@@ -94,9 +94,9 @@ Every fetcher inherits from `pipelines.fetchers.base.BaseFetcher`:
 
 ## Discovery fetcher roadmap
 
-Only `oecd_ai_navigator` is operational today; five other discovery
-sources are already declared in `sources/registry.yml` but have no
-fetcher yet. The monthly pipeline therefore currently surfaces only
+Two fetchers are operational today (`oecd_ai_navigator`,
+`unesco_gaigo`); four other discovery sources are already declared in
+`sources/registry.yml` but have no fetcher yet. The monthly pipeline therefore currently surfaces only
 what OECD.AI's Policy Navigator catches — roughly *national AI
 strategies* and *major intergovernmental initiatives*. Non-OECD-orbit
 venues are systematically invisible to the fetcher until the
@@ -121,10 +121,12 @@ fetchers, not hand-seeding each new venue.
 Each bullet names a `sources/registry.yml` entry that already exists
 and what gap its fetcher would close.
 
-1. **`unesco_gaigo`** — UNESCO Global AI Ethics and Governance
-   Observatory. Closes the "Asian / African / LAC regional bodies"
-   blind spot (catches AISA-style venues and UNESCO RAM pilot
-   countries). Likely needs the Playwright fallback.
+1. ~~**`unesco_gaigo`** — UNESCO Global AI Ethics and Governance
+   Observatory.~~ **DONE.** Closed the "Asian / African / LAC regional
+   bodies" blind spot — RAM pilot reports + country profiles +
+   regional initiatives (AU / ASEAN / fAIr LAC / MENA / Pacific).
+   Live strategy TBD on first online run; see
+   `pipelines/fetchers/unesco_gaigo.py` docstring.
 2. **`tech_policy_press`** — news monitoring for newly-formed
    associations, alliances, and side events. Catches IASEAI / AI
    Safety Connect / similar. RSS + HTML; probably static-HTTP
@@ -145,14 +147,12 @@ to N sources.
 
 ### Pipeline-level implication
 
-Once ≥2 fetchers are live, the `diff.py` stale-detection signal
-becomes much more reliable: with only OECD.AI running, any AGV whose
-existence is not on OECD.AI will be perpetually flagged as "not seen
-this run" and therefore *will be marked stale* once its
-`last_observed_activity_date` crosses its `convening_frequency`
-threshold (§3.5). The e2e dry-run today produces 17 stale candidates
-for exactly this reason. Adding `unesco_gaigo` + `tech_policy_press`
-would cut that substantially.
+With two fetchers live the `diff.py` stale-detection signal is
+already more reliable than with OECD.AI alone — the current e2e
+dry-run surfaces 120 candidate venues (60 from each fetcher) and
+still 17 stale candidates (AGVs whose existence lives on neither
+OECD.AI nor UNESCO GAIGO, e.g. industry consortia and standards
+WGs). Adding `tech_policy_press` next should cut that further.
 
 ## Testing
 

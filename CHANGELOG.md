@@ -12,6 +12,26 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: UNESCO GAIGO discovery fetcher online (follow-on to
+  Task 4). `pipelines/fetchers/unesco_gaigo.py` (`UNESCOGaigoFetcher`)
+  targets the Global AI Ethics & Governance Observatory and extracts
+  three entry kinds (country profiles, RAM pilots, regional
+  initiatives) into `RawVenue` records. Reuses the Task-4
+  `BaseFetcher` contract verbatim: static HTTP → Playwright fallback,
+  robots.txt honouring, throttle, SHA-256-keyed cache. CLI mirrors
+  `oecd_ai`'s flags (`--live` / `--fixture` / `--from-fixture` /
+  `--cache-dir` / `--quiet`) with live-first-fallback-to-fixture as
+  default. Shipped synthetic fixture at
+  `tests/fixtures/unesco_gaigo/index.html` (60 entries skewed to
+  AF/MENA/LAC/Asia/Pacific — the OECD.AI blind spot). Live strategy
+  (static vs Playwright) TBD on first online run — the module
+  docstring instructs the first runner to update it.
+  `scripts/monthly_update.sh` now chains both fetchers (step 1a + 1b),
+  concatenating per-source RawVenue streams into the normalizer input.
+  Local dry-run: 120 RawVenue records (60 OECD + 60 UNESCO) → 120
+  normalized candidates → 1961-line PR body. `pipelines/README.md`
+  roadmap updated; 2/6 discovery sources now online. pytest: 289/289
+  green (280 + 9 new UNESCO tests).
 - **analysis**: companion notebook online (Task 13).
   `notebooks/founding_rate_analysis.ipynb` is a deterministic
   `.ipynb` built from `scripts/generate_analysis_notebook.py` (same

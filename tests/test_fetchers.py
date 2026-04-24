@@ -18,6 +18,11 @@ from pipelines.fetchers.base import (
     FETCH_STRATEGY_STATIC,
 )
 from pipelines.fetchers.oecd_ai import DEFAULT_FIXTURE_PATH, OECDFetcher, main as oecd_main
+from pipelines.fetchers.unesco_gaigo import (
+    DEFAULT_FIXTURE_PATH as UNESCO_FIXTURE_PATH,
+    UNESCOGaigoFetcher,
+    main as unesco_main,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -199,3 +204,91 @@ def test_oecd_cli_from_fixture_outputs_jsonl(capsys):
         obj = json.loads(ln)
         assert obj["source_role"] == "discovery"
     assert "source_role=discovery" in captured.err
+
+
+# ---- UNESCOGaigoFetcher ----
+
+def test_unesco_default_fixture_exists():
+    assert UNESCO_FIXTURE_PATH.exists(), (
+        f"default UNESCO fixture missing at {UNESCO_FIXTURE_PATH}"
+    )
+
+
+def test_unesco_fetcher_fixture_returns_at_least_50():
+    fetcher = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    assert len(venues) >= 50, f"expected >=50 records, got {len(venues)}"
+
+
+def test_unesco_fetcher_all_records_are_discovery():
+    fetcher = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    assert venues
+    for v in venues:
+        assert v.source_role == "discovery", v
+        assert v.source_registry == "unesco_gaigo"
+        assert v.fetch_strategy == FETCH_STRATEGY_FIXTURE
+
+
+def test_unesco_fetcher_record_shape():
+    fetcher = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    for v in venues:
+        assert v.name, v
+        assert v.url.startswith("https://"), v
+        assert v.source_id.startswith("unesco.gaigo:"), v
+        assert v.fetched_at, v
+        # raw_blob carries the UNESCO-specific entry_kind classification
+        assert v.raw_blob.get("entry_kind") in (
+            "country_profile", "ram_pilot", "regional_initiative",
+        )
+
+
+def test_unesco_fetcher_covers_non_oecd_regions():
+    """Sanity check that the fixture (and therefore the fetcher) skews
+    toward the global-south / non-OECD regions the Task 4 fetcher misses."""
+    fetcher = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    regions = {v.raw_blob.get("region") for v in venues}
+    # At minimum AF, MENA, LAC, Asia, Pacific should all show up.
+    for r in ("AF", "MENA", "LAC", "Asia", "Pacific"):
+        assert r in regions, f"fixture missing region '{r}': {regions}"
+
+
+def test_unesco_fetcher_fixture_mode_does_not_hit_network(monkeypatch):
+    import httpx
+    calls = []
+    monkeypatch.setattr(httpx, "get", lambda *a, **kw: calls.append((a, kw)))
+    fetcher = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH)
+    fetcher.fetch()
+    assert calls == []
+
+
+def test_unesco_fetcher_empty_fixture(tmp_path: Path):
+    empty = tmp_path / "empty.html"
+    empty.write_text("<html><body>no cards</body></html>", encoding="utf-8")
+    fetcher = UNESCOGaigoFetcher(fixture_path=empty)
+    assert fetcher.fetch() == []
+
+
+def test_unesco_cli_from_fixture_outputs_jsonl(capsys):
+    rc = unesco_main(["--from-fixture", "--quiet"])
+    assert rc == 0
+    captured = capsys.readouterr()
+    import json
+    lines = [ln for ln in captured.out.splitlines() if ln.strip()]
+    assert len(lines) >= 50
+    for ln in lines:
+        obj = json.loads(ln)
+        assert obj["source_role"] == "discovery"
+        assert obj["source_registry"] == "unesco_gaigo"
+    assert "source_role=discovery" in captured.err
+
+
+def test_unesco_fetcher_source_id_distinct_from_oecd():
+    """Guard against the two fetchers' source_id namespaces colliding."""
+    unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    u_ids = {v.source_id for v in unesco}
+    o_ids = {v.source_id for v in oecd}
+    assert not (u_ids & o_ids), "source_id collision between fetchers"
