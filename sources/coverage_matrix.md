@@ -12,7 +12,7 @@
 | entity_type | AGVs | verification sources | discovery sources |
 |---|---:|---|---|
 | `igo_initiative` | 15 | `oecd_ai_official`, `unesco_ai_ethics_official` | `oecd_ai_navigator`, `unesco_gaigo`, `government_pages`, `evalcommunity_map` |
-| `intergov_forum` | 7 | `mofa_g7_hiroshima`, `g20_official` | `oecd_ai_navigator`, `government_pages`, `tech_policy_press` |
+| `intergov_forum` | 7 | `mofa_g7_hiroshima`, `g20_official` | `oecd_ai_navigator`, `iapp_ai_law_tracker`, `government_pages`, `tech_policy_press` |
 | `treaty_body` | 5 | `coe_cai` | `iapp_ai_law_tracker` |
 | `multistakeholder_coalition` | 9 | `partnership_on_ai_official`, `ai_verify_foundation` | `oecd_ai_navigator`, `evalcommunity_map`, `tech_policy_press` |
 | `industry_consortium` | 8 | `frontier_model_forum_official`, `mlcommons_official` | `tech_policy_press` |

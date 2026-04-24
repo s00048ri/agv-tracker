@@ -65,11 +65,12 @@ sources:
     entity_types_covered:
       - national_regulator_intl
       - treaty_body
+      - intergov_forum
     fetcher_module: pipelines.fetchers.iapp
     fetch_strategy: http_with_playwright_fallback
-    update_frequency: quarterly
-    last_verified_alive: 2026-04-23
-    notes: "Regulatory authorities and laws; surfaces new treaty bodies early."
+    update_frequency: monthly
+    last_verified_alive: 2026-04-24
+    notes: "Statutes / regulations / supervisory agencies by jurisdiction. Entry kinds (statute, regulation, agency) land in RawVenue.raw_blob.entry_kind; the 'agency' rows carry the national_regulator_intl / treaty_body candidates."
 
   - id: government_pages
     name: "Major-government AI pages (config-driven, multi-source)"

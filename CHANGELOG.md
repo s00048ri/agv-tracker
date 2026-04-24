@@ -12,6 +12,28 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: IAPP Global AI Law and Policy Tracker fetcher online
+  (follow-on to Task 4). `pipelines/fetchers/iapp.py` parses the
+  tracker into three entry kinds — `statute`, `regulation`, `agency` —
+  landing in `RawVenue.raw_blob.entry_kind`. The `agency` rows are
+  where new `national_regulator_intl` / `treaty_body` AGV candidates
+  live (EU AI Office, AESIA, CNIL AI, K-PIPC AI division, India
+  AISI, Japan AISI, CAI, UN CCW GGE, International AISI Network).
+  Synthetic 40-entry fixture covers 22 jurisdictions spanning
+  OECD + Global South + treaty bodies. Fixture E2E: 40 records;
+  raw_blob carries status, date, and authority alongside entry_kind.
+  5-fetcher monthly dry-run (first time this pipeline has hit
+  non-zero §4.7 conflict + update signals): 209 RawVenue (60 OECD +
+  60 UNESCO + 23 gov + 26 TPP + 40 IAPP) → 209 candidates → 208 new /
+  2 updated / **1 conflict** / 17 stale / 0 rename → 3397-line PR
+  body. The conflict (EU AI Office `legal_character`, canonical
+  `hard_law` vs classifier-proposed `soft_law`) is exactly the case
+  §4.7 was built to surface — human-verified field locked,
+  classifier proposal pinned to the PR for reviewer decision, not
+  silently overwritten. pytest: 325/325 green (314 + 11 new IAPP
+  tests). Registry: IAPP entry updated (update_frequency monthly,
+  entity_types_covered adds intergov_forum, notes rewritten to
+  explain the three-kind parsing).
 - **pipelines**: Tech Policy Press RSS discovery fetcher online
   (follow-on to Task 4). `pipelines/fetchers/tech_policy_press.py`
   reads the site's AI-category RSS feed, preprocesses `<link>` tags

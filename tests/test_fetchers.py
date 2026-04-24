@@ -36,6 +36,11 @@ from pipelines.fetchers.tech_policy_press import (
     TechPolicyPressFetcher,
     main as tpp_main,
 )
+from pipelines.fetchers.iapp import (
+    DEFAULT_FIXTURE_PATH as IAPP_FIXTURE_PATH,
+    IAPPFetcher,
+    main as iapp_main,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -578,4 +583,132 @@ def test_tpp_source_ids_distinct_from_other_fetchers():
         | {v.source_id for v in gov}
     )
     for v in tpp:
+        assert v.source_id not in all_others, v
+
+
+# ---- IAPPFetcher ----
+
+def test_iapp_default_fixture_exists():
+    assert IAPP_FIXTURE_PATH.exists(), (
+        f"default IAPP fixture missing at {IAPP_FIXTURE_PATH}"
+    )
+
+
+def test_iapp_fetcher_fixture_returns_records():
+    fetcher = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    assert len(venues) >= 30  # 40 entries × some filtering latitude
+    for v in venues:
+        assert v.source_role == "discovery"
+        assert v.source_registry == "iapp_ai_law_tracker"
+        assert v.source_id.startswith("iapp:")
+        assert v.fetch_strategy == FETCH_STRATEGY_FIXTURE
+
+
+def test_iapp_record_shape_has_regulatory_metadata():
+    fetcher = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    for v in venues:
+        assert v.name, v
+        assert v.url.startswith("https://"), v
+        rb = v.raw_blob
+        # IAPP-specific raw_blob carries entry_kind, status, date, authority.
+        assert "entry_kind" in rb
+        assert "status" in rb
+        assert "authority" in rb
+        assert rb["entry_kind"] in ("statute", "regulation", "agency")
+
+
+def test_iapp_fetcher_covers_expected_jurisdictions():
+    """Regression: jurisdictions that the other four fetchers underserve."""
+    fetcher = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH)
+    countries = {v.country for v in fetcher.fetch()}
+    # Must span EU-level + global + a mix of non-OECD enforcement hubs.
+    for c in ("EU", "International", "China", "Korea", "Brazil", "India",
+              "Israel", "Saudi Arabia", "South Africa"):
+        assert c in countries, f"{c} missing from IAPP fixture coverage"
+
+
+def test_iapp_fetcher_covers_three_entry_kinds():
+    fetcher = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH)
+    kinds = {v.raw_blob["entry_kind"] for v in fetcher.fetch()}
+    assert kinds == {"statute", "regulation", "agency"}
+
+
+def test_iapp_fetcher_catches_flagship_statutes():
+    """Regression: the obvious anchor statutes must be present."""
+    fetcher = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH)
+    names = {v.name for v in fetcher.fetch()}
+    for flagship in (
+        "EU Artificial Intelligence Act",
+        "Council of Europe Framework Convention on AI",
+        "China Interim Measures for Generative AI Services",
+        "Korea AI Basic Act",
+    ):
+        assert any(flagship in n for n in names), flagship
+
+
+def test_iapp_fetcher_surfaces_regulators_agencies():
+    """The 'agency' kind is what promotes IAPP beyond a mere legislation
+    index — it's where the tracker names new AGVs (national_regulator_intl
+    candidates)."""
+    fetcher = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH)
+    agencies = [v for v in fetcher.fetch()
+                if v.raw_blob["entry_kind"] == "agency"]
+    assert len(agencies) >= 10
+    # A handful we know must be present.
+    names = {v.name for v in agencies}
+    for expected in (
+        "EU AI Office",
+        "UK AI Security Institute",
+        "US AI Safety Institute",
+        "Japan AI Safety Institute",
+    ):
+        assert any(expected in n for n in names), expected
+
+
+def test_iapp_fetcher_empty_fixture(tmp_path: Path):
+    empty = tmp_path / "empty.html"
+    empty.write_text("<html><body>no entries</body></html>", encoding="utf-8")
+    fetcher = IAPPFetcher(fixture_path=empty)
+    assert fetcher.fetch() == []
+
+
+def test_iapp_fetcher_fixture_mode_does_not_hit_network(monkeypatch):
+    import httpx
+    calls = []
+    monkeypatch.setattr(httpx, "get", lambda *a, **kw: calls.append((a, kw)))
+    fetcher = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH)
+    fetcher.fetch()
+    assert calls == []
+
+
+def test_iapp_cli_from_fixture_outputs_jsonl(capsys):
+    rc = iapp_main(["--from-fixture", "--quiet"])
+    assert rc == 0
+    captured = capsys.readouterr()
+    import json
+    lines = [ln for ln in captured.out.splitlines() if ln.strip()]
+    assert len(lines) >= 30
+    for ln in lines:
+        obj = json.loads(ln)
+        assert obj["source_registry"] == "iapp_ai_law_tracker"
+    assert "source_role=discovery" in captured.err
+
+
+def test_iapp_source_ids_distinct_from_other_fetchers():
+    iapp = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
+    gov = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    ).fetch()
+    tpp = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH).fetch()
+    all_others = (
+        {v.source_id for v in oecd}
+        | {v.source_id for v in unesco}
+        | {v.source_id for v in gov}
+        | {v.source_id for v in tpp}
+    )
+    for v in iapp:
         assert v.source_id not in all_others, v
