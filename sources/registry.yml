@@ -96,11 +96,12 @@ sources:
       - multistakeholder_coalition
       - intl_ngo_thinktank
       - academic_consortium
-    fetcher_module: null
-    fetch_strategy: manual
-    update_frequency: ad_hoc
-    last_verified_alive: 2026-04-23
-    notes: "On probation; re-evaluate before v0.4 per §12.7."
+      - national_regulator_intl
+    fetcher_module: pipelines.fetchers.evalcommunity_map
+    fetch_strategy: http_with_playwright_fallback
+    update_frequency: quarterly
+    last_verified_alive: 2026-04-24
+    notes: "On §12.7 probation. Fetcher landed so the source can be evaluated empirically (update cadence + deduplication vs UNESCO GAIGO / IAPP). Drop by setting fetcher_module: null and unlinking from scripts/monthly_update.sh if the next three monthly runs show stale / duplicated output."
 
   - id: ai_deadlines
     name: "AI Conference Deadlines"
@@ -110,11 +111,11 @@ sources:
       - conference_policy_track
       - standalone_governance_conference
       - industry_conference
-    fetcher_module: null
-    fetch_strategy: http_static
-    update_frequency: ad_hoc
-    last_verified_alive: 2026-04-23
-    notes: "Seeds candidate recurring conferences with governance tracks."
+    fetcher_module: pipelines.fetchers.ai_deadlines
+    fetch_strategy: http_with_playwright_fallback
+    update_frequency: monthly
+    last_verified_alive: 2026-04-24
+    notes: "Seeds candidate governance-relevant conference policy tracks (workshops at NeurIPS/ICML/ICLR/AAAI/ACL + standalone conferences FAccT/AIES/EAAMO/FORC/ICAIL). INCLUDE_REGEX filters to governance/ethics/safety-layered tracks only."
 
   - id: tech_policy_press
     name: "Tech Policy Press (AI governance coverage)"

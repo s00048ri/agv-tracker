@@ -19,7 +19,7 @@
 | `intl_ngo_thinktank` | 11 | `fli_official`, `caidp_official` | `evalcommunity_map`, `tech_policy_press` |
 | `academic_consortium` | 5 | `mila_official` | `evalcommunity_map` |
 | `standards_body_wg` | 11 | `iso_iec_sc42`, `ieee_sa_ai`, `itu_ai_for_good_official` | — |
-| `national_regulator_intl` | 13 | `uk_aisi_official`, `us_aisi_official`, `japan_aisi_official` | `oecd_ai_navigator`, `unesco_gaigo`, `iapp_ai_law_tracker`, `government_pages` |
+| `national_regulator_intl` | 13 | `uk_aisi_official`, `us_aisi_official`, `japan_aisi_official` | `oecd_ai_navigator`, `unesco_gaigo`, `iapp_ai_law_tracker`, `government_pages`, `evalcommunity_map` |
 | `conference_policy_track` | 5 | `neurips_workshops`, `aaai_safety_track` | `ai_deadlines` |
 | `standalone_governance_conference` | 5 | `facct_conference_official`, `aies_conference_official` | `ai_deadlines` |
 | `industry_conference` | 4 | `itu_ai_for_good_official`, `world_summit_ai` | `ai_deadlines` |

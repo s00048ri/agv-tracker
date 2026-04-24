@@ -8,7 +8,7 @@ monthly PRs.
 
 | Subpackage | Purpose | Status |
 |---|---|---|
-| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — 5 of 7 discovery sources online (OECD.AI, UNESCO GAIGO, government_pages, Tech Policy Press, IAPP); see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) for the remaining two |
+| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — **all 7 discovery sources online** (OECD.AI, UNESCO GAIGO, government_pages, Tech Policy Press, IAPP, ai_deadlines, EvalCommunity map). EvalCommunity remains on §12.7 probation; see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) |
 | `normalize.py` | RawVenue → AGV candidate rows | §9 Task 6 — online |
 | `classify.py` | LLM-assisted AGVO classification | §9 Task 5 — online |
 | `diff.py`     | Lock-aware diff + stale detection | §9 Task 6 — online |
@@ -94,11 +94,13 @@ Every fetcher inherits from `pipelines.fetchers.base.BaseFetcher`:
 
 ## Discovery fetcher roadmap
 
-Five fetchers are operational today (`oecd_ai_navigator`,
-`unesco_gaigo`, the config-driven `government_pages`,
-`tech_policy_press`, and `iapp_ai_law_tracker`); two other discovery
-sources are already declared in `sources/registry.yml` but have no
-fetcher yet. The monthly pipeline therefore currently surfaces only
+All seven discovery sources declared in `sources/registry.yml` now
+have a fetcher (`oecd_ai_navigator`, `unesco_gaigo`, the config-driven
+`government_pages`, `tech_policy_press`, `iapp_ai_law_tracker`,
+`ai_deadlines`, `evalcommunity_map`). The last one is on §12.7
+probation — kept in the chain so we can evaluate update cadence +
+deduplication empirically over the next ~3 monthly runs and decide
+whether to drop it before v0.4. The monthly pipeline therefore currently surfaces only
 what OECD.AI's Policy Navigator catches — roughly *national AI
 strategies* and *major intergovernmental initiatives*. Non-OECD-orbit
 venues are systematically invisible to the fetcher until the
@@ -155,11 +157,20 @@ and what gap its fetcher would close.
    `treaty_body` coverage via CoE CAI, UN CCW GGE on LAWS, and the
    International AISI Network. Live strategy TBD on first online run;
    see the module docstring.
-5. **`ai_deadlines`** — academic conference deadlines aggregator.
-   Catches new `conference_policy_track` venues (ICML, NeurIPS,
-   ICLR, AAAI, ACL workshops on safety/ethics/trustworthy ML).
-6. **`evalcommunity_map`** — on probation per §12.7; re-evaluate
-   cadence before v0.4.
+5. ~~**`ai_deadlines`** — academic conference deadlines aggregator.~~
+   **DONE.** `pipelines/fetchers/ai_deadlines.py` filters the feed
+   via INCLUDE_REGEX to governance/ethics/safety/fairness-layered
+   workshops and tracks (safety / ethics / fairness / trustworthy /
+   alignment / responsible / accountability / governance / policy /
+   privacy / interpretability / explainability / bias + named
+   conferences FAccT/AIES/EAAMO/FORC/ICAIL). Pure technical tracks
+   (RL theory / GNN / distributed training / 3D vision) are rejected.
+6. ~~**`evalcommunity_map`** — on probation per §12.7.~~ **DONE,
+   probation preserved.** `pipelines/fetchers/evalcommunity_map.py`
+   ships so the source can be evaluated empirically. Drop by setting
+   `fetcher_module: null` in `sources/registry.yml` and unlinking
+   from `scripts/monthly_update.sh` if the next 3 runs show stale or
+   duplicated output vs UNESCO GAIGO / IAPP.
 
 Each new fetcher is a single-file module under
 `pipelines/fetchers/<source>.py` following the §Fetcher conventions
@@ -169,22 +180,30 @@ to N sources.
 
 ### Pipeline-level implication
 
-With five fetchers live the discovery surface spans:
-OECD-member national AI strategies + policy initiatives (OECD.AI);
-Global-South / UNESCO-aligned RAM pilots + regional bodies
-(UNESCO GAIGO); English-native government news (government_pages);
-newly-formed organization / summit announcements in AI-policy media
-(tech_policy_press); and **enacted statutes + regulations +
-supervisory agencies by jurisdiction** (IAPP tracker). Fixture-mode
-E2E now surfaces ~210 candidate venues per run
-(60 + 60 + 23 + 26 + 40) — the monthly PR has a much richer set to
-classify than the 60-record OECD-only baseline and now also reaches
-the regulator cell that the other four sources systematically missed.
-Stale detection on the committed seed is down to single digits for
-most runs (exact count depends on de-duplication since IAPP has
-agency rows that overlap with existing seed AGVs — UK AISI, EU AI
-Office, etc., which is correct behaviour: the diff pipeline will
-find them as `case D: match` and suppress them).
+With all seven fetchers live (one on probation) the monthly
+discovery surface spans:
+
+  - OECD-member national AI strategies + policy initiatives
+    (`oecd_ai_navigator`, 60 fixture records);
+  - Global-South / UNESCO-aligned RAM pilots + regional bodies
+    (`unesco_gaigo`, 60);
+  - English-native government news for UK / US / EU / SG / CA / AU
+    (`government_pages`, 23 — extend via YAML);
+  - newly-formed organization and summit-side-event announcements in
+    AI-policy media (`tech_policy_press`, 26);
+  - enacted statutes + regulations + supervisory agencies by
+    jurisdiction (`iapp_ai_law_tracker`, 40);
+  - AI-governance-layered conference workshops + tracks
+    (`ai_deadlines`, 25);
+  - ~140 institutions aggregated by EvalCommunity (on probation,
+    53).
+
+Fixture-mode E2E now surfaces **287 candidate venues** per run. The
+overlap between sources is intentional: it is how the §4.7 diff
+pipeline discovers genuine conflicts (human-verified canonical value
+vs. classifier proposal under a different source) and counts
+matches. Live cross-source triangulation is the point — no single
+source is authoritative.
 
 ## Testing
 

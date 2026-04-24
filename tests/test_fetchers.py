@@ -41,6 +41,17 @@ from pipelines.fetchers.iapp import (
     IAPPFetcher,
     main as iapp_main,
 )
+from pipelines.fetchers.ai_deadlines import (
+    DEFAULT_FIXTURE_PATH as AIDL_FIXTURE_PATH,
+    INCLUDE_REGEX as AIDL_INCLUDE_REGEX,
+    AIDeadlinesFetcher,
+    main as aidl_main,
+)
+from pipelines.fetchers.evalcommunity_map import (
+    DEFAULT_FIXTURE_PATH as ECOM_FIXTURE_PATH,
+    EvalCommunityMapFetcher,
+    main as ecom_main,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -711,4 +722,217 @@ def test_iapp_source_ids_distinct_from_other_fetchers():
         | {v.source_id for v in tpp}
     )
     for v in iapp:
+        assert v.source_id not in all_others, v
+
+
+# ---- AIDeadlinesFetcher ----
+
+def test_aidl_default_fixture_exists():
+    assert AIDL_FIXTURE_PATH.exists()
+
+
+def test_aidl_fetcher_fixture_returns_records():
+    fetcher = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    assert len(venues) >= 20
+    for v in venues:
+        assert v.source_role == "discovery"
+        assert v.source_registry == "ai_deadlines"
+        assert v.source_id.startswith("aideadlines:")
+        assert v.fetch_strategy == FETCH_STRATEGY_FIXTURE
+
+
+def test_aidl_raw_blob_carries_tags_and_dates():
+    fetcher = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH)
+    for v in fetcher.fetch():
+        assert "tags" in v.raw_blob
+        assert isinstance(v.raw_blob["tags"], list)
+        # Deadline / event_date present (strings).
+        assert "deadline" in v.raw_blob
+        assert "event_date" in v.raw_blob
+
+
+def test_aidl_catches_known_governance_workshops():
+    fetcher = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH)
+    names = [v.name for v in fetcher.fetch()]
+    for flagship in (
+        "FAccT", "AIES", "EAAMO", "TrustNLP", "AI Safety",
+        "Trustworthy", "Bias", "Accountability",
+    ):
+        assert any(flagship in n for n in names), flagship
+
+
+def test_aidl_filters_off_topic_technical_tracks():
+    """Control: pure technical workshops (RL theory / GNN / distributed
+    training / 3D scene understanding) must not pass the filter."""
+    fetcher = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH)
+    names = {v.name for v in fetcher.fetch()}
+    for noise in (
+        "Reinforcement Learning Theory",
+        "Geometric Deep Learning",
+        "Large-Scale Distributed Training",
+        "Graph Neural Networks",
+        "3D Scene Understanding",
+    ):
+        for n in names:
+            assert noise not in n, f"noise leaked: {n}"
+
+
+def test_aidl_include_regex_matches_expected_keywords():
+    for kw in (
+        "safety", "ethics", "fairness", "trustworthy", "alignment",
+        "responsible", "accountability", "governance", "policy",
+        "privacy", "interpretability", "explainability", "bias",
+        "FAccT", "AIES", "EAAMO", "FORC", "ICAIL",
+    ):
+        assert AIDL_INCLUDE_REGEX.search(f"ICML 2026 Workshop on {kw}"), kw
+
+
+def test_aidl_include_regex_rejects_pure_technical():
+    for text in (
+        "Workshop on Reinforcement Learning Theory",
+        "Workshop on Graph Neural Networks",
+        "Competition on 3D scene reconstruction",
+    ):
+        assert not AIDL_INCLUDE_REGEX.search(text), text
+
+
+def test_aidl_fetcher_empty_fixture(tmp_path: Path):
+    empty = tmp_path / "empty.html"
+    empty.write_text("<html><body></body></html>", encoding="utf-8")
+    fetcher = AIDeadlinesFetcher(fixture_path=empty)
+    assert fetcher.fetch() == []
+
+
+def test_aidl_fetcher_fixture_mode_does_not_hit_network(monkeypatch):
+    import httpx
+    calls = []
+    monkeypatch.setattr(httpx, "get", lambda *a, **kw: calls.append((a, kw)))
+    fetcher = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH)
+    fetcher.fetch()
+    assert calls == []
+
+
+def test_aidl_cli_from_fixture_outputs_jsonl(capsys):
+    rc = aidl_main(["--from-fixture", "--quiet"])
+    assert rc == 0
+    captured = capsys.readouterr()
+    import json
+    lines = [ln for ln in captured.out.splitlines() if ln.strip()]
+    assert len(lines) >= 20
+    for ln in lines:
+        obj = json.loads(ln)
+        assert obj["source_registry"] == "ai_deadlines"
+    assert "source_role=discovery" in captured.err
+
+
+def test_aidl_source_ids_distinct_from_other_fetchers():
+    aidl = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
+    gov = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    ).fetch()
+    tpp = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH).fetch()
+    iapp = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH).fetch()
+    all_others = (
+        {v.source_id for v in oecd}
+        | {v.source_id for v in unesco}
+        | {v.source_id for v in gov}
+        | {v.source_id for v in tpp}
+        | {v.source_id for v in iapp}
+    )
+    for v in aidl:
+        assert v.source_id not in all_others, v
+
+
+# ---- EvalCommunityMapFetcher ----
+
+def test_ecom_default_fixture_exists():
+    assert ECOM_FIXTURE_PATH.exists()
+
+
+def test_ecom_fetcher_fixture_returns_records():
+    fetcher = EvalCommunityMapFetcher(fixture_path=ECOM_FIXTURE_PATH)
+    venues = fetcher.fetch()
+    assert len(venues) >= 40
+    for v in venues:
+        assert v.source_role == "discovery"
+        assert v.source_registry == "evalcommunity_map"
+        assert v.source_id.startswith("evalcommunity:")
+        assert v.fetch_strategy == FETCH_STRATEGY_FIXTURE
+
+
+def test_ecom_raw_blob_carries_role_region_focus():
+    fetcher = EvalCommunityMapFetcher(fixture_path=ECOM_FIXTURE_PATH)
+    for v in fetcher.fetch():
+        assert "role" in v.raw_blob
+        assert "region" in v.raw_blob
+        assert "focus" in v.raw_blob
+
+
+def test_ecom_fetcher_spans_all_regions():
+    fetcher = EvalCommunityMapFetcher(fixture_path=ECOM_FIXTURE_PATH)
+    regions = {v.raw_blob["region"] for v in fetcher.fetch()}
+    for r in ("NA", "EU", "LAC", "AF", "MENA", "Asia", "Pacific", "International"):
+        assert r in regions, f"region {r} missing from fixture coverage"
+
+
+def test_ecom_fetcher_role_taxonomy_diverse():
+    fetcher = EvalCommunityMapFetcher(fixture_path=ECOM_FIXTURE_PATH)
+    roles = {v.raw_blob["role"] for v in fetcher.fetch()}
+    # Expect at least regulator + thinktank + multistakeholder + industry
+    for r in ("regulator", "thinktank", "multistakeholder", "industry_consortium",
+              "academic", "ngo"):
+        assert r in roles, f"role {r} missing from fixture"
+
+
+def test_ecom_fetcher_fixture_mode_does_not_hit_network(monkeypatch):
+    import httpx
+    calls = []
+    monkeypatch.setattr(httpx, "get", lambda *a, **kw: calls.append((a, kw)))
+    fetcher = EvalCommunityMapFetcher(fixture_path=ECOM_FIXTURE_PATH)
+    fetcher.fetch()
+    assert calls == []
+
+
+def test_ecom_fetcher_empty_fixture(tmp_path: Path):
+    empty = tmp_path / "empty.html"
+    empty.write_text("<html><body></body></html>", encoding="utf-8")
+    fetcher = EvalCommunityMapFetcher(fixture_path=empty)
+    assert fetcher.fetch() == []
+
+
+def test_ecom_cli_from_fixture_outputs_jsonl(capsys):
+    rc = ecom_main(["--from-fixture", "--quiet"])
+    assert rc == 0
+    captured = capsys.readouterr()
+    import json
+    lines = [ln for ln in captured.out.splitlines() if ln.strip()]
+    assert len(lines) >= 40
+    for ln in lines:
+        obj = json.loads(ln)
+        assert obj["source_registry"] == "evalcommunity_map"
+    assert "source_role=discovery" in captured.err
+
+
+def test_ecom_source_ids_distinct_from_other_fetchers():
+    ecom = EvalCommunityMapFetcher(fixture_path=ECOM_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
+    gov = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    ).fetch()
+    tpp = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH).fetch()
+    iapp = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH).fetch()
+    aidl = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH).fetch()
+    all_others = (
+        {v.source_id for v in oecd}
+        | {v.source_id for v in unesco}
+        | {v.source_id for v in gov}
+        | {v.source_id for v in tpp}
+        | {v.source_id for v in iapp}
+        | {v.source_id for v in aidl}
+    )
+    for v in ecom:
         assert v.source_id not in all_others, v

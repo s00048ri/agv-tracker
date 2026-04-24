@@ -12,6 +12,28 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: **all 7 discovery fetchers online** — `ai_deadlines`
+  (aideadlin.es, governance workshops filtered via
+  safety/ethics/fairness/trustworthy/alignment/responsible/
+  accountability/governance/policy/privacy/interpretability/
+  explainability/bias regex plus named conference list FAccT/AIES/
+  EAAMO/FORC/ICAIL) and `evalcommunity_map` (Global AI Governance
+  Map; on §12.7 probation, kept in the chain so update cadence +
+  dedup overlap can be evaluated empirically over the next ~3 runs)
+  completed. `scripts/monthly_update.sh` now chains 7 fetchers
+  (1a-1g); fixture-mode monthly dry-run surfaces 287 RawVenue
+  records (60 OECD + 60 UNESCO + 23 gov + 26 TPP + 40 IAPP +
+  25 aideadlines + 53 EvalCommunity) → 287 candidates → 277 new /
+  19 updated / **9 conflict** / 17 stale / 0 rename → 4614-line PR
+  body. The 9 conflicts all hit `legal_character` on research-only
+  AGVs (METR / Apollo Research / ELLIS / AlgorithmWatch / Spain
+  AESIA / EU AI Office) where the mock classifier over-classifies
+  as `soft_law`; canonical values are human-verified (`n/a` or
+  `hard_law`) so §4.7 pinpoints them as reviewer-decision items
+  instead of silently overwriting. Registry entries for
+  `ai_deadlines` and `evalcommunity_map` wired up; coverage matrix
+  unchanged (36 sources). pytest: 345/345 green (325 + 20 new —
+  10 AIDeadlines tests + 8 EvalCommunity tests + 2 regex tests).
 - **pipelines**: IAPP Global AI Law and Policy Tracker fetcher online
   (follow-on to Task 4). `pipelines/fetchers/iapp.py` parses the
   tracker into three entry kinds — `statute`, `regulation`, `agency` —

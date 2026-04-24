@@ -7,6 +7,8 @@
 #   1c. pipelines.fetchers.government_pages  — discovery fetch (config-driven government pages)
 #   1d. pipelines.fetchers.tech_policy_press  — discovery fetch (news monitor)
 #   1e. pipelines.fetchers.iapp               — discovery fetch (IAPP law/policy tracker)
+#   1f. pipelines.fetchers.ai_deadlines       — discovery fetch (aideadlin.es, governance workshops)
+#   1g. pipelines.fetchers.evalcommunity_map  — discovery fetch (§12.7 probation)
 #       → RawVenue JSONL from all fetchers concatenated as the normalizer input
 #   2. pipelines.normalize          — RawVenue → v0.3 candidates + classifier
 #   3. pipelines.diff               — lock-aware diff vs. data/agv.csv
@@ -80,9 +82,26 @@ uv run python -m pipelines.fetchers.iapp \
 echo "  IAPP tracker: $(wc -l < "$WORK/raw-iapp.jsonl" | tr -d ' ') RawVenue record(s)"
 echo "::endgroup::"
 
+echo "::group::1f/4 fetch (AI conference deadlines)"
+uv run python -m pipelines.fetchers.ai_deadlines \
+    --cache-dir "$WORK/aidl-cache" \
+    --quiet \
+    > "$WORK/raw-aidl.jsonl"
+echo "  aideadlin.es: $(wc -l < "$WORK/raw-aidl.jsonl" | tr -d ' ') RawVenue record(s)"
+echo "::endgroup::"
+
+echo "::group::1g/4 fetch (EvalCommunity map — §12.7 probation)"
+uv run python -m pipelines.fetchers.evalcommunity_map \
+    --cache-dir "$WORK/ecom-cache" \
+    --quiet \
+    > "$WORK/raw-ecom.jsonl"
+echo "  EvalCommunity: $(wc -l < "$WORK/raw-ecom.jsonl" | tr -d ' ') RawVenue record(s)"
+echo "::endgroup::"
+
 # Concatenate per-source RawVenue streams for the normalizer.
 cat "$WORK/raw-oecd.jsonl" "$WORK/raw-unesco.jsonl" "$WORK/raw-gov.jsonl" \
-    "$WORK/raw-tpp.jsonl" "$WORK/raw-iapp.jsonl" > "$WORK/raw.jsonl"
+    "$WORK/raw-tpp.jsonl" "$WORK/raw-iapp.jsonl" "$WORK/raw-aidl.jsonl" \
+    "$WORK/raw-ecom.jsonl" > "$WORK/raw.jsonl"
 echo "  combined: $(wc -l < "$WORK/raw.jsonl" | tr -d ' ') RawVenue record(s)"
 
 CLASSIFY_FLAG="--live"
