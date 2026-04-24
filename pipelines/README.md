@@ -8,11 +8,11 @@ monthly PRs.
 
 | Subpackage | Purpose | Status |
 |---|---|---|
-| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — OECD.AI online |
-| `normalize.py` | RawVenue → AGV candidate rows | §9 Task 6 (pending) |
-| `classify.py` | LLM-assisted AGVO classification | §9 Task 5 (pending) |
-| `diff.py`     | Lock-aware diff + stale detection | §9 Task 6 (pending) |
-| `candidates_to_pr.py` | Emits Markdown PR body | §9 Task 6 (pending) |
+| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — 1 of 6 discovery sources online (OECD.AI); see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) for the remaining five |
+| `normalize.py` | RawVenue → AGV candidate rows | §9 Task 6 — online |
+| `classify.py` | LLM-assisted AGVO classification | §9 Task 5 — online |
+| `diff.py`     | Lock-aware diff + stale detection | §9 Task 6 — online |
+| `candidates_to_pr.py` | Emits Markdown PR body | §9 Task 6 — online |
 
 ## Setup
 
@@ -91,6 +91,68 @@ Every fetcher inherits from `pipelines.fetchers.base.BaseFetcher`:
    `playwright`). This is a CLAUDE.md §9 Task 4 step-3 contract.
 6. Regenerate `sources/coverage_matrix.md` if the source's
    `entity_types_covered` changed.
+
+## Discovery fetcher roadmap
+
+Only `oecd_ai_navigator` is operational today; five other discovery
+sources are already declared in `sources/registry.yml` but have no
+fetcher yet. The monthly pipeline therefore currently surfaces only
+what OECD.AI's Policy Navigator catches — roughly *national AI
+strategies* and *major intergovernmental initiatives*. Non-OECD-orbit
+venues are systematically invisible to the fetcher until the
+corresponding module exists.
+
+### What the current pipeline misses (worked examples)
+
+| Venue | Type | Would be caught by | Reason it's missed today |
+|---|---|---|---|
+| **IASEAI** — International Association for Safe and Ethical AI | `multistakeholder_coalition` / `intl_ngo_thinktank` | `tech_policy_press` (news) or a dedicated association tracker | Not an OECD.AI Policy Observatory entry |
+| **AI Safety Connect** (Paris AI Action Summit side event) | `conference_policy_track` or `one_off_summit` | `tech_policy_press`, a host-government summit fetcher, or `ai_deadlines` | Summit-adjacent events not registered in Policy Navigator |
+| **AI Safety Asia (AISA)** | `intl_ngo_thinktank`, regional (Asia) | `unesco_gaigo` (regional bodies) or `tech_policy_press` | Asian regional bodies outside OECD's core focus |
+| MOFA OECD-related conference page | `one_off_summit` or `intergov_forum` | Direct MOFA / host-government fetcher, or OECD.AI when the deposit lands | OECD.AI may lag the host-government announcement |
+
+These are *representative* — the dataset's v0.3 seed of 106 venues is a
+deliberate sample, not a census (CLAUDE.md §10 targets ≥10 per
+`entity_type` for v1.0). Covering gaps like the above requires adding
+fetchers, not hand-seeding each new venue.
+
+### Priority order for new fetchers
+
+Each bullet names a `sources/registry.yml` entry that already exists
+and what gap its fetcher would close.
+
+1. **`unesco_gaigo`** — UNESCO Global AI Ethics and Governance
+   Observatory. Closes the "Asian / African / LAC regional bodies"
+   blind spot (catches AISA-style venues and UNESCO RAM pilot
+   countries). Likely needs the Playwright fallback.
+2. **`tech_policy_press`** — news monitoring for newly-formed
+   associations, alliances, and side events. Catches IASEAI / AI
+   Safety Connect / similar. RSS + HTML; probably static-HTTP
+   friendly.
+3. **`iapp_ai_law_tracker`** — Global AI Law & Policy Tracker.
+   Catches emerging national regulators the OECD Observatory lags on.
+4. **`ai_deadlines`** — academic conference deadlines aggregator.
+   Catches new `conference_policy_track` venues (ICML, NeurIPS,
+   ICLR, AAAI, ACL workshops on safety/ethics/trustworthy ML).
+5. **`evalcommunity_map`** — on probation per §12.7; re-evaluate
+   cadence before v0.4.
+
+Each new fetcher is a single-file module under
+`pipelines/fetchers/<source>.py` following the §Fetcher conventions
+pattern (see "Adding a new fetcher" below). None of them reshape
+`BaseFetcher`; the Task 4 plumbing was intentionally built to scale
+to N sources.
+
+### Pipeline-level implication
+
+Once ≥2 fetchers are live, the `diff.py` stale-detection signal
+becomes much more reliable: with only OECD.AI running, any AGV whose
+existence is not on OECD.AI will be perpetually flagged as "not seen
+this run" and therefore *will be marked stale* once its
+`last_observed_activity_date` crosses its `convening_frequency`
+threshold (§3.5). The e2e dry-run today produces 17 stale candidates
+for exactly this reason. Adding `unesco_gaigo` + `tech_policy_press`
+would cut that substantially.
 
 ## Testing
 
