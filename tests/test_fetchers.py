@@ -410,6 +410,79 @@ def test_gov_fetcher_multi_country_coverage():
         assert c in countries, f"missing country in fixture coverage: {c}"
 
 
+def test_gov_fetcher_multilingual_country_coverage():
+    """Non-English wave: JP/KR/FR/DE/CN must each emit at least one
+    record from their fixture."""
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    countries = {v.country for v in fetcher.fetch()}
+    for c in ("JP", "KR", "FR", "DE", "CN"):
+        assert c in countries, f"missing non-English country: {c}"
+
+
+def test_gov_fetcher_multilingual_regex_filters_noise():
+    """Each non-English target's fixture has one off-topic control entry
+    that the include_if_regex must drop. Together they prove the regex
+    works against CJK + accented Latin scripts."""
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    names = {v.name for v in fetcher.fetch()}
+    # One known-noise title per non-English fixture.
+    for noise in (
+        "日米首脳会談",                         # JP MOFA
+        "工作機械輸出統計",                     # JP METI
+        "5G 망 투자 동향",                      # KR MSIT
+        "Vœux du Président",                    # FR Élysée
+        "Energiepreis-Bericht Januar",          # DE BMWK
+        "网络信息内容生态治理",                  # CN CAC
+    ):
+        for n in names:
+            assert noise not in n, (
+                f"non-English regex leaked off-topic entry: {n!r}"
+            )
+
+
+def test_gov_fetcher_emits_records_in_target_languages():
+    """Confirm we are actually getting CJK / accented-Latin content out
+    the other side, not silently degraded to empty strings."""
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    venues = fetcher.fetch()
+    by_target = {v.raw_blob["target_id"]: v for v in venues}
+    # Pick one known-keyword fragment per language and assert it
+    # appears in at least one record's name.
+    expectations = [
+        ("jp_mofa_oecd_ai", "AI"),                 # ASCII inside JP content
+        ("jp_meti_ai", "AI"),
+        ("kr_msit_ai", "AI"),                       # ASCII inside KR content
+        ("fr_elysee_ai", "IA"),                     # IA in FR
+        ("de_bmwk_ai", "KI"),                       # KI in DE
+        ("cn_cac_ai", "人工智能"),                  # CJK in CN
+    ]
+    for target_id, fragment in expectations:
+        per_target_names = [
+            v.name for v in venues
+            if v.raw_blob["target_id"] == target_id
+        ]
+        assert any(fragment in n for n in per_target_names), (
+            f"{target_id}: no record with '{fragment}' in name; "
+            f"got {per_target_names!r}"
+        )
+
+
+def test_gov_fetcher_url_resolution_handles_relative_links_in_multilingual_fixtures():
+    """Per-target hrefs may be absolute (most fixtures) or relative; either
+    way, the fetcher must produce https:// URLs in RawVenue.url."""
+    fetcher = GovernmentPagesFetcher(
+        config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
+    )
+    for v in fetcher.fetch():
+        assert v.url.startswith("https://"), v
+
+
 def test_gov_fetcher_atom_feed_target_parses():
     """The UK target is an Atom feed; make sure it comes out non-empty."""
     fetcher = GovernmentPagesFetcher(

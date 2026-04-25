@@ -102,3 +102,95 @@ targets:
     include_if_regex: "(?i)\\b(AI|artificial intelligence|safe and responsible)\\b"
     priority: 2
     notes: "Department of Industry, Science and Resources AI page."
+
+  # ------------------------------------------------------------------
+  # Non-English government targets (Task: B / multi-language wave).
+  #
+  # Each non-English target uses a regex that does NOT rely on `\b`
+  # for the foreign-language stems — `\b` is a word-boundary in the
+  # ASCII sense and does not behave as expected against CJK or
+  # accented Latin scripts. ASCII tokens like "AI" still get a `\b`
+  # so we don't pick up substrings inside transliterated terms.
+  #
+  # **Live classifier prerequisite.** When run live, these feed
+  # non-English content into the AGVO classifier. The mock
+  # classifier in pipelines/classify.py only knows English; running
+  # these targets through it produces noisy labels. Switch to live
+  # Claude (--live in pipelines/classify or scripts/monthly_update.sh
+  # with ANTHROPIC_API_KEY) before using these in a real monthly PR.
+  # ------------------------------------------------------------------
+
+  - id: jp_mofa_oecd_ai
+    country: JP
+    language: ja
+    url: "https://www.mofa.go.jp/policy/ecm/oecd/"
+    list_selector: "article, li.news-item, div.news-list-item"
+    title_selector: "a"
+    description_selector: "p"
+    # 「AI」 (ASCII, word-bounded) OR Japanese AI lexicon. The
+    # alternation does not require `\b` for kanji because Japanese
+    # has no whitespace word boundaries that match `\b`'s contract.
+    include_if_regex: "(?i)\\bAI\\b|人工知能|生成AI|AI戦略|AI安全|AIセーフティ|AIガバナンス|AISI"
+    priority: 2
+    notes: "MOFA OECD-policy hub; surfaces Japan-hosted AI ministerial / G7 events. Japanese-language regex; needs live classifier."
+
+  - id: jp_meti_ai
+    country: JP
+    language: ja
+    url: "https://www.meti.go.jp/policy/it_policy/ai_kakushin/"
+    list_selector: "article, li.news-item, div.list-news"
+    title_selector: "a"
+    description_selector: "p"
+    include_if_regex: "(?i)\\bAI\\b|人工知能|生成AI|AI戦略|AI事業者|AIガイドライン"
+    priority: 2
+    notes: "METI industrial-AI policy + AI事業者ガイドライン guidance; non-OECD-tracked national directives often land here first."
+
+  - id: kr_msit_ai
+    country: KR
+    language: ko
+    url: "https://www.msit.go.kr/bbs/list.do?sCode=user&mId=113&mPid=112"
+    list_selector: "article, li.list-item, tr.bbs-row"
+    title_selector: "a"
+    description_selector: "p, td"
+    # Korean AI lexicon + "AI" Latin token (word-bounded).
+    include_if_regex: "(?i)\\bAI\\b|인공지능|AI안전연구소|AI기본법|생성형 AI|AI 윤리"
+    priority: 2
+    notes: "Korea MSIT bulletin; K-AISI announcements + AI Basic Act implementation. Korean-language regex."
+
+  - id: fr_elysee_ai
+    country: FR
+    language: fr
+    url: "https://www.elysee.fr/recherche?q=intelligence+artificielle"
+    list_selector: "article, li.search-result"
+    title_selector: "h3 a, h2 a, a"
+    description_selector: "p, div.summary"
+    # `\b` works for accented Latin script in Python's regex (re module
+    # treats accented letters as word chars by default in unicode mode),
+    # so the alternation is safe.
+    include_if_regex: "(?i)\\b(IA|intelligence artificielle|sécurité de l'IA|gouvernance de l'IA|sommet IA|loi IA)\\b"
+    priority: 2
+    notes: "Élysée presidential search; AI Action Summit follow-ups + national AI strategy events."
+
+  - id: de_bmwk_ai
+    country: DE
+    language: de
+    url: "https://www.bmwk.de/Navigation/DE/Themen/themen-ki.html"
+    list_selector: "article, li.list-item"
+    title_selector: "a, h3"
+    description_selector: "p, div.teaser"
+    include_if_regex: "(?i)\\b(KI|Künstliche Intelligenz|KI-Gesetz|KI-Verordnung|KI-Sicherheit|KI-Strategie|KI-Aufsichtsbehörde)\\b"
+    priority: 2
+    notes: "BMWK KI hub; BNetzA AI Act surveillance designation, KI-Strategie updates."
+
+  - id: cn_cac_ai
+    country: CN
+    language: zh
+    url: "https://www.cac.gov.cn/zwxx_index.htm"
+    list_selector: "li, article, tr.news-row"
+    title_selector: "a"
+    description_selector: "p, div.summary"
+    # Simplified Chinese AI lexicon. CAC is the AI enforcement
+    # authority for the GenAI Interim Measures.
+    include_if_regex: "(?i)\\bAI\\b|人工智能|生成式人工智能|人工智能安全|人工智能法|算法推荐"
+    priority: 2
+    notes: "CAC announcements hub; GenAI Interim Measures enforcement + algorithm-recommendation regulation. Simplified-Chinese regex; needs live classifier."

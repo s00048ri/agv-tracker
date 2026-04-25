@@ -12,6 +12,32 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: multi-language wave for `government_pages` —
+  6 non-English targets added to `sources/government_pages.yml`:
+  Japan MOFA OECD policy hub, Japan METI AI policy + AI事業者
+  ガイドライン, Korea MSIT (K-AISI announcements + AI Basic Act),
+  France Élysée (AI Action Summit follow-ups + national strategy),
+  Germany BMWK (BNetzA designation + KI-Strategie), China CAC
+  (GenAI Interim Measures enforcement + algorithm-recommendation
+  rules). Per-language `include_if_regex` covers each target's
+  native AI lexicon (人工知能 / 生成AI / AISI; 인공지능 / AI안전
+  연구소 / AI기본법; IA / intelligence artificielle / sommet IA;
+  KI / Künstliche Intelligenz / KI-Verordnung / KI-Aufsichtsbehörde;
+  人工智能 / 生成式人工智能 / 人工智能法 / 算法推荐) plus a
+  word-bounded ASCII fallback for "AI" / "IA" / "KI". Each fixture
+  carries one off-topic control entry to prove the regex handles
+  CJK + accented Latin without leaking — care needed because
+  `\bIA\b` / `\bKI\b` will match self-referential phrases like
+  "kein KI-Bezug", so noise descriptions avoid the keyword.
+  government_pages now drives 12 targets total; fixture-mode E2E
+  yields 40 records (was 23 with 6 English-only targets).
+  Combined 7-fetcher E2E rises to 305 RawVenue candidates.
+  pytest: 349/349 green (345 + 4 new multilingual tests).
+  **Live classifier prerequisite**: the mock classifier is
+  English-only and will mislabel non-English content; the new
+  YAML targets are gated behind switching to live Claude
+  (--live in pipelines/classify or scripts/monthly_update.sh
+  with ANTHROPIC_API_KEY set) before they go into a real PR.
 - **pipelines**: **all 7 discovery fetchers online** — `ai_deadlines`
   (aideadlin.es, governance workshops filtered via
   safety/ethics/fairness/trustworthy/alignment/responsible/
