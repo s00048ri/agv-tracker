@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>AI Snake Oil</title>
+  <link>https://www.aisnakeoil.com/</link>
+  <description>Critical-eye AI commentary by Narayanan and Kapoor.</description>
+  <item>
+    <title>AI Safety Connect 2026: what we learned</title>
+    <link>https://www.aisnakeoil.com/p/ai-safety-connect-2026</link>
+    <description>Reflections from the second edition of the AI Safety Connect side-event, run alongside the Paris AI Action Summit III.</description>
+    <pubDate>Wed, 16 Apr 2026 14:00:00 GMT</pubDate>
+    <category>AI Safety</category>
+    <category>Summit</category>
+  </item>
+  <item>
+    <title>The IASEAI moment: when does an association become a venue?</title>
+    <link>https://www.aisnakeoil.com/p/iaseai-moment</link>
+    <description>One year in, IASEAI is shaping up as a real venue rather than press-release ware. Analysis of its working groups and standing.</description>
+    <pubDate>Wed, 02 Apr 2026 14:00:00 GMT</pubDate>
+    <category>AI Governance</category>
+  </item>
+  <item>
+    <title>Frontier-model evaluations: the institutionalization curve</title>
+    <link>https://www.aisnakeoil.com/p/eval-institutionalization</link>
+    <description>How frontier-model evaluation work moved from independent labs to AISI-network coordination over 2024-2026.</description>
+    <pubDate>Wed, 19 Mar 2026 14:00:00 GMT</pubDate>
+    <category>AI Safety</category>
+    <category>Evaluations</category>
+  </item>
+  <item>
+    <title>Snake oil watch: predictive AI in hiring</title>
+    <link>https://www.aisnakeoil.com/p/predictive-hiring-2026</link>
+    <description>The latest crop of "AI-powered hiring" tools and why their accountability claims remain hollow.</description>
+    <pubDate>Wed, 05 Mar 2026 14:00:00 GMT</pubDate>
+    <category>AI</category>
+    <category>Accountability</category>
+  </item>
+  <item>
+    <title>Reading list: Q1 2026</title>
+    <link>https://www.aisnakeoil.com/p/reading-list-q1-2026</link>
+    <description>Quarterly long-read recommendations across machine-learning, policy, and journalism.</description>
+    <pubDate>Wed, 19 Feb 2026 14:00:00 GMT</pubDate>
+    <category>Reading</category>
+  </item>
+</channel>
+</rss>

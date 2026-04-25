@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>CAIS AI Safety Newsletter</title>
+  <link>https://aisafety.substack.com/</link>
+  <description>Center for AI Safety weekly newsletter.</description>
+  <item>
+    <title>CAIS Newsletter #128: New AISI Network Working Group on Deception</title>
+    <link>https://aisafety.substack.com/p/newsletter-128</link>
+    <description>The AISI Network announced a new working group on deceptive behaviour evaluations across UK / US / Japan / Korea / Singapore institutes.</description>
+    <pubDate>Mon, 14 Apr 2026 10:00:00 GMT</pubDate>
+    <category>AI Safety</category>
+  </item>
+  <item>
+    <title>CAIS Newsletter #127: Frontier Model Forum publishes joint safety commitments</title>
+    <link>https://aisafety.substack.com/p/newsletter-127</link>
+    <description>FMF members release joint commitments on cybersecurity disclosure and red-team data sharing.</description>
+    <pubDate>Mon, 07 Apr 2026 10:00:00 GMT</pubDate>
+    <category>AI Safety</category>
+    <category>Industry</category>
+  </item>
+  <item>
+    <title>CAIS Newsletter #126: METR releases benchmarking suite for autonomous task completion</title>
+    <link>https://aisafety.substack.com/p/newsletter-126</link>
+    <description>METR's new evaluation suite measures frontier-model autonomous task completion across 50+ task domains.</description>
+    <pubDate>Mon, 31 Mar 2026 10:00:00 GMT</pubDate>
+    <category>AI Safety</category>
+    <category>Evaluations</category>
+  </item>
+  <item>
+    <title>CAIS Newsletter #125: New AI safety institute opens in Brazil</title>
+    <link>https://aisafety.substack.com/p/newsletter-125</link>
+    <description>Brazilian government announces a national AI safety institute under the ANPD; first frontier-model evaluations expected late 2026.</description>
+    <pubDate>Mon, 24 Mar 2026 10:00:00 GMT</pubDate>
+    <category>AI Safety</category>
+    <category>Brazil</category>
+  </item>
+  <item>
+    <title>CAIS Newsletter #124: Off-week round-up</title>
+    <link>https://aisafety.substack.com/p/newsletter-124</link>
+    <description>Catch-up edition. Light news week.</description>
+    <pubDate>Mon, 17 Mar 2026 10:00:00 GMT</pubDate>
+    <category>Newsletter</category>
+  </item>
+</channel>
+</rss>

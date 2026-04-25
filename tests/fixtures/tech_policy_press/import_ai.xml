@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>Import AI</title>
+  <link>https://importai.substack.com/</link>
+  <description>Jack Clark's weekly AI newsletter.</description>
+  <item>
+    <title>Import AI 412: International AISI Network expands to 14 members</title>
+    <link>https://importai.substack.com/p/import-ai-412</link>
+    <description>The International AISI Network adds Brazil, Mexico, and Indonesia as observer members; total reaches 14 institutes.</description>
+    <pubDate>Mon, 21 Apr 2026 12:00:00 GMT</pubDate>
+    <category>AI</category>
+  </item>
+  <item>
+    <title>Import AI 411: New AI Code of Conduct from G20 Hyderabad summit</title>
+    <link>https://importai.substack.com/p/import-ai-411</link>
+    <description>G20 Digital Economy WG releases a new AI code of conduct following the 2026 Hyderabad summit.</description>
+    <pubDate>Mon, 14 Apr 2026 12:00:00 GMT</pubDate>
+    <category>AI</category>
+    <category>Policy</category>
+  </item>
+  <item>
+    <title>Import AI 410: Anthropic, Google, OpenAI form a new safety coalition</title>
+    <link>https://importai.substack.com/p/import-ai-410</link>
+    <description>Three frontier labs announce a joint AI safety coalition focused on cyber-deployment risk evaluations.</description>
+    <pubDate>Mon, 07 Apr 2026 12:00:00 GMT</pubDate>
+    <category>AI</category>
+    <category>Industry</category>
+  </item>
+  <item>
+    <title>Import AI 409: Pre-deployment testing — what the new IAPP tracker shows</title>
+    <link>https://importai.substack.com/p/import-ai-409</link>
+    <description>Analysis of pre-deployment testing requirements emerging in EU / US / Korean AI law.</description>
+    <pubDate>Mon, 31 Mar 2026 12:00:00 GMT</pubDate>
+    <category>AI Policy</category>
+  </item>
+  <item>
+    <title>Import AI 408: Compute governance — current state</title>
+    <link>https://importai.substack.com/p/import-ai-408</link>
+    <description>Survey of compute governance proposals across major AI policy regimes.</description>
+    <pubDate>Mon, 24 Mar 2026 12:00:00 GMT</pubDate>
+    <category>AI Policy</category>
+  </item>
+  <item>
+    <title>Import AI 407: Tech reading list, March 2026</title>
+    <link>https://importai.substack.com/p/import-ai-407</link>
+    <description>Monthly tech reading list. Light week, no policy moves.</description>
+    <pubDate>Mon, 17 Mar 2026 12:00:00 GMT</pubDate>
+    <category>Newsletter</category>
+  </item>
+</channel>
+</rss>

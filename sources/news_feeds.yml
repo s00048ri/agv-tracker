@@ -1,0 +1,54 @@
+# Config-driven RSS feed targets for pipelines.fetchers.tech_policy_press.
+#
+# Same pattern as sources/government_pages.yml: one Python module
+# (`pipelines/fetchers/tech_policy_press.py`) loops over the entries
+# below. Adding a new feed is a YAML edit; no Python change.
+#
+# Schema for each entry:
+#   id              snake_case, unique across this file. Becomes the
+#                   source_id namespace prefix: "<id>:<idx>".
+#   name            human-readable.
+#   url             RSS / Atom feed URL (.xml or .feed/).
+#   include_regex   optional override of the module-level
+#                   INCLUDE_REGEX. If absent, the default regex is
+#                   used. Most newsletters cover AI specifically so
+#                   the default is fine; per-feed override exists in
+#                   case a future feed needs a stricter / looser
+#                   filter.
+#   priority        1 (high) .. 3 (low); reserved for future use.
+#   notes           freeform.
+#
+# **Live strategy TBD per feed.** All feeds in this file are
+# substack-shaped or WordPress-shaped; static HTTP almost always
+# suffices. The BaseFetcher contract falls back to Playwright if
+# the feed body returns without <item> tags, which is the actual
+# failure mode for paywalled / cookie-walled feeds.
+#
+# The module name is `tech_policy_press` for historical / registry
+# reasons (Tech Policy Press was the first feed). Despite the name,
+# this is a generic news-monitor fetcher driving N feeds.
+
+feeds:
+  - id: tech_policy_press
+    name: "Tech Policy Press — Artificial Intelligence"
+    url: "https://www.techpolicy.press/category/artificial-intelligence/feed/"
+    priority: 1
+    notes: "Core AI-policy reporting; daily cadence. Catches IASEAI / AI Safety Connect-style announcements."
+
+  - id: cais_newsletter
+    name: "CAIS AI Safety Newsletter"
+    url: "https://aisafety.substack.com/feed"
+    priority: 2
+    notes: "Center for AI Safety weekly newsletter. Curates safety research + frontier-model news."
+
+  - id: import_ai
+    name: "Import AI (Jack Clark)"
+    url: "https://importai.substack.com/feed"
+    priority: 2
+    notes: "Jack Clark's weekly AI newsletter; broad coverage of frontier-AI policy + research."
+
+  - id: ai_snake_oil
+    name: "AI Snake Oil (Narayanan & Kapoor)"
+    url: "https://www.aisnakeoil.com/feed"
+    priority: 2
+    notes: "Critical-eye AI commentary; surfaces AI hype + emerging governance concerns."

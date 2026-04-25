@@ -12,6 +12,33 @@ in `CLAUDE.md §0`.
   Institute" with former name preserved; all 30 rows marked
   `human_verified_fields=entity_type,founded_date,current_state,legal_character`
   with `override_policy=lock_verified_only`.
+- **pipelines**: multi-feed wave for `tech_policy_press` —
+  refactored from a single-feed Tech Policy Press fetcher into a
+  config-driven multi-feed news monitor (same shape as
+  `government_pages`). Backed by new `sources/news_feeds.yml`
+  carrying 4 feeds: Tech Policy Press AI category (existing), CAIS
+  AI Safety Newsletter, Import AI (Jack Clark), AI Snake Oil
+  (Narayanan & Kapoor). The module name `tech_policy_press` is
+  preserved for registry / monthly_update.sh compatibility despite
+  becoming a generic news monitor; the historical naming is
+  documented in the module + YAML headers.
+  Each feed gets its own per-target BaseFetcher subclass (own
+  throttle clock + robots cache + .cache/<feed_id>/ bucket); per-
+  feed failures are isolated. Source_id namespace changed from
+  `techpolicypress:<idx>` to `<feed_id>:<idx>` (e.g.
+  `tech_policy_press:0001`, `cais_newsletter:0002`,
+  `import_ai:0003`); raw_blob carries `feed_id` + `feed_name`.
+  INCLUDE_REGEX gained four named-venue tokens that were previously
+  filtered out: `IASEAI`, `AI Safety Connect`, `AI Safety Asia`,
+  `AISA`, plus the standalone-conference acronyms FAccT / AIES /
+  EAAMO / FORC. Fixtures: existing `feed.xml` renamed to
+  `tech_policy_press.xml`; three new RSS fixtures (cais_newsletter,
+  import_ai, ai_snake_oil) added under
+  `tests/fixtures/tech_policy_press/`. CLI gains `--only` and
+  `--fixture-dir` flags matching the government_pages pattern.
+  fetcher output: 26 → 39 records. 7-fetcher monthly E2E: 305 → 318
+  RawVenue per run. pytest: 360/360 green (349 + 11 new multi-feed
+  tests; 1 existing test updated for the new source_id namespace).
 - **pipelines**: multi-language wave for `government_pages` —
   6 non-English targets added to `sources/government_pages.yml`:
   Japan MOFA OECD policy hub, Japan METI AI policy + AI事業者

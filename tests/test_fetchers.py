@@ -547,7 +547,10 @@ def test_tpp_fetcher_fixture_returns_records():
     for v in venues:
         assert v.source_role == "discovery"
         assert v.source_registry == "tech_policy_press"
-        assert v.source_id.startswith("techpolicypress:")
+        # New multi-feed namespace: source_id is "<feed_id>:<idx>".
+        # The legacy single-fixture path bind us to the tech_policy_press
+        # feed only.
+        assert v.source_id.startswith("tech_policy_press:")
         assert v.fetch_strategy == FETCH_STRATEGY_FIXTURE
 
 
@@ -668,6 +671,137 @@ def test_tpp_source_ids_distinct_from_other_fetchers():
     )
     for v in tpp:
         assert v.source_id not in all_others, v
+
+
+# ---- TechPolicyPressFetcher multi-feed wave ----
+
+from pipelines.fetchers.tech_policy_press import (
+    DEFAULT_CONFIG_PATH as NEWS_CONFIG_PATH,
+    DEFAULT_FIXTURE_DIR as NEWS_FIXTURE_DIR,
+    load_feeds,
+)
+
+
+def test_news_feeds_config_loads_and_has_required_fields():
+    feeds = load_feeds(NEWS_CONFIG_PATH)
+    assert len(feeds) >= 4
+    for f in feeds:
+        for k in ("id", "name", "url"):
+            assert k in f, (f.get("id"), k)
+
+
+def test_news_feeds_config_target_ids_unique():
+    from collections import Counter
+    ids = [f["id"] for f in load_feeds(NEWS_CONFIG_PATH)]
+    dupes = [i for i, n in Counter(ids).items() if n > 1]
+    assert not dupes
+
+
+def test_news_fixture_dir_has_one_xml_per_feed():
+    feed_ids = {f["id"] for f in load_feeds(NEWS_CONFIG_PATH)}
+    fixture_files = {p.stem for p in NEWS_FIXTURE_DIR.glob("*.xml")}
+    missing = feed_ids - fixture_files
+    assert not missing, (
+        f"fixture XMLs missing for feeds: {sorted(missing)}"
+    )
+
+
+def test_news_multi_feed_fetch_emits_records_from_each_feed():
+    fetcher = TechPolicyPressFetcher(
+        config_path=NEWS_CONFIG_PATH, fixture_dir=NEWS_FIXTURE_DIR,
+    )
+    venues = fetcher.fetch()
+    assert len(venues) >= 30  # all feeds combined
+    feed_ids_hit = {v.raw_blob["feed_id"] for v in venues}
+    config_ids = {f["id"] for f in load_feeds(NEWS_CONFIG_PATH)}
+    assert feed_ids_hit == config_ids
+
+
+def test_news_multi_feed_source_ids_namespaced_per_feed():
+    fetcher = TechPolicyPressFetcher(
+        config_path=NEWS_CONFIG_PATH, fixture_dir=NEWS_FIXTURE_DIR,
+    )
+    for v in fetcher.fetch():
+        feed_id = v.raw_blob["feed_id"]
+        assert v.source_id.startswith(f"{feed_id}:"), v
+
+
+def test_news_multi_feed_only_flag_scopes_feeds():
+    fetcher = TechPolicyPressFetcher(
+        config_path=NEWS_CONFIG_PATH, fixture_dir=NEWS_FIXTURE_DIR,
+    )
+    venues = fetcher.fetch(only_ids={"cais_newsletter"})
+    assert venues
+    assert all(v.raw_blob["feed_id"] == "cais_newsletter" for v in venues)
+
+
+def test_news_multi_feed_iaseai_caught():
+    """IASEAI was the user-flagged blind spot; the AI Snake Oil feed
+    article 'The IASEAI moment' must pass the include regex."""
+    fetcher = TechPolicyPressFetcher(
+        config_path=NEWS_CONFIG_PATH, fixture_dir=NEWS_FIXTURE_DIR,
+    )
+    names = [v.name for v in fetcher.fetch()]
+    assert any("IASEAI" in n for n in names)
+
+
+def test_news_multi_feed_ai_safety_connect_caught():
+    fetcher = TechPolicyPressFetcher(
+        config_path=NEWS_CONFIG_PATH, fixture_dir=NEWS_FIXTURE_DIR,
+    )
+    names = [v.name for v in fetcher.fetch()]
+    assert any("AI Safety Connect" in n for n in names)
+
+
+def test_news_multi_feed_filters_off_topic_substack_items():
+    """Each non-TPP feed has at least one off-topic 'reading list' /
+    'round-up' item that should be filtered."""
+    fetcher = TechPolicyPressFetcher(
+        config_path=NEWS_CONFIG_PATH, fixture_dir=NEWS_FIXTURE_DIR,
+    )
+    names = [v.name for v in fetcher.fetch()]
+    for noise in (
+        "Reading list: Q1 2026",  # ai_snake_oil control
+    ):
+        for n in names:
+            assert noise not in n, n
+
+
+def test_news_multi_feed_cli_from_fixture(capsys):
+    """The CLI's --from-fixture mode should drive all feeds, not just TPP."""
+    rc = tpp_main(["--from-fixture", "--quiet"])
+    assert rc == 0
+    captured = capsys.readouterr()
+    import json
+    lines = [ln for ln in captured.out.splitlines() if ln.strip()]
+    assert len(lines) >= 30
+    feed_ids = {json.loads(ln)["raw_blob"]["feed_id"] for ln in lines}
+    # Should span at least the tech_policy_press + cais + import_ai + snake_oil.
+    assert "tech_policy_press" in feed_ids
+    assert "cais_newsletter" in feed_ids
+    assert "import_ai" in feed_ids
+    assert "ai_snake_oil" in feed_ids
+
+
+def test_news_multi_feed_per_feed_failure_isolated(monkeypatch, tmp_path):
+    """If one feed's fixture is missing in fixture-dir mode, the run
+    continues with the remaining feeds (same isolation contract as
+    government_pages)."""
+    fdir = tmp_path / "fixtures"
+    fdir.mkdir()
+    # Only ship one of four expected fixtures.
+    (NEWS_FIXTURE_DIR / "tech_policy_press.xml").read_bytes()  # sanity
+    (fdir / "tech_policy_press.xml").write_bytes(
+        (NEWS_FIXTURE_DIR / "tech_policy_press.xml").read_bytes()
+    )
+    fetcher = TechPolicyPressFetcher(
+        config_path=NEWS_CONFIG_PATH, fixture_dir=fdir,
+    )
+    venues = fetcher.fetch()
+    assert venues  # tech_policy_press feed still produced records
+    # Other feeds were skipped, not crashed.
+    feed_ids = {v.raw_blob["feed_id"] for v in venues}
+    assert feed_ids == {"tech_policy_press"}
 
 
 # ---- IAPPFetcher ----
