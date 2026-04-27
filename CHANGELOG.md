@@ -5,6 +5,22 @@ in `CLAUDE.md §0`.
 
 ## 2026-04-23
 
+- **data**: curated batch 2 — promoted 12 AGVs from discovery-fetcher output
+  into canonical data (106 → 118 AGVs). Three buckets:
+  (a) 5 national AI Act competent / supervisory authorities surfaced by IAPP
+  (Germany BNetzA, Italy ACN, Netherlands AP, Brazil ANPD, Korea PIPC);
+  (b) 3 regional / IGO coordination bodies surfaced by UNESCO GAIGO
+  (Smart Africa AI Blueprint WG, ECOWAS AI Strategy WG, UNESCO Chairs &
+  UNITWIN AI Ethics Network); (c) 4 conference policy tracks surfaced by
+  ai_deadlines (NeurIPS Responsible GenAI, IJCAI AI Safety Track, UAI Causal
+  Safety Workshop, KDD Responsible AI Workshop). News articles (TPP /
+  government_pages press releases) intentionally skipped — 記事 ≠ venue.
+  Each row carries one `llm_classification` evidence row attributed to the
+  fetcher pipeline plus four `human_verification` rows
+  (entity_type/founded_date/current_state/legal_character) with
+  reviewer=s00048ri; `override_policy=lock_verified_only`.
+  +12 AGVs / +60 evidence rows / +12 lifecycle rows. Coverage matrix and
+  118 venue pages regenerated. pytest: 360/360 green.
 - **data**: migrated 30-AGV seed from v0.1 → v0.3 schema (Task 2). Split into
   `agv.csv` + `agv_relation.csv` (3) + `agv_evidence.csv` (120) +
   `agv_name_history.csv` (2) + `agv_lifecycle.csv` (35); reclassified FAccT and
