@@ -3,6 +3,26 @@
 Runtime data/decisions accepted into the repository. Spec revisions are tracked
 in `CLAUDE.md §0`.
 
+## 2026-05-13
+
+- **tools**: local review UI (`tools/review/`) online. Flask app + single-page
+  vanilla-JS frontend that consumes a `pipelines.diff` `DiffReport` and lets
+  the maintainer Accept / Edit / Reject / Defer each candidate row before it
+  gets written to canonical CSVs. Implements all five DiffReport categories
+  (new_venues / unverified_updates / conflicts / stale_candidates / renames)
+  with the three §4.7 conflict choices (keep_human / accept_llm /
+  note_evolution) surfaced as radio buttons. Side-by-side iframe preview of
+  the candidate's `primary_reference_url`, keyboard shortcuts (a/e/r/d +
+  j/k), continuous persistence to `decisions.json`, resumable mid-stream.
+  Companion `apply_decisions.py` writes decisions back to `data/agv.csv`,
+  `agv_evidence.csv`, `agv_lifecycle.csv`, `agv_name_history.csv` with proper
+  `human_verification` evidence rows and `human_verified_fields` /
+  `human_verified_at` stamping; `--dry-run` by default, `--apply` to commit.
+  Enum validation against AGVO v0.3; schema parity with
+  `tests/test_schema.py` is itself tested. pyproject.toml adds `[review]`
+  extras = flask>=3.0. pytest: 380/380 green (+20 new tests covering each
+  category × action × dry-run/apply path).
+
 ## 2026-04-23
 
 - **data**: curated batch 2 — promoted 12 AGVs from discovery-fetcher output

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AGV review</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #fff;
+    --border: #ddd;
+    --muted: #777;
+    --accept: #2a8c2a;
+    --reject: #b13b3b;
+    --defer:  #7a7a2a;
+    --edit:   #2a5e8c;
+    --conflict: #b13b3b;
+    --new: #2a8c2a;
+    --update: #2a5e8c;
+    --stale: #7a7a2a;
+    --rename: #6a3b8c;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+         margin: 0; padding: 0; background: var(--bg); color: #222; font-size: 14px; }
+  header { padding: 8px 16px; background: #222; color: #eee; display: flex;
+           align-items: center; gap: 16px; }
+  header h1 { font-size: 14px; margin: 0; font-weight: 600; }
+  header .meta { color: #bbb; font-size: 12px; }
+  header .grow { flex: 1; }
+  header input { background: #333; color: #eee; border: 1px solid #555;
+                 border-radius: 3px; padding: 4px 6px; font-size: 12px; }
+  main { display: grid; grid-template-columns: 1fr 1fr; height: calc(100vh - 36px); }
+  .panel { overflow-y: auto; padding: 12px; }
+  .panel.right { border-left: 1px solid var(--border); padding: 0; }
+  iframe { width: 100%; height: 100%; border: 0; background: #fff; }
+  .card { background: var(--card); border: 1px solid var(--border);
+          border-radius: 4px; padding: 12px; margin-bottom: 12px; }
+  .card h2 { font-size: 13px; margin: 0 0 8px 0; display: flex;
+             align-items: center; gap: 8px; }
+  .pill { display: inline-block; padding: 1px 6px; border-radius: 8px;
+          font-size: 11px; color: #fff; font-weight: 600; }
+  .pill.new_venues { background: var(--new); }
+  .pill.unverified_updates { background: var(--update); }
+  .pill.conflicts { background: var(--conflict); }
+  .pill.stale_candidates { background: var(--stale); }
+  .pill.renames { background: var(--rename); }
+  .pill.action_accept { background: var(--accept); }
+  .pill.action_edit { background: var(--edit); }
+  .pill.action_reject { background: var(--reject); }
+  .pill.action_defer { background: var(--defer); }
+  table.fields { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  table.fields th, table.fields td { padding: 3px 6px; text-align: left;
+                                     vertical-align: top; font-size: 12px; }
+  table.fields th { width: 180px; color: var(--muted); font-weight: 500; }
+  table.fields tr.changed { background: #fff8e6; }
+  table.fields select, table.fields input, table.fields textarea {
+    width: 100%; font-family: inherit; font-size: 12px; padding: 2px 4px;
+    border: 1px solid var(--border); border-radius: 3px; box-sizing: border-box;
+  }
+  table.fields textarea { font-family: inherit; height: 36px; resize: vertical; }
+  .actions { display: flex; gap: 6px; margin-top: 12px; align-items: center; }
+  .actions button { padding: 4px 10px; border: 1px solid var(--border);
+                    border-radius: 3px; background: #fff; cursor: pointer;
+                    font-size: 12px; }
+  .actions button.primary { background: #222; color: #fff; border-color: #222; }
+  .actions button.accept { border-color: var(--accept); color: var(--accept); }
+  .actions button.edit   { border-color: var(--edit);   color: var(--edit); }
+  .actions button.reject { border-color: var(--reject); color: var(--reject); }
+  .actions button.defer  { border-color: var(--defer);  color: var(--defer); }
+  .actions input[type=text] { flex: 1; padding: 4px 6px; border: 1px solid var(--border);
+                              border-radius: 3px; font-size: 12px; }
+  ul.queue { list-style: none; margin: 0; padding: 0; }
+  ul.queue li { padding: 6px 8px; border-bottom: 1px solid var(--border);
+                cursor: pointer; display: flex; gap: 8px; align-items: center;
+                font-size: 12px; }
+  ul.queue li:hover { background: #f0f0f0; }
+  ul.queue li.current { background: #ffe; font-weight: 600; }
+  ul.queue li.decided { opacity: 0.55; }
+  ul.queue li .ref { flex: 1; font-family: ui-monospace, monospace;
+                     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .progress { background: #eee; height: 4px; border-radius: 2px; overflow: hidden; }
+  .progress > div { background: var(--accept); height: 100%; transition: width 0.2s; }
+  .filters { display: flex; gap: 8px; padding: 6px; border-bottom: 1px solid var(--border);
+             background: #f5f5f5; }
+  .filters label { display: flex; align-items: center; gap: 4px; font-size: 11px;
+                   color: var(--muted); }
+  .helptext { color: var(--muted); font-size: 11px; }
+  .conflict-choice { margin-top: 8px; padding: 8px; background: #fff5f5;
+                     border: 1px solid #f0c0c0; border-radius: 3px; }
+  .conflict-choice label { display: block; margin: 2px 0; font-size: 12px; cursor: pointer; }
+  .raw { background: #f4f4f4; padding: 6px; border-radius: 3px; font-size: 11px;
+         font-family: ui-monospace, monospace; white-space: pre-wrap; max-height: 200px;
+         overflow-y: auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AGV review</h1>
+  <span class="meta" id="meta">loading…</span>
+  <div class="progress" style="width:220px"><div id="progressBar" style="width:0%"></div></div>
+  <span class="meta" id="progressText">0 / 0</span>
+  <span class="grow"></span>
+  <span class="meta">reviewer:</span>
+  <input id="reviewer" type="text" placeholder="github handle" size="14">
+</header>
+
+<main>
+  <aside class="panel" style="padding:0; border-right:1px solid var(--border)">
+    <div class="filters">
+      <label><input type="checkbox" id="hideDecided" checked> hide decided</label>
+      <label>filter:
+        <select id="filterCategory">
+          <option value="">all</option>
+          <option>new_venues</option>
+          <option>unverified_updates</option>
+          <option>conflicts</option>
+          <option>stale_candidates</option>
+          <option>renames</option>
+        </select>
+      </label>
+    </div>
+    <ul class="queue" id="queue"></ul>
+  </aside>
+
+  <section class="panel" id="cardPanel">
+    <div id="card"><p class="helptext">Loading…</p></div>
+    <details>
+      <summary class="helptext">Keyboard shortcuts</summary>
+      <ul class="helptext">
+        <li><kbd>a</kbd> accept &nbsp; <kbd>e</kbd> save edits &nbsp;
+            <kbd>r</kbd> reject &nbsp; <kbd>d</kbd> defer</li>
+        <li><kbd>j</kbd> / <kbd>↓</kbd> next &nbsp; <kbd>k</kbd> / <kbd>↑</kbd> prev</li>
+        <li><kbd>?</kbd> show this help</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="panel right">
+    <iframe id="preview" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
+  </section>
+</main>
+
+<script>
+// ---- state ----
+let STATE = null;        // { report, candidates, decisions, editable_fields }
+let ENUMS = null;        // { enums, editable_fields }
+let CURRENT = 0;         // index into filtered list
+let FILTERED = [];       // candidates after filter
+
+const $ = (sel, root=document) => root.querySelector(sel);
+const create = (tag, attrs={}, ...children) => {
+  const el = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs)) {
+    if (k === "class") el.className = v;
+    else if (k === "style") el.setAttribute("style", v);
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (v != null) el.setAttribute(k, v);
+  }
+  for (const c of children) {
+    if (c == null) continue;
+    el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+  }
+  return el;
+};
+
+async function api(path, opts={}) {
+  const res = await fetch(path, {
+    headers: {"Content-Type": "application/json"},
+    ...opts,
+  });
+  if (!res.ok) throw new Error(`${path} → ${res.status}`);
+  return res.json();
+}
+
+async function load() {
+  ENUMS = await api("/api/enums");
+  await refresh();
+}
+
+async function refresh() {
+  STATE = await api("/api/state");
+  $("#meta").textContent = `${STATE.report.run_id} • ${STATE.report.candidate_size} candidates`;
+  $("#reviewer").value = STATE.decisions.reviewer || "";
+  applyFilter();
+  renderQueue();
+  renderCard();
+}
+
+function applyFilter() {
+  const hideDecided = $("#hideDecided").checked;
+  const cat = $("#filterCategory").value;
+  FILTERED = STATE.candidates.filter(c => {
+    if (cat && c.category !== cat) return false;
+    if (hideDecided && STATE.decisions.decisions[c.key]) return false;
+    return true;
+  });
+  if (CURRENT >= FILTERED.length) CURRENT = Math.max(0, FILTERED.length - 1);
+}
+
+function renderQueue() {
+  const ul = $("#queue");
+  ul.innerHTML = "";
+  for (let i = 0; i < FILTERED.length; i++) {
+    const c = FILTERED[i];
+    const decided = STATE.decisions.decisions[c.key];
+    const li = create("li", {
+      class: (i === CURRENT ? "current " : "") + (decided ? "decided" : ""),
+      onclick: () => { CURRENT = i; renderCard(); renderQueue(); }
+    },
+      create("span", {class: `pill ${c.category}`}, c.category.replace("_"," ").slice(0,4)),
+      create("span", {class: "ref"}, c.ref),
+      decided ? create("span", {class: `pill action_${decided.action}`}, decided.action) : null,
+    );
+    ul.appendChild(li);
+  }
+  const total = STATE.candidates.length;
+  const done  = Object.keys(STATE.decisions.decisions || {}).length;
+  $("#progressText").textContent = `${done} / ${total}`;
+  $("#progressBar").style.width = `${total ? Math.round(100*done/total) : 0}%`;
+}
+
+function renderCard() {
+  const root = $("#card");
+  root.innerHTML = "";
+  if (!FILTERED.length) {
+    root.appendChild(create("p", {class: "helptext"},
+      "No candidates match the current filter. ✅ Done?"));
+    $("#preview").src = "about:blank";
+    return;
+  }
+  const c = FILTERED[CURRENT];
+  const existing = STATE.decisions.decisions[c.key];
+  const card = create("div", {class: "card"});
+  card.appendChild(create("h2", {},
+    create("span", {class: `pill ${c.category}`}, c.category),
+    `${CURRENT+1} / ${FILTERED.length}`,
+    create("span", {class: "helptext"}, c.ref),
+  ));
+
+  if (c.category === "new_venues")          renderNewVenue(card, c);
+  else if (c.category === "unverified_updates") renderFieldChange(card, c);
+  else if (c.category === "conflicts")      renderConflict(card, c);
+  else if (c.category === "stale_candidates") renderStale(card, c);
+  else if (c.category === "renames")        renderRename(card, c);
+
+  card.appendChild(renderActions(c, existing));
+  root.appendChild(card);
+
+  // iframe preview
+  const url = bestPreviewUrl(c);
+  $("#preview").src = url || "about:blank";
+}
+
+function bestPreviewUrl(c) {
+  if (c.category === "new_venues")
+    return c.data.agv_row.primary_reference_url || "";
+  if (c.category === "unverified_updates" || c.category === "conflicts")
+    return c.data.source_url || "";
+  if (c.category === "stale_candidates")
+    return "";  // no obvious URL; venue page is in main app
+  return "";
+}
+
+function renderNewVenue(card, c) {
+  const row = c.data.agv_row || {};
+  const tbl = create("table", {class: "fields"});
+  for (const f of ENUMS.editable_fields) {
+    tbl.appendChild(renderEditableField(c, f, row[f] ?? "", null));
+  }
+  card.appendChild(tbl);
+  card.appendChild(create("details", {},
+    create("summary", {class:"helptext"}, "Discovery provenance + evidence rows"),
+    create("pre", {class:"raw"}, JSON.stringify(c.data.provenance, null, 2)),
+    create("pre", {class:"raw"}, JSON.stringify(c.data.evidence_rows, null, 2)),
+  ));
+}
+
+function renderFieldChange(card, c) {
+  const d = c.data;
+  const tbl = create("table", {class: "fields"});
+  const addRow = (label, val) => tbl.appendChild(create("tr", {},
+    create("th", {}, label), create("td", {}, String(val || ""))));
+  addRow("agv_id", d.agv_id);
+  addRow("name_en", d.name_en);
+  addRow("field", d.field_name);
+  addRow("existing", d.existing_value);
+  tbl.appendChild(create("tr", {class:"changed"},
+    create("th", {}, "proposed"),
+    create("td", {}, renderEnumOrText(c, d.field_name, d.proposed_value)),
+  ));
+  addRow("rationale", d.rationale);
+  addRow("source", d.source_url);
+  card.appendChild(tbl);
+}
+
+function renderConflict(card, c) {
+  const d = c.data;
+  renderFieldChange(card, c);
+  // conflict_choice block (§4.7 a/b/c)
+  const existing = STATE.decisions.decisions[c.key] || {};
+  const cur = existing.conflict_choice || "";
+  const block = create("div", {class: "conflict-choice"},
+    create("strong", {}, "§4.7 conflict resolution"),
+    create("label", {},
+      create("input", {type:"radio", name:`cc_${c.key}`, value:"keep_human",
+        checked: cur==="keep_human" ? "" : null,
+        onchange: () => setConflictChoice(c, "keep_human")}),
+      " (a) keep human-verified value"),
+    create("label", {},
+      create("input", {type:"radio", name:`cc_${c.key}`, value:"accept_llm",
+        checked: cur==="accept_llm" ? "" : null,
+        onchange: () => setConflictChoice(c, "accept_llm")}),
+      " (b) accept LLM proposal and re-verify"),
+    create("label", {},
+      create("input", {type:"radio", name:`cc_${c.key}`, value:"note_evolution",
+        checked: cur==="note_evolution" ? "" : null,
+        onchange: () => setConflictChoice(c, "note_evolution")}),
+      " (c) note venue evolution (accept + add note)"),
+    create("div", {class:"helptext"},
+      `human_verified_at: ${d.existing_verified_at}, override_policy: ${d.override_policy}`),
+  );
+  card.appendChild(block);
+}
+
+function renderStale(card, c) {
+  const d = c.data;
+  const tbl = create("table", {class: "fields"});
+  const addRow = (label, val) => tbl.appendChild(create("tr", {},
+    create("th", {}, label), create("td", {}, String(val || ""))));
+  addRow("agv_id", d.agv_id);
+  addRow("name_en", d.name_en);
+  addRow("convening_frequency", d.convening_frequency);
+  addRow("last_observed_activity_date", d.last_observed_activity_date);
+  addRow("months since LOA", d.months_since_loa);
+  addRow("threshold (months)", d.threshold_months);
+  card.appendChild(tbl);
+  card.appendChild(create("p", {class:"helptext"},
+    "Accept = leave for human follow-up. Reject = keep as active (false positive). Defer = re-evaluate next cycle."));
+}
+
+function renderRename(card, c) {
+  const d = c.data;
+  const tbl = create("table", {class: "fields"});
+  const addRow = (label, val) => tbl.appendChild(create("tr", {},
+    create("th", {}, label), create("td", {}, String(val || ""))));
+  addRow("candidate_agv_id", d.candidate_agv_id);
+  addRow("candidate_name", d.candidate_name);
+  addRow("matched (existing) agv_id", d.matched_agv_id);
+  addRow("former name on file", d.former_name);
+  addRow("valid_to", d.name_history_valid_to);
+  card.appendChild(tbl);
+}
+
+// ---- editable field rendering ----
+
+function renderEditableField(c, field, value, existing) {
+  const row = create("tr", {});
+  row.appendChild(create("th", {}, field));
+  const cell = create("td", {});
+  const td = renderEnumOrText(c, field, value);
+  cell.appendChild(td);
+  row.appendChild(cell);
+  return row;
+}
+
+function renderEnumOrText(c, field, value) {
+  const decisionKey = c.key;
+  const enums = ENUMS.enums[field];
+  if (enums) {
+    const sel = create("select", {
+      "data-field": field, "data-key": decisionKey,
+      onchange: () => markDirty(c),
+    });
+    for (const opt of enums) {
+      const o = create("option", {value: opt}, opt || "(none)");
+      if (opt === value) o.setAttribute("selected", "");
+      sel.appendChild(o);
+    }
+    return sel;
+  }
+  if (field === "notes" || field === "name_native") {
+    return create("textarea", {
+      "data-field": field, "data-key": decisionKey,
+      oninput: () => markDirty(c),
+    }, value || "");
+  }
+  return create("input", {
+    type: "text", value: value || "",
+    "data-field": field, "data-key": decisionKey,
+    oninput: () => markDirty(c),
+  });
+}
+
+function collectEdits(c) {
+  const inputs = document.querySelectorAll(
+    `[data-key="${c.key.replace(/"/g,'\\"')}"]`);
+  const out = {};
+  for (const inp of inputs) {
+    out[inp.dataset.field] = inp.value;
+  }
+  return out;
+}
+
+let DIRTY = false;
+function markDirty() { DIRTY = true; }
+
+// ---- actions ----
+
+function renderActions(c, existing) {
+  const wrap = create("div", {class: "actions"});
+  const commentInp = create("input", {type:"text", placeholder:"comment (optional)",
+    value: existing?.comment || ""});
+  const submit = async (action) => {
+    const body = {
+      category: c.category, ref: c.ref, action,
+      comment: commentInp.value,
+    };
+    if (action === "edit" || (c.category === "new_venues" && action === "accept")) {
+      body.edits = collectEdits(c);
+    }
+    if (c.category === "conflicts" && action !== "defer") {
+      const cc = document.querySelector(`input[name="cc_${c.key}"]:checked`);
+      body.conflict_choice = cc ? cc.value : "";
+      if (!body.conflict_choice) {
+        alert("Pick a §4.7 conflict choice first (a/b/c).");
+        return;
+      }
+    }
+    const reviewer = $("#reviewer").value.trim();
+    if (reviewer && reviewer !== STATE.decisions.reviewer) {
+      await api("/api/reviewer", {method:"POST", body: JSON.stringify({reviewer})});
+    }
+    const res = await fetch("/api/decision", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      alert("validation error:\n" + (data.errors || []).join("\n"));
+      return;
+    }
+    DIRTY = false;
+    await refresh();
+    if (CURRENT < FILTERED.length - 1) {
+      CURRENT += 1;
+      renderCard(); renderQueue();
+    }
+  };
+  wrap.appendChild(create("button", {class:"accept", onclick: () => submit("accept")},
+    "Accept (a)"));
+  if (c.category === "new_venues" || c.category === "unverified_updates" ||
+      c.category === "conflicts") {
+    wrap.appendChild(create("button", {class:"edit", onclick: () => submit("edit")},
+      "Save edits (e)"));
+  }
+  wrap.appendChild(create("button", {class:"reject", onclick: () => submit("reject")},
+    "Reject (r)"));
+  wrap.appendChild(create("button", {class:"defer", onclick: () => submit("defer")},
+    "Defer (d)"));
+  wrap.appendChild(commentInp);
+  // remember which action callbacks the keyboard handler can invoke
+  wrap.dataset.bindable = "true";
+  wrap._submit = submit;
+  return wrap;
+}
+
+async function setConflictChoice(c, choice) {
+  // optimistic visual; saved when user clicks Accept / Edit
+  const existing = STATE.decisions.decisions[c.key] || {};
+  existing.conflict_choice = choice;
+  STATE.decisions.decisions[c.key] = existing;
+}
+
+// ---- keyboard ----
+
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA"
+      || e.target.tagName === "SELECT") return;
+  const actions = document.querySelector(".card .actions");
+  const submit = actions?._submit;
+  if (e.key === "a" && submit) submit("accept");
+  else if (e.key === "e" && submit) submit("edit");
+  else if (e.key === "r" && submit) submit("reject");
+  else if (e.key === "d" && submit) submit("defer");
+  else if (e.key === "j" || e.key === "ArrowDown") {
+    if (CURRENT < FILTERED.length - 1) { CURRENT += 1; renderCard(); renderQueue(); }
+  } else if (e.key === "k" || e.key === "ArrowUp") {
+    if (CURRENT > 0) { CURRENT -= 1; renderCard(); renderQueue(); }
+  }
+});
+
+$("#hideDecided").addEventListener("change", () => { applyFilter(); renderQueue(); renderCard(); });
+$("#filterCategory").addEventListener("change", () => { applyFilter(); renderQueue(); renderCard(); });
+$("#reviewer").addEventListener("change", async () => {
+  await api("/api/reviewer", {method:"POST",
+    body: JSON.stringify({reviewer: $("#reviewer").value.trim()})});
+});
+
+load().catch(e => {
+  $("#card").innerHTML = `<p style="color:red">${e.message}</p>`;
+});
+</script>
+</body>
+</html>
