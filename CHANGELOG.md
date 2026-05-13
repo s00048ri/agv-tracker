@@ -5,6 +5,17 @@ in `CLAUDE.md §0`.
 
 ## 2026-05-13
 
+- **docs**: `docs/codebook.md` + `docs/coding_manual.md` published.
+  Codebook (589 lines): operational reference for every field and every
+  enum value in the v0.3 schema, with concrete examples from current 118
+  AGVs and explicit "common confusion" flags for the ambiguous pairs
+  (standalone_governance_conference vs conference_policy_track, etc.).
+  Coding manual (569 lines): how-to guide for the human reviewer —
+  decision trees per dimension, §4.7 conflict-resolution decision tree,
+  §3.5 stale-detection decision tree, edge cases (AISI Network geography,
+  summit series, workshop-name drift, member-vs-venue), audit-trail rules,
+  and a printable quick-reference card. Together they aim for 80%
+  inter-coder agreement within 5 min/row.
 - **tools**: local review UI (`tools/review/`) online. Flask app + single-page
   vanilla-JS frontend that consumes a `pipelines.diff` `DiffReport` and lets
   the maintainer Accept / Edit / Reject / Defer each candidate row before it
