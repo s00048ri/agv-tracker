@@ -2,7 +2,7 @@
 
 A static web tracker for **AI Governance Venues** — international organizations, intergovernmental fora, multistakeholder coalitions, and recurring conferences whose mandate addresses the governance of AI.
 
-This is a **v0.3 working dataset** with 106 verified seed venues produced
+This is a **v0.3 working dataset** with 118 human-verified venues produced
 under the AGVO v0.3 ontology (see `CLAUDE.md` for the spec and `CHANGELOG.md`
 for the dataset history).
 
@@ -61,4 +61,6 @@ See `src/methodology.md` and the AGVO ontology specification.
 
 ## Contributing
 
-Issues and PRs welcome. For data corrections, see the "Edit on GitHub" link on each venue's detail page (planned for v0.2).
+Issues and PRs welcome. For data corrections, use the "Edit on GitHub" link on each
+venue's detail page — it opens `data/agv.csv` directly. Any data change must carry
+the evidence rows described in `CLAUDE.md` §8.6; CI enforces this.
