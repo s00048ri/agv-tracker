@@ -142,6 +142,67 @@ def test_cache_hit_skips_http(monkeypatch, tmp_path: Path):
     assert "initiative-card" in html
 
 
+# ---- robots.txt fetching must be bounded (regression: first live monthly-fetch) ----
+
+class _FakeRobotsResp:
+    def __init__(self, text: str):
+        self.text = text
+
+    def raise_for_status(self):
+        return None
+
+
+def test_robots_fetch_never_uses_unbounded_robotparser_read(monkeypatch):
+    """RobotFileParser.read() calls urlopen() with no timeout and can hang forever.
+
+    The first live monthly-fetch run stalled ~30 min inside it and the job was
+    killed, so _can_fetch must fetch robots.txt itself with a timeout.
+    """
+    import urllib.robotparser
+
+    def boom(self):
+        raise AssertionError("RobotFileParser.read() must not be used (unbounded)")
+
+    monkeypatch.setattr(urllib.robotparser.RobotFileParser, "read", boom)
+
+    seen: list[dict] = []
+
+    def fake_get(url, **kw):
+        seen.append({"url": url, **kw})
+        return _FakeRobotsResp("User-agent: *\nAllow: /\n")
+
+    import httpx
+    monkeypatch.setattr(httpx, "get", fake_get)
+
+    f = _DummyFetcher()
+    assert f._can_fetch("https://example.invalid/page") is True
+    assert len(seen) == 1
+    assert seen[0]["url"] == "https://example.invalid/robots.txt"
+    assert seen[0]["timeout"] == f.timeout_seconds
+
+
+def test_robots_unreachable_defaults_to_permissive(monkeypatch):
+    def hang(*a, **kw):
+        raise TimeoutError("read timed out")
+
+    import httpx
+    monkeypatch.setattr(httpx, "get", hang)
+
+    f = _DummyFetcher()
+    assert f._can_fetch("https://example.invalid/page") is True
+
+
+def test_robots_disallow_is_respected(monkeypatch):
+    import httpx
+    monkeypatch.setattr(
+        httpx, "get",
+        lambda url, **kw: _FakeRobotsResp("User-agent: *\nDisallow: /\n"),
+    )
+
+    f = _DummyFetcher()
+    assert f._can_fetch("https://example.invalid/page") is False
+
+
 def test_static_http_success(monkeypatch, tmp_path: Path):
     """When httpx returns HTML with all required selectors, no Playwright path."""
     f = _DummyFetcher(cache_dir=tmp_path)

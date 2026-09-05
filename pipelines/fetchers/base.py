@@ -175,7 +175,20 @@ class BaseFetcher(ABC):
             rp = urllib.robotparser.RobotFileParser()
             rp.set_url(robots_url)
             try:
-                rp.read()
+                # NOT RobotFileParser.read(): it calls urllib.request.urlopen()
+                # with no timeout, so a host that accepts the connection but
+                # never responds blocks the whole run forever (observed on the
+                # first live monthly-fetch: ~30 min hang, job killed). Fetch it
+                # ourselves so the same timeout budget as page fetches applies.
+                import httpx
+                resp = httpx.get(
+                    robots_url,
+                    timeout=self.timeout_seconds,
+                    follow_redirects=True,
+                    headers={"User-Agent": USER_AGENT},
+                )
+                resp.raise_for_status()
+                rp.parse(resp.text.splitlines())
             except Exception as e:  # noqa: BLE001
                 self._log.info("robots.txt unreachable at %s: %s (defaulting to allow)",
                                robots_url, e)
@@ -215,9 +228,11 @@ class BaseFetcher(ABC):
                 "  playwright install chromium"
             ) from e
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(headless=True, timeout=timeout * 1000)
             try:
                 page = browser.new_page(user_agent=USER_AGENT)
+                # Bounds page.content() and any other implicit wait, not just goto().
+                page.set_default_timeout(timeout * 1000)
                 page.goto(url, timeout=timeout * 1000, wait_until="networkidle")
                 html = page.content()
             finally:
