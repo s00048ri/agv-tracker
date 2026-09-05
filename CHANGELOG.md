@@ -3,6 +3,49 @@
 Runtime data/decisions accepted into the repository. Spec revisions are tracked
 in `CLAUDE.md §0`.
 
+## 2026-09-05
+
+- **infra**: repository published at <https://github.com/s00048ri/agv-tracker>
+  (public; code MIT, data CC-BY 4.0) and `main` pushed. Four workflows
+  registered. Repository secrets are **not** yet provisioned, so
+  `monthly-fetch` ran with the classifier in `--mock` mode and `deploy`
+  has not run.
+- **pipeline**: first live `monthly-fetch` on GitHub Actions
+  (run 33961283592) **timed out at 30 min and was killed**.
+  `BaseFetcher._can_fetch` called `urllib.robotparser.RobotFileParser.read()`,
+  which calls `urllib.request.urlopen()` with no timeout; `au_disr_ai`
+  accepted the connection and never responded, so the run hung for ~29.5 min.
+  `government_pages`' per-target `except` could not isolate it because the
+  call never returned. Fixed by fetching robots.txt through httpx under the
+  fetcher's own timeout budget; Playwright launch and page defaults are now
+  bounded too. Re-run 33962767018 completed in ~3 min.
+- **pipeline**: the same run proposed **17 new venues, all 17 of which were
+  articles** — 15 AI Snake Oil posts, a gov.uk press release, a consultation
+  notice. `pipelines/venue_names.py` now rejects headlines before they become
+  candidates, unwraps CDATA (which had been reaching `name_en` and `agv_id`
+  as literal `<![CDATA[...]]>`), and flags the registry verification-family
+  `primary_reference_url` as a placeholder for the reviewer to replace.
+  Calibrated on real data in both directions: 0 of the 17 articles survive,
+  112 of the 118 curated names in `data/agv.csv` pass. pytest: 397 green.
+- **sources**: **the discovery layer is largely non-functional and the docs
+  said otherwise.** Five of seven fetchers match nothing on their live pages,
+  because their fixtures were authored to fit the selectors rather than
+  captured from the sites: `initiative-card` appears 60× in
+  `tests/fixtures/oecd_ai/dashboards.html` and 0× on the live OECD.AI
+  dashboard; `gaigo-entry` 60 vs 0; `iapp-law-entry` 40 vs 0. A green fetcher
+  test proves the parser handles its own fixture, not that the source is
+  covered. `sources/registry.yml` gains `fetcher_status` /
+  `fetcher_status_checked` / `fetcher_status_note` recording what each
+  fetcher does against live targets, and `pipelines/README.md` no longer
+  claims seven sources are online. Rebuilding them needs live DOM
+  inspection, tracked as a separate task; `ai_deadlines` is the one easy fix
+  (upstream `conferences.yml`) and is also the lowest-yield (~1 governance
+  venue).
+- **data**: stale detection flagged 67 of 118 AGVs, correctly —
+  `last_observed_activity_date` sits around 2026-03/04 and the `continuous`
+  threshold is 6 months (§3.5). The dataset needs a refresh pass, not a
+  threshold change.
+
 ## 2026-05-13
 
 - **docs**: `docs/codebook.md` + `docs/coding_manual.md` published.

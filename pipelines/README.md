@@ -8,7 +8,7 @@ monthly PRs.
 
 | Subpackage | Purpose | Status |
 |---|---|---|
-| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — **all 7 discovery sources online** (OECD.AI, UNESCO GAIGO, government_pages, Tech Policy Press, IAPP, ai_deadlines, EvalCommunity map). EvalCommunity remains on §12.7 probation; see [Discovery fetcher roadmap](#discovery-fetcher-roadmap) |
+| `fetchers/` | Per-source discovery fetchers (§5.2) | §9 Task 4 — 7 modules exist, **2 produce records against live sites** (`government_pages`, `tech_policy_press`, both partial). The other 5 match nothing live; see [Discovery fetcher status](#discovery-fetcher-status) |
 | `normalize.py` | RawVenue → AGV candidate rows | §9 Task 6 — online |
 | `classify.py` | LLM-assisted AGVO classification | §9 Task 5 — online |
 | `diff.py`     | Lock-aware diff + stale detection | §9 Task 6 — online |
@@ -92,19 +92,53 @@ Every fetcher inherits from `pipelines.fetchers.base.BaseFetcher`:
 6. Regenerate `sources/coverage_matrix.md` if the source's
    `entity_types_covered` changed.
 
-## Discovery fetcher roadmap
+## Discovery fetcher status
 
-All seven discovery sources declared in `sources/registry.yml` now
-have a fetcher (`oecd_ai_navigator`, `unesco_gaigo`, the config-driven
-`government_pages`, `tech_policy_press`, `iapp_ai_law_tracker`,
-`ai_deadlines`, `evalcommunity_map`). The last one is on §12.7
-probation — kept in the chain so we can evaluate update cadence +
-deduplication empirically over the next ~3 monthly runs and decide
-whether to drop it before v0.4. The monthly pipeline therefore currently surfaces only
-what OECD.AI's Policy Navigator catches — roughly *national AI
-strategies* and *major intergovernmental initiatives*. Non-OECD-orbit
-venues are systematically invisible to the fetcher until the
-corresponding module exists.
+All seven discovery sources declared in `sources/registry.yml` have a
+fetcher module. **Having a module is not the same as producing records.**
+The first live run on GitHub Actions (2026-09-05, run 33962767018) gave
+the honest picture:
+
+| fetcher | live records | status |
+|---|---:|---|
+| `government_pages` | 2 (of 12 targets) | `partial` |
+| `tech_policy_press` | 15 (all articles) | `partial` |
+| `oecd_ai_navigator` | 0 | `selectors_unverified` |
+| `unesco_gaigo` | 0 | `selectors_unverified` |
+| `iapp_ai_law_tracker` | 0 | `selectors_unverified` |
+| `ai_deadlines` | 0 | `selectors_unverified` |
+| `evalcommunity_map` | 0 | `selectors_unverified` |
+
+`selectors_unverified` means the module runs, respects robots.txt, falls
+back to Playwright — and matches nothing on the live page. The cause is
+the same in each case: the fixtures under `tests/fixtures/` were authored
+to fit the selectors rather than captured from the site. `initiative-card`
+occurs 60 times in `tests/fixtures/oecd_ai/dashboards.html` and 0 times on
+`https://oecd.ai/en/dashboards/overview`; `gaigo-entry` 60 vs 0;
+`iapp-law-entry` 40 vs 0. A green fetcher test therefore says the parser
+handles its own fixture, not that the source is covered.
+
+**Rebuilding these requires live DOM inspection, not a selector tweak.**
+Notes for whoever picks it up:
+
+- `oecd_ai_navigator` — the old base_url `/en/dashboards/overview/policy`
+  now 404s; `/en/dashboards/overview` serves a Bulma-classed shell with no
+  API URL in the HTML. Likely SPA-rendered; start from a real Playwright
+  session.
+- `iapp_ai_law_tracker` — the live page carries two `application/ld+json`
+  blocks, an unexplored and probably more stable route than CSS selectors.
+- `ai_deadlines` — upstream `conferences.yml` (192 entries) is fetchable
+  and already structured, so this one is easy. It is also **low-yield**:
+  it holds roughly one governance venue (FAccT). Fix it for completeness,
+  not for coverage.
+- `government_pages` — the 10 failing targets fail for reasons no selector
+  fixes: 404 (us_nist, ca_ised, cn_cac), 403 (jp_mofa, jp_meti), robots
+  disallow (fr_elysee), timeout (kr_msit), HTTP/2 error (au_disr).
+- `tech_policy_press` — both Substack feeds return 403 to the fetcher's
+  user agent; techpolicy.press's own feed fails gzip decoding.
+
+Until that work lands, the monthly pipeline surfaces only what those two
+partial fetchers catch, and the dataset grows mainly by hand-curation.
 
 ### What the current pipeline misses (worked examples)
 
@@ -115,10 +149,11 @@ corresponding module exists.
 | **AI Safety Asia (AISA)** | `intl_ngo_thinktank`, regional (Asia) | `unesco_gaigo` (regional bodies) or `tech_policy_press` | Asian regional bodies outside OECD's core focus |
 | MOFA OECD-related conference page | `one_off_summit` or `intergov_forum` | Direct MOFA / host-government fetcher, or OECD.AI when the deposit lands | OECD.AI may lag the host-government announcement |
 
-These are *representative* — the dataset's v0.3 seed of 106 venues is a
-deliberate sample, not a census (CLAUDE.md §10 targets ≥10 per
-`entity_type` for v1.0). Covering gaps like the above requires adding
-fetchers, not hand-seeding each new venue.
+These are *representative* — the dataset's 118 venues are a deliberate
+sample, not a census (CLAUDE.md §10 targets ≥10 per `entity_type` for
+v1.0). Closing gaps like the above requires fetchers that actually parse
+their sources; as of the 2026-09-05 run, five of the seven do not, so the
+dataset still grows by hand-curation.
 
 ### Priority order for new fetchers
 
@@ -129,34 +164,35 @@ and what gap its fetcher would close.
    Observatory.~~ **DONE.** Closed the "Asian / African / LAC regional
    bodies" blind spot — RAM pilot reports + country profiles +
    regional initiatives (AU / ASEAN / fAIr LAC / MENA / Pacific).
-   Live strategy TBD on first online run; see
-   `pipelines/fetchers/unesco_gaigo.py` docstring.
+   **Module only** — matches nothing on the live page; see
+   [Discovery fetcher status](#discovery-fetcher-status).
 2. ~~**`government_pages`** — config-driven major-government AI pages.~~
    **DONE.** `pipelines/fetchers/government_pages.py` is one module
    driving N target pages listed in `sources/government_pages.yml`.
    Initial MVP config ships UK DSIT / US NIST / EU AI Office /
    Singapore IMDA / Canada ISED / Australia DISR. Extend to a new
    country by appending ~10 YAML lines; no Python change required.
-   Live strategy TBD per target on first online run; see the module
-   docstring.
+   Partly working live: 2 of 12 targets produced records on 2026-09-05.
 3. ~~**`tech_policy_press`** — news monitoring for newly-formed
    associations, alliances, and side events.~~ **DONE.**
    `pipelines/fetchers/tech_policy_press.py` reads the site's AI-
    category RSS feed and filters to AI-governance relevance via
    `INCLUDE_REGEX` (AI / AISI / AI Office / frontier model / content
-   provenance / C2PA / watermark / …). IASEAI and AI Safety Connect —
-   the two user-raised examples of pipeline blind spots — are now
-   caught at the first run. Article-vs-venue caveat: the fetcher
-   emits one RawVenue per article; a reviewer decides which of those
-   correspond to a new AGV. Live strategy TBD on first online run.
+   provenance / C2PA / watermark / …). The first live run caught
+   neither IASEAI nor AI Safety Connect — it returned 15 articles from
+   one surviving feed, and both Substack feeds 403'd. Article-vs-venue
+   is no longer left to the reviewer: `pipelines/venue_names.py` drops
+   headlines before they reach the PR, and an article contributes a
+   candidate only when it names a venue in its text.
 4. ~~**`iapp_ai_law_tracker`** — Global AI Law & Policy Tracker.~~
    **DONE.** `pipelines/fetchers/iapp.py` parses the tracker into
    three entry kinds (`statute` / `regulation` / `agency`); the
    `agency` rows are exactly where regulator AGVs live (EU AI Office,
    Spain AESIA, Korea PIPC AI division, India AISI, …). Extends to
    `treaty_body` coverage via CoE CAI, UN CCW GGE on LAWS, and the
-   International AISI Network. Live strategy TBD on first online run;
-   see the module docstring.
+   International AISI Network. **Module only** — matches nothing on the
+   live page; the page's `application/ld+json` blocks are the likely
+   route in. See [Discovery fetcher status](#discovery-fetcher-status).
 5. ~~**`ai_deadlines`** — academic conference deadlines aggregator.~~
    **DONE.** `pipelines/fetchers/ai_deadlines.py` filters the feed
    via INCLUDE_REGEX to governance/ethics/safety/fairness-layered
@@ -165,9 +201,13 @@ and what gap its fetcher would close.
    privacy / interpretability / explainability / bias + named
    conferences FAccT/AIES/EAAMO/FORC/ICAIL). Pure technical tracks
    (RL theory / GNN / distributed training / 3D vision) are rejected.
+   **Module only** — matches nothing on the live page. The upstream
+   `conferences.yml` would be an easy fix but holds ~1 governance venue.
 6. ~~**`evalcommunity_map`** — on probation per §12.7.~~ **DONE,
    probation preserved.** `pipelines/fetchers/evalcommunity_map.py`
-   ships so the source can be evaluated empirically. Drop by setting
+   ships so the source can be evaluated empirically. **Module only** —
+   matches nothing on the live page, so the probation has produced no
+   evidence either way. Drop by setting
    `fetcher_module: null` in `sources/registry.yml` and unlinking
    from `scripts/monthly_update.sh` if the next 3 runs show stale or
    duplicated output vs UNESCO GAIGO / IAPP.

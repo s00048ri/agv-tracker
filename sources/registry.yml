@@ -15,6 +15,16 @@
 #                          (required for discovery sources that are or will be fetched)
 #   update_frequency       human-readable cadence label (e.g. monthly, quarterly, annual, ad_hoc)
 #   last_verified_alive    ISO date; last day the URL was manually confirmed reachable
+#   fetcher_status         for entries with a fetcher_module, whether that fetcher can
+#                          actually parse its live target today. One of:
+#                            operational           — verified against the live page
+#                            partial               — some targets/feeds parse, others fail
+#                            selectors_unverified  — fetcher runs but matches nothing live;
+#                                                    its fixtures were authored to fit the
+#                                                    selectors rather than captured from the site
+#                          Set from an observed run, never from a fixture-backed test.
+#   fetcher_status_checked ISO date the fetcher_status above was last observed
+#   fetcher_status_note    what was observed
 #   notes                  optional freeform
 #
 # Invariants (enforced by scripts/generate_coverage_matrix.py):
@@ -43,6 +53,10 @@ sources:
     fetch_strategy: http_with_playwright_fallback
     update_frequency: monthly
     last_verified_alive: 2026-04-23
+    fetcher_status: selectors_unverified
+    fetcher_status_checked: 2026-09-05
+    fetcher_status_note: >-
+      Live https://oecd.ai/en/dashboards/overview returns 0 matches for the fetcher's 'initiative-card' selector (60 matches in its fixture); the old base_url .../overview/policy now 404s. Yields 0 records.
     notes: "Best general-purpose discovery for international initiatives; Task 4 target."
 
   - id: unesco_gaigo
@@ -56,6 +70,10 @@ sources:
     fetch_strategy: http_with_playwright_fallback
     update_frequency: quarterly
     last_verified_alive: 2026-04-23
+    fetcher_status: selectors_unverified
+    fetcher_status_checked: 2026-09-05
+    fetcher_status_note: >-
+      Live page returns 0 matches for 'gaigo-entry' (60 in fixture). Yields 0 records.
     notes: "Country-level entities and emerging regional bodies."
 
   - id: iapp_ai_law_tracker
@@ -70,6 +88,10 @@ sources:
     fetch_strategy: http_with_playwright_fallback
     update_frequency: monthly
     last_verified_alive: 2026-04-24
+    fetcher_status: selectors_unverified
+    fetcher_status_checked: 2026-09-05
+    fetcher_status_note: >-
+      Live page returns 0 matches for 'iapp-law-entry' (40 in fixture). Two application/ld+json blocks on the page are an unexplored route. Yields 0 records.
     notes: "Statutes / regulations / supervisory agencies by jurisdiction. Entry kinds (statute, regulation, agency) land in RawVenue.raw_blob.entry_kind; the 'agency' rows carry the national_regulator_intl / treaty_body candidates."
 
   - id: government_pages
@@ -85,6 +107,10 @@ sources:
     fetch_strategy: http_with_playwright_fallback
     update_frequency: monthly
     last_verified_alive: 2026-04-24
+    fetcher_status: partial
+    fetcher_status_checked: 2026-09-05
+    fetcher_status_note: >-
+      2 of 12 targets produced records on 2026-09-05: us_nist 404, ca_ised 404, au_disr HTTP/2 error, jp_mofa + jp_meti 403, kr_msit timeout, fr_elysee robots-disallowed, cn_cac 404.
     notes: "Aggregates 6 English-native government AI pages (UK DSIT / US NIST / EU AI Office / Singapore IMDA / Canada ISED / Australia DISR) via sources/government_pages.yml. Extend by appending YAML entries, not writing new Python modules."
 
   - id: evalcommunity_map
@@ -101,6 +127,10 @@ sources:
     fetch_strategy: http_with_playwright_fallback
     update_frequency: quarterly
     last_verified_alive: 2026-04-24
+    fetcher_status: selectors_unverified
+    fetcher_status_checked: 2026-09-05
+    fetcher_status_note: >-
+      Live page yields 0 records. Already on §12.7 probation.
     notes: "On §12.7 probation. Fetcher landed so the source can be evaluated empirically (update cadence + deduplication vs UNESCO GAIGO / IAPP). Drop by setting fetcher_module: null and unlinking from scripts/monthly_update.sh if the next three monthly runs show stale / duplicated output."
 
   - id: ai_deadlines
@@ -115,6 +145,10 @@ sources:
     fetch_strategy: http_with_playwright_fallback
     update_frequency: monthly
     last_verified_alive: 2026-04-24
+    fetcher_status: selectors_unverified
+    fetcher_status_checked: 2026-09-05
+    fetcher_status_note: >-
+      Live page yields 0 records. Upstream conferences.yml (192 entries) is fetchable and structured, but holds ~1 governance venue (FAccT), so repair is low-yield.
     notes: "Seeds candidate governance-relevant conference policy tracks (workshops at NeurIPS/ICML/ICLR/AAAI/ACL + standalone conferences FAccT/AIES/EAAMO/FORC/ICAIL). INCLUDE_REGEX filters to governance/ethics/safety-layered tracks only."
 
   - id: tech_policy_press
@@ -131,6 +165,10 @@ sources:
     fetch_strategy: http_with_playwright_fallback
     update_frequency: monthly
     last_verified_alive: 2026-04-24
+    fetcher_status: partial
+    fetcher_status_checked: 2026-09-05
+    fetcher_status_note: >-
+      AI Snake Oil feed parses; techpolicy.press feed fails gzip decode and both Substack feeds (CAIS, Import AI) return 403. 15 records, all articles.
     notes: "AI category RSS feed. News-article-level candidates — reviewer filters to actual AGVs in monthly PR. See pipelines/README.md for the article-vs-venue caveat."
 
   # ------------------------------------------------------------------
