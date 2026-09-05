@@ -76,7 +76,12 @@ jobs:
           commit-message: "chore(monthly): ${{ steps.meta.outputs.month }} fetch + diff"
           # Only stage changes that belong in a committed monthly update;
           # monthly_pr_body.md is NOT staged (it lives only as the PR body).
+          # pipelines/reports/ carries the dated DiffReport, which is what
+          # gives the PR a diff — the pipeline never edits data/ itself, so
+          # without it create-pull-request has nothing to commit and silently
+          # opens no PR (observed 2026-09-05: pull-request-operation = none).
           add-paths: |
             data/
             sources/coverage_matrix.md
+            pipelines/reports/
           delete-branch: true

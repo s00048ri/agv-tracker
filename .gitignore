@@ -14,3 +14,7 @@ build/
 .coverage
 .ipynb_checkpoints/
 notebooks/figures/
+
+# Monthly pipeline scratch output (the durable copy lives in pipelines/reports/)
+monthly_report.json
+monthly_pr_body.md

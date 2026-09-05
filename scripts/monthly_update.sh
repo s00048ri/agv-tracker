@@ -15,10 +15,11 @@
 #   4. pipelines.candidates_to_pr   — Markdown body for the PR
 #
 # Output (relative to repo root):
-#   monthly_pr_body.md  — consumed by peter-evans/create-pull-request
-#   monthly_report.json — raw DiffReport (committed via peter-evans --add-paths
-#                         only if we choose to track it; default is to keep it
-#                         as a PR attachment only)
+#   monthly_pr_body.md            — consumed by peter-evans/create-pull-request
+#   monthly_report.json           — raw DiffReport, scratch (gitignored)
+#   pipelines/reports/YYYY-MM.json — the same report, committed. This is what
+#                         gives the monthly PR a diff, and what the review UI
+#                         reads: python -m tools.review.server that path.
 #
 # Fallback behaviour:
 #   - If ANTHROPIC_API_KEY is unset, the classifier silently switches to
@@ -131,6 +132,17 @@ uv run python -m pipelines.diff \
     --quiet
 echo "  report saved to monthly_report.json"
 echo "::endgroup::"
+
+# The monthly proposal is the run's only durable output: the pipeline does
+# not edit data/ (a human does, after review). Commit the report under a
+# dated path so the PR carries a diff at all — without this,
+# peter-evans/create-pull-request finds nothing staged and opens no PR —
+# and so the review UI can be pointed straight at the PR branch:
+#   python -m tools.review.server pipelines/reports/YYYY-MM.json
+REPORT_MONTH="$(date -u +%Y-%m)"
+mkdir -p "$REPO_ROOT/pipelines/reports"
+cp "$REPO_ROOT/monthly_report.json" "$REPO_ROOT/pipelines/reports/$REPORT_MONTH.json"
+echo "  archived report to pipelines/reports/$REPORT_MONTH.json"
 
 echo "::group::4/4 render PR body"
 uv run python -m pipelines.candidates_to_pr \

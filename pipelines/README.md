@@ -13,6 +13,23 @@ monthly PRs.
 | `classify.py` | LLM-assisted AGVO classification | §9 Task 5 — online |
 | `diff.py`     | Lock-aware diff + stale detection | §9 Task 6 — online |
 | `candidates_to_pr.py` | Emits Markdown PR body | §9 Task 6 — online |
+| `reports/` | Committed monthly `DiffReport`s, one per month | Written by `scripts/monthly_update.sh`; read by `tools/review/` |
+
+## Monthly reports
+
+`scripts/monthly_update.sh` archives each run's `DiffReport` to
+`pipelines/reports/YYYY-MM.json` and that file is staged into the monthly
+PR. It is load-bearing in two ways:
+
+1. **The PR exists because of it.** The pipeline proposes; it never edits
+   `data/` (a human does, after review). With nothing staged,
+   `peter-evans/create-pull-request` reports `pull-request-operation = none`
+   and opens no PR at all — which is exactly what happened on 2026-09-05
+   before this was added.
+2. **The review UI reads it.** Check out the PR branch and run
+   `python -m tools.review.server pipelines/reports/2026-09.json` to triage
+   the proposal, then `python -m tools.review.apply_decisions` to write the
+   accepted rows into the canonical CSVs.
 
 ## Setup
 
