@@ -1204,3 +1204,22 @@ def test_ecom_source_ids_distinct_from_other_fetchers():
     )
     for v in ecom:
         assert v.source_id not in all_others, v
+
+
+# ---- CDATA unwrapping (regression: AI Snake Oil titles) ----
+
+def test_rss_preprocess_unwraps_cdata():
+    from pipelines.fetchers.tech_policy_press import _parse_feed
+
+    xml = (
+        "<rss><channel>"
+        "<item><title><![CDATA[Global AI Safety Forum launches]]></title>"
+        "<link>https://example.invalid/post</link>"
+        "<description><![CDATA[About AI governance]]></description></item>"
+        "</channel></rss>"
+    )
+    out = _parse_feed(xml, "http_static", {"id": "ai_snake_oil", "name": "AI Snake Oil"})
+    assert len(out) == 1
+    assert out[0].name == "Global AI Safety Forum launches"
+    assert "CDATA" not in out[0].name
+    assert out[0].url == "https://example.invalid/post"

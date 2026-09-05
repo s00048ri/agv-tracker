@@ -38,6 +38,7 @@ from .classify import (
     mock_llm_call,
     results_to_evidence_rows,
 )
+from .venue_names import extract_venue_name, looks_like_venue_name, unwrap_cdata
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_REGISTRY = REPO_ROOT / "sources" / "registry.yml"
@@ -94,14 +95,14 @@ def verification_url_for_entity_type(registry: list[dict], entity_type: str) -> 
 
 def extract_name_and_text(record: dict) -> tuple[str, str, str]:
     """Return (agv_id, name_en, classification_text)."""
-    name_en = str(record.get("name_en") or record.get("name") or "").strip()
-    text = str(record.get("text") or "").strip()
+    name_en = unwrap_cdata(str(record.get("name_en") or record.get("name") or "")).strip()
+    text = unwrap_cdata(str(record.get("text") or "")).strip()
     if not text:
         parts = []
         for field in ("name_en", "name", "description", "notes"):
             v = record.get(field)
             if v:
-                parts.append(str(v))
+                parts.append(unwrap_cdata(str(v)))
         text = " — ".join(parts)
     agv_id = str(
         record.get("agv_id")
@@ -128,16 +129,41 @@ class Normalizer:
         self.classifier = classifier or Classifier(
             cache_dir=None, llm_call=mock_llm_call, budget_guard=None,
         )
+        # Records dropped by the article/venue gate, for run reporting.
+        self.skipped_not_a_venue: list[dict] = []
 
     def normalize(self, records: list[dict]) -> list[dict]:
         """Return list of ``{agv_row, evidence_rows, provenance}`` dicts."""
         outputs: list[dict] = []
+        self.skipped_not_a_venue = []
         today = today_utc()
         for rec in records:
             agv_id, name_en, text = extract_name_and_text(rec)
             if not name_en or not text:
                 log.warning("skipping record missing name or text: %s", rec.get("source_id") or rec)
                 continue
+
+            # A discovery source offers article titles as readily as venue
+            # names (CLAUDE.md §3.1: a venue, not coverage of one). Reject the
+            # headlines; give an article one chance to name a venue in its text.
+            if not looks_like_venue_name(name_en):
+                extracted = extract_venue_name(f"{name_en} — {text}")
+                if not extracted:
+                    log.info(
+                        "skipping %s: reads as an article, names no venue (%r)",
+                        rec.get("source_id") or agv_id, name_en[:80],
+                    )
+                    self.skipped_not_a_venue.append({
+                        "source_id": str(rec.get("source_id") or ""),
+                        "source_registry": str(rec.get("source_registry") or ""),
+                        "name": name_en,
+                        "url": str(rec.get("url") or ""),
+                    })
+                    continue
+                log.info("record %s: using venue name %r extracted from article %r",
+                         rec.get("source_id") or agv_id, extracted, name_en[:60])
+                name_en = extracted
+                agv_id = slugify(extracted)
 
             results = self.classifier.classify_all(agv_id, text)
             classified = {r.field_name: r for r in results}
@@ -161,6 +187,7 @@ class Normalizer:
             agv_row = self._build_agv_row(
                 agv_id=agv_id, name_en=name_en, rec=rec,
                 classified=classified, ref_url=ref_url, today=today,
+                ref_url_is_placeholder=not explicit_ref,
             )
             outputs.append({
                 "agv_row": agv_row,
@@ -178,6 +205,7 @@ class Normalizer:
     @staticmethod
     def _build_agv_row(
         *,
+        ref_url_is_placeholder: bool = False,
         agv_id: str,
         name_en: str,
         rec: dict,
@@ -227,6 +255,15 @@ class Normalizer:
             "normalize candidate — requires human verification of "
             "founded_date, current_state, and convening_frequency before merging."
         )
+        if ref_url_is_placeholder:
+            # The URL is the entity_type's verification *family* from
+            # registry.yml (§5.2), identical for every candidate of that type.
+            # It is a valid layer but not evidence for this venue.
+            row["notes"] += (
+                " | primary_reference_url is the registry verification-family "
+                "placeholder for this entity_type, not this venue's own page — "
+                "replace it before merging."
+            )
         if rec.get("notes"):
             row["notes"] = str(rec["notes"]) + " | " + row["notes"]
         return row
@@ -295,9 +332,12 @@ def main(argv: list[str] | None = None) -> int:
         args.output.write_text(payload + "\n", encoding="utf-8")
     else:
         sys.stdout.write(payload + "\n")
+    skipped = len(normalizer.skipped_not_a_venue)
     print(
         f"normalized {len(outputs)} candidate(s) "
-        f"from {len(records)} input record(s); run_id={classifier.run_id}",
+        f"from {len(records)} input record(s) "
+        f"({skipped} dropped as articles, not venues); "
+        f"run_id={classifier.run_id}",
         file=sys.stderr,
     )
     return 0

@@ -46,6 +46,7 @@ from pathlib import Path
 import yaml
 from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 
+from ..venue_names import unwrap_cdata
 from .base import FETCH_STRATEGY_FIXTURE, BaseFetcher, RawVenue
 
 # We deliberately use html.parser on XML; see _preprocess_rss().
@@ -99,7 +100,12 @@ class _PerFeedFetcher(BaseFetcher):
 def _preprocess_rss(xml: str) -> str:
     """html.parser drops <link>...</link> text; rename to <rsslink> so the
     URL survives (no lxml dependency). Self-closing <link/> is left alone.
+
+    Also unwraps CDATA sections: html.parser keeps their markers as literal
+    text, so a feed that wraps its titles (AI Snake Oil does) would otherwise
+    yield names like "<![CDATA[Could AI slow science?]]>".
     """
+    xml = unwrap_cdata(xml)
     return re.sub(r"<link>([^<]+)</link>", r"<rsslink>\1</rsslink>", xml)
 
 

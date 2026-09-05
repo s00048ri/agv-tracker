@@ -134,11 +134,11 @@ def test_normalize_rawvenue_from_fetcher_shape():
         "source_id": "oecd.ai:1001",
         "source_role": "discovery",
         "source_registry": "oecd_ai_navigator",
-        "name": "France — National AI Strategy",
+        "name": "OECD Working Party on AI Governance",
         "url": "https://oecd.ai/en/dashboards/overview/policy/1001",
         "country": "France",
         "description": (
-            "Initiative within the OECD ecosystem; France national AI strategy. "
+            "Initiative within the OECD ecosystem; standing working party. "
             "Global scope via OECD; lead actor OECD secretariat."
         ),
         "fetched_at": "2026-04-23T00:00:00+00:00",
@@ -150,3 +150,87 @@ def test_normalize_rawvenue_from_fetcher_shape():
     prov = out[0]["provenance"]
     assert prov["source_id"] == "oecd.ai:1001"
     assert prov["discovery_url"] == "https://oecd.ai/en/dashboards/overview/policy/1001"
+
+
+def test_normalize_drops_national_strategy_titles():
+    """A national AI strategy is a policy document, not a venue (§3.1).
+
+    OECD.AI's Policy Navigator lists many of them; none should be proposed
+    as an AGV candidate.
+    """
+    raw = {
+        "source_id": "oecd.ai:1002",
+        "source_registry": "oecd_ai_navigator",
+        "name": "France — National AI Strategy",
+        "url": "https://oecd.ai/en/dashboards/overview/policy/1002",
+        "description": "France national AI strategy, second phase funding.",
+    }
+    norm = Normalizer(registry=_registry(), classifier=_classifier())
+    assert norm.normalize([raw]) == []
+    assert [s["source_id"] for s in norm.skipped_not_a_venue] == ["oecd.ai:1002"]
+
+
+def test_normalize_drops_news_headlines_and_unwraps_cdata():
+    """Regression: the first live monthly run proposed 17 articles as venues."""
+    raws = [
+        {
+            "source_id": "ai_snake_oil:0001",
+            "source_registry": "tech_policy_press",
+            "name": "<![CDATA[Could AI slow science?]]>",
+            "url": "https://example.invalid/post",
+            "description": "A blog post about research productivity.",
+        },
+        {
+            "source_id": "gov_uk:0002",
+            "source_registry": "government_pages",
+            "name": (
+                "New partnership set to see the UK and Ukraine develop battle "
+                "winning technology as Britain secures access to Ukraine's AI Labs"
+            ),
+            "url": "https://example.invalid/news",
+            "description": "Press release.",
+        },
+    ]
+    norm = Normalizer(registry=_registry(), classifier=_classifier())
+    assert norm.normalize(raws) == []
+    assert len(norm.skipped_not_a_venue) == 2
+    # CDATA markers must not survive into the reported name.
+    assert norm.skipped_not_a_venue[0]["name"] == "Could AI slow science?"
+
+
+def test_normalize_recovers_venue_named_inside_an_article():
+    """A news item earns a candidate only by naming a venue in its text."""
+    raw = {
+        "source_id": "tech_policy_press:0003",
+        "source_registry": "tech_policy_press",
+        "name": "Regulators announce sweeping new rules",
+        "url": "https://example.invalid/article",
+        "description": "The UK AI Safety Institute will run the evaluations.",
+        # Explicit so the assertion is about name recovery, not registry lookup.
+        "primary_reference_url": "https://www.aisi.gov.uk/",
+    }
+    norm = Normalizer(registry=_registry(), classifier=_classifier())
+    out = norm.normalize([raw])
+    assert len(out) == 1
+    assert out[0]["agv_row"]["name_en"] == "UK AI Safety Institute"
+    assert norm.skipped_not_a_venue == []
+
+
+def test_normalize_flags_placeholder_reference_url():
+    """A registry family URL is valid layer-wise but is not this venue's page."""
+    raw = {
+        "source_id": "oecd.ai:1003",
+        "source_registry": "oecd_ai_navigator",
+        "name": "OECD AI Policy Observatory",
+        "url": "https://oecd.ai/en/dashboards/overview/policy/1003",
+        "description": "Initiative within the OECD ecosystem; standing programme.",
+    }
+    norm = Normalizer(registry=_registry(), classifier=_classifier())
+    out = norm.normalize([raw])
+    assert len(out) == 1
+    assert "placeholder" in out[0]["agv_row"]["notes"]
+
+    explicit = dict(raw, primary_reference_url="https://oecd.ai/en/wonk/")
+    out2 = norm.normalize([explicit])
+    assert out2[0]["agv_row"]["primary_reference_url"] == "https://oecd.ai/en/wonk/"
+    assert "placeholder" not in out2[0]["agv_row"]["notes"]
