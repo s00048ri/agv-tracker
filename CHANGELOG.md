@@ -3,6 +3,25 @@
 Runtime data/decisions accepted into the repository. Spec revisions are tracked
 in `CLAUDE.md §0`.
 
+## 2026-09-06
+
+- **ci**: first `deploy` run (33993566147, push to `main`) **failed at the
+  wrangler step** — `CLOUDFLARE_API_TOKEN` is not provisioned. Everything
+  before it passed: venue-page regeneration, `npm ci`, and `npm run build`.
+  So the Observable Framework build is green on CI, and Task 11 Done-when #1
+  is blocked only on (a) the two Cloudflare repository secrets and (b) the
+  `agv-tracker` Pages project existing (`.github/CI_SETUP.md` §1–§2).
+- **ci**: `monthly-fetch` run #5 (33993926637) is the first run to reach PR
+  creation, and it **failed there**: `GitHub Actions is not permitted to
+  create or approve pull requests`. The pipeline itself succeeded and
+  `monthly-update/2026-09` was pushed with `pipelines/reports/2026-09.json`,
+  so no work was lost — the blocker is the repository setting
+  `Settings → Actions → General → Workflow permissions`, which cannot be set
+  from inside a workflow. Documented as `.github/CI_SETUP.md` §0.1 with the
+  UI path, the `gh api` equivalent, and the org-level override caveat; the
+  §1 secrets table no longer claims the monthly workflow "opens a PR"
+  regardless of that setting. Task 7 Done-when #1 remains open.
+
 ## 2026-09-05
 
 - **infra**: repository published at <https://github.com/s00048ri/agv-tracker>
