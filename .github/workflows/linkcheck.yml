@@ -31,6 +31,7 @@ jobs:
           args: >-
             --no-progress
             --accept 200..=299,403,429
+            --user-agent "Mozilla/5.0 (compatible; agv-tracker-linkcheck/1.0; +https://github.com/s00048ri/agv-tracker)"
             --exclude "^internal://"
             --exclude "^https://standards\.ieee\.org/practices/intelligent-systems/$"
             --exclude-path node_modules

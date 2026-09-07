@@ -69,6 +69,13 @@ jobs:
         if: steps.changed.outputs.any_changed == 'true'
         uses: lycheeverse/lychee-action@v2
         with:
+          # --user-agent: lychee identifies itself as `lychee/x.y` by
+          # default, which several of these hosts' WAFs answer with 401,
+          # 403 or even 500 while serving the same page fine to a normal
+          # client. The UA below still says what it is and links back here,
+          # rather than impersonating a browser — a checker that lies about
+          # itself is not a checker anyone should trust.
+          #
           # 403 is accepted: coe.int, g20.org, iso.org and mofa.go.jp all
           # answer a CI link checker with 403 while serving fine in a
           # browser. A 403 cannot distinguish "gone" from "refuses robots",
@@ -83,6 +90,7 @@ jobs:
           args: >-
             --no-progress
             --accept 200..=299,403,429
+            --user-agent "Mozilla/5.0 (compatible; agv-tracker-linkcheck/1.0; +https://github.com/s00048ri/agv-tracker)"
             --exclude-path node_modules
             --exclude "^https://standards\.ieee\.org/practices/intelligent-systems/$"
             ${{ steps.changed.outputs.all_changed_files }}
