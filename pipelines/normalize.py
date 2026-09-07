@@ -212,7 +212,7 @@ class Normalizer:
                     "run_id": self.classifier.run_id,
                     # The configured model, and separately what actually
                     # answered. These differed silently on 2026-09-07: a
-                    # mock run was labelled `claude-sonnet-4-5` here and in
+                    # mock run was labelled `claude-sonnet-5` here and in
                     # every evidence row it produced.
                     "model": self.classifier.model,
                     "backend": _effective_backend(results),

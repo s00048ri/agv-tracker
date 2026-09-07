@@ -55,7 +55,7 @@ from pathlib import Path
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 DEFAULT_CACHE_DIR = Path(".cache/classifier")
 DEFAULT_BUDGET_FILE = DEFAULT_CACHE_DIR / "budget.json"
-DEFAULT_MODEL = "claude-sonnet-4-5"
+DEFAULT_MODEL = "claude-sonnet-5"
 DEFAULT_MONTHLY_BUDGET_USD = 50.0
 DEFAULT_MAX_TOKENS = 600
 
@@ -100,21 +100,27 @@ DIMENSIONS: list[tuple[str, str, list[str]]] = [
     ("legal_character", "classify_legal_character.txt", LEGAL_CHARACTERS),
 ]
 
-# Anthropic list prices (USD per million tokens) for Claude 4.x models.
-# Treat unknown models as sonnet pricing (conservative).
+# Anthropic list prices (USD per million tokens), input then output.
+# Checked 2026-09-07. Prices move: `compute_cost` is a budget guard, not an
+# invoice, and an unknown model falls back to the default model's rate —
+# deliberately, so a typo in a model id cannot silently disable the guard.
 PRICING: dict[str, tuple[float, float]] = {
-    "claude-opus-4-6": (15.0, 75.0),
-    "claude-opus-4-7": (15.0, 75.0),
-    "claude-sonnet-4-5": (3.0, 15.0),
-    "claude-sonnet-4-6": (3.0, 15.0),
-    "claude-sonnet-4-7": (3.0, 15.0),
+    # Current generation
+    "claude-opus-5": (5.0, 25.0),
+    "claude-sonnet-5": (2.0, 10.0),
     "claude-haiku-4-5": (1.0, 5.0),
+    # Previous generation, still priced here for older cached runs
+    "claude-opus-4-8": (5.0, 25.0),
+    "claude-opus-4-7": (5.0, 25.0),
+    "claude-opus-4-6": (5.0, 25.0),
+    "claude-sonnet-4-6": (3.0, 15.0),
+    "claude-sonnet-4-5": (3.0, 15.0),
 }
 
 
 # Backend identifiers. Every backend tags its reply with `_backend`, and the
 # evidence trail records *who actually answered* rather than which model was
-# configured: writing "claude-sonnet-4-5" into `agv_evidence.reviewer` for a
+# configured: writing the model name into `agv_evidence.reviewer` for a
 # classification no Claude ever saw is a false attribution in the dataset's
 # own provenance (CLAUDE.md §4.4), and it makes a plumbing run look exactly
 # like a real one.
@@ -188,7 +194,7 @@ def extract_json(text: str) -> dict:
 
 
 def compute_cost(model: str, tokens_in: int, tokens_out: int) -> float:
-    p_in, p_out = PRICING.get(model, PRICING["claude-sonnet-4-5"])
+    p_in, p_out = PRICING.get(model, PRICING[DEFAULT_MODEL])
     return (tokens_in * p_in + tokens_out * p_out) / 1_000_000
 
 

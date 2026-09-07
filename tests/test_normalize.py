@@ -97,9 +97,9 @@ def test_normalize_emits_candidate_and_evidence():
         # `reviewer` names who answered, `provenance.model` names what
         # was configured. They agree only on a live run — and this
         # fixture's classifier is the mock, so they must not.
-        assert entry["provenance"]["model"] == "claude-sonnet-4-5"
+        assert entry["provenance"]["model"] == "claude-sonnet-5"
         assert entry["provenance"]["backend"] == "mock"
-        assert ev["reviewer"] == "mock (no claude-sonnet-4-5 call)"
+        assert ev["reviewer"] == "mock (no claude-sonnet-5 call)"
 
 
 def test_normalize_explicit_verification_url_overrides_registry():
