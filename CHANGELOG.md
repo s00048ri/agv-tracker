@@ -56,6 +56,40 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
+- **pipeline**: **`oecd_ai` rebuilt and operational — the discovery layer's
+  highest-value fetcher is back.** It now walks the international dashboard:
+  index → 14 intergovernmental organisations → each organisation's AI
+  initiatives. Against the three organisation pages shipped as captures it
+  returns 10 records, and they are the right kind of thing — HUDERIA, the
+  CoE Framework Convention on AI, the Hiroshima AI Process Code of Conduct
+  Reporting Framework, the OECD–GPAI Integrated Partnership, the G7 public
+  sector toolkit, ISO/IEC 42001 and 23894. Live it will walk all 14.
+  Initiatives are recognised by URL path (`/policy-initiatives/`) rather
+  than by class name, because the site is an Angular build whose component
+  classes carry generated `_ngcontent-*` attributes — the IAPP lesson, applied
+  before it bites. Each initiative renders as two anchors to the same href,
+  title then description, so anchors are grouped by href.
+  **What a record here is not**: OECD.AI catalogues policy *instruments*
+  while AGVO catalogues *venues*, and they do not correspond one to one —
+  ISO/IEC 42001 is a standard whose AGV is the working group behind it; the
+  Framework Convention is a treaty whose AGV is its committee. A record is a
+  pointer to a venue. The module says so, so nobody reads the proposal count
+  as a venue count.
+  A test now pins the index parse, and another asserts every capture
+  directory is named for a slug the index actually uses: ISO shipped as
+  `international-iso`, contributed nothing, and was invisible because the
+  fetcher skips organisations it cannot read — correct behaviour that hides
+  a naming mistake unless something checks for it.
+  Two more `>= 50` assertions inherited from the invented fixture are gone
+  (`test_e2e_pipeline` among them). pytest: 421 green.
+- **ci**: worth knowing about the capture workflow: `create-pull-request`
+  rebuilds its branch from `main` on every run, so a second dispatch before
+  the first PR merges force-pushes the first capture away — which happened
+  here, silently, to the international index. Merge a capture before
+  dispatching the next. Relatedly, PRs that workflow opens carry **no
+  checks**: GitHub does not trigger workflows for events raised with
+  `GITHUB_TOKEN`, so neither the capture PRs nor the monthly-update PR are
+  validated by `validate.yml`.
 - **pipeline**: `capture_fixtures.py --capture-url DIR=URL` — the step between
   a probe and a rebuild. A probe names a promising page; capturing it used to
   require first rewriting a fetcher's `base_url` to point at somewhere nobody

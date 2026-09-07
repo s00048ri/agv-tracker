@@ -42,7 +42,7 @@ sources:
 
   - id: oecd_ai_navigator
     name: "OECD.AI Policy Observatory (Policy Navigator)"
-    url: "https://oecd.ai/"
+    url: "https://oecd.ai/en/dashboards/international"
     role: discovery
     entity_types_covered:
       - igo_initiative
@@ -50,13 +50,13 @@ sources:
       - multistakeholder_coalition
       - national_regulator_intl
     fetcher_module: pipelines.fetchers.oecd_ai
-    fetch_strategy: http_with_playwright_fallback
     update_frequency: monthly
-    last_verified_alive: 2026-04-23
-    fetcher_status: selectors_unverified
+    last_verified_alive: 2026-09-07
+    fetch_strategy: http_static
+    fetcher_status: operational
     fetcher_status_checked: 2026-09-07
     fetcher_status_note: >-
-      The fetcher's base_url (oecd.ai/en/dashboards/overview/policy — written without a scheme so the link checker does not chase a URL we already know is dead) returns HTTP 404; the captured page is the site's 404 chrome, whose only classes are navigation (nav-item-link, navbar-item). So this is not selector rot — there is no listing to select from, and no selector work is possible until the correct dashboard URL is found. Captured at tests/fixtures/oecd_ai/live/. Yields 0 records.
+      Rebuilt on the international dashboard, which indexes 14 intergovernmental organisations, each linking to a page of that organisation's AI initiatives. Against the three organisation pages shipped as captures it yields 10 records — HUDERIA, the CoE Framework Convention, the Hiroshima AI Process reporting framework, ISO/IEC 42001 and 23894 among them. Static HTTP suffices (intergovernmental-card appears 14 times in both the static response and the rendered DOM). The old base_url (oecd.ai/en/dashboards/overview/policy — scheme omitted so the link checker does not chase a URL known to be dead) returns 404, and the fixture that made the old tests pass was written to match its selectors rather than captured from it. Deliberately NOT pointed at /en/dashboards/policy-initiatives: that database is dominated by national policy instruments, which AGVO excludes (§3.1).
     notes: "Best general-purpose discovery for international initiatives; Task 4 target."
 
   - id: unesco_gaigo
