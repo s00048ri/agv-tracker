@@ -56,7 +56,7 @@ sources:
     fetcher_status: selectors_unverified
     fetcher_status_checked: 2026-09-07
     fetcher_status_note: >-
-      The fetcher's base_url https://oecd.ai/en/dashboards/overview/policy returns HTTP 404; the captured page is the site's 404 chrome, whose only classes are navigation (nav-item-link, navbar-item). So this is not selector rot — there is no listing to select from, and no selector work is possible until the correct dashboard URL is found. Captured at tests/fixtures/oecd_ai/live/. Yields 0 records.
+      The fetcher's base_url (oecd.ai/en/dashboards/overview/policy — written without a scheme so the link checker does not chase a URL we already know is dead) returns HTTP 404; the captured page is the site's 404 chrome, whose only classes are navigation (nav-item-link, navbar-item). So this is not selector rot — there is no listing to select from, and no selector work is possible until the correct dashboard URL is found. Captured at tests/fixtures/oecd_ai/live/. Yields 0 records.
     notes: "Best general-purpose discovery for international initiatives; Task 4 target."
 
   - id: unesco_gaigo
@@ -336,6 +336,14 @@ sources:
   - id: ieee_sa_ai
     name: "IEEE Standards Association — Intelligent Systems practices"
     url: "https://standards.ieee.org/practices/intelligent-systems/"
+    # DEAD: returns HTTP 404, first observed 2026-09-07 — the first time
+    # registry.yml was link-checked at all. Left in place rather than
+    # repointed at a guess: this family backs the primary_reference_url of
+    # every standards_body_wg row (CLAUDE.md §5.2), so the replacement has
+    # to be confirmed, not inferred. Excluded by name in the link-check
+    # workflows; remove that exclusion together with this comment.
+    link_status: dead
+    link_status_checked: 2026-09-07
     role: verification
     entity_types_covered:
       - standards_body_wg

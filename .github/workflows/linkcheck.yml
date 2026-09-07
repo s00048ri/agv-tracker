@@ -30,8 +30,9 @@ jobs:
           # usage error rather than off any real link.
           args: >-
             --no-progress
-            --accept 200..=299,429
+            --accept 200..=299,403,429
             --exclude "^internal://"
+            --exclude "^https://standards\.ieee\.org/practices/intelligent-systems/$"
             --exclude-path node_modules
             sources/registry.yml
             data/agv.csv

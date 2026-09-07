@@ -69,13 +69,21 @@ jobs:
         if: steps.changed.outputs.any_changed == 'true'
         uses: lycheeverse/lychee-action@v2
         with:
+          # 403 is accepted: coe.int, g20.org, iso.org and mofa.go.jp all
+          # answer a CI link checker with 403 while serving fine in a
+          # browser. A 403 cannot distinguish "gone" from "refuses robots",
+          # so treating it as a broken link only teaches people to ignore
+          # this job. The one --exclude is a URL known to be dead and
+          # tracked in sources/registry.yml, not a link being hidden.
+          #
           # No --exclude-mail: lychee v2 removed it and rejects the whole
           # invocation with a usage error (exit 2) rather than ignoring it,
           # so every PR failed this job before a single URL was fetched.
           # Excluding mailto: is v2's default; --include-mail opts back in.
           args: >-
             --no-progress
-            --accept 200..=299,429
+            --accept 200..=299,403,429
             --exclude-path node_modules
+            --exclude "^https://standards\.ieee\.org/practices/intelligent-systems/$"
             ${{ steps.changed.outputs.all_changed_files }}
           fail: true

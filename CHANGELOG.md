@@ -56,6 +56,27 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
+- **sources**: **`sources/registry.yml` was link-checked for the first time,
+  and seven of its URLs fail.** `validate.yml`'s link job only looks at files
+  a PR changes, so the registry had never been in scope. The failures split
+  three ways:
+  - **A dead verification source.**
+    `https://standards.ieee.org/practices/intelligent-systems/` returns 404.
+    It backs the `primary_reference_url` family for every `standards_body_wg`
+    row (§5.2), so it is recorded in place — `link_status: dead` plus a
+    comment — rather than repointed at a guessed replacement, and excluded by
+    name in both link-check workflows so the exclusion is legible and
+    removable. **This one needs a human to confirm the new URL.**
+  - **Four hosts that refuse robots**: coe.int, g20.org, iso.org and
+    mofa.go.jp answer a CI link checker with 403 while serving fine in a
+    browser. 403 cannot distinguish "gone" from "refuses automated clients",
+    so the workflows now accept it. Treating it as breakage would only teach
+    people to ignore the job.
+  - **One self-inflicted**: the note added today recording OECD.AI's dead
+    endpoint wrote it as a live URL, so the checker dutifully chased a link
+    we had just documented as a 404. Written without a scheme now.
+  (`techpolicy.press`'s feed also returned 500 on that run; watching whether
+  it recurs before deciding it is more than a blip.)
 - **sources**: **the five discovery targets were captured live, and the
   fetchers' problems turn out not to be the same problem.** The 2026-09-05
   entry called them all "selectors_unverified"; the real markup says
