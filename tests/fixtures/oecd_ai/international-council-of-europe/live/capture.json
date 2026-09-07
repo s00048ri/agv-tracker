@@ -1,0 +1,114 @@
+{
+  "source_id": "ad-hoc:oecd_ai/international-council-of-europe",
+  "url": "https://oecd.ai/en/dashboards/international/council-of-europe",
+  "captured_at": "2026-09-07T05:30:29+00:00",
+  "note": "ad-hoc capture (--capture-url)",
+  "static_status": 200,
+  "static_bytes": 195012,
+  "static_sha256": "b64e948471e8be0ae767e93559ffea744462b56788c4e5bc23b6d94fe3f0ecad",
+  "rendered_bytes": 195280,
+  "rendered_sha256": "c1564d93555ce3c551de27d97df814ceee1761eab718a1d14265a9a3cb72b6b9",
+  "top_class_tokens": [
+    {
+      "token": "icon",
+      "count": 36
+    },
+    {
+      "token": "content",
+      "count": 34
+    },
+    {
+      "token": "ghost",
+      "count": 32
+    },
+    {
+      "token": "nav-item-link",
+      "count": 27
+    },
+    {
+      "token": "nav-item-media",
+      "count": 27
+    },
+    {
+      "token": "icon-text",
+      "count": 27
+    },
+    {
+      "token": "fa-chevron-right",
+      "count": 27
+    },
+    {
+      "token": "navbar-item",
+      "count": 11
+    },
+    {
+      "token": "no-deco",
+      "count": 11
+    },
+    {
+      "token": "button",
+      "count": 7
+    },
+    {
+      "token": "title",
+      "count": 6
+    },
+    {
+      "token": "align-center",
+      "count": 5
+    },
+    {
+      "token": "sans",
+      "count": 5
+    },
+    {
+      "token": "navbar-link",
+      "count": 4
+    },
+    {
+      "token": "navbar-dropdown",
+      "count": 4
+    },
+    {
+      "token": "navbar-dropdown--large",
+      "count": 4
+    },
+    {
+      "token": "country-label",
+      "count": 4
+    },
+    {
+      "token": "xsmall-meta",
+      "count": 4
+    },
+    {
+      "token": "justify-center",
+      "count": 2
+    },
+    {
+      "token": "layout-list",
+      "count": 2
+    },
+    {
+      "token": "card--policyInitiative__content",
+      "count": 2
+    },
+    {
+      "token": "field",
+      "count": 2
+    },
+    {
+      "token": "pointer",
+      "count": 2
+    },
+    {
+      "token": "gap-2",
+      "count": 2
+    },
+    {
+      "token": "icon-Calendar",
+      "count": 2
+    }
+  ],
+  "javascript_changes_dom": true
+}
