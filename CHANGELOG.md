@@ -56,8 +56,19 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
-- **infra**: **but the production alias <https://agv-tracker.pages.dev> serves
-  Cloudflare's "Nothing is here yet" placeholder**, which is what Pages shows
+- **infra**: **the production hostname now serves the site.**
+  `pages_config.yml` set the Pages project's `production_branch` to `main`
+  (run 34072442101, read back after the write), and `deploy` run 34072544186
+  populated <https://agv-tracker.pages.dev>. The maintainer confirmed the
+  page renders with no console errors. **Task 11 Done-when #1 closed** for
+  the `pages.dev` host; the custom domain (§9 Task 11 steps 3–4) is still
+  open, and `scripts/verify_deployment.sh` has not been run as a scripted
+  sweep of every route — this session's sandbox cannot reach `pages.dev`
+  (403 on CONNECT), so that remains a one-command check from a normal
+  network.
+- **infra**: (earlier the same day) **the production alias
+  <https://agv-tracker.pages.dev> served Cloudflare's "Nothing is here yet"
+  placeholder**, which is what Pages shows
   for a project with no *production* deployment. `deploy.yml` deploys with
   `--branch=main`, and `wrangler pages project create` defaults the project's
   production branch to `production` unless `--production-branch` is passed —
