@@ -17,15 +17,25 @@ in `CLAUDE.md §0`.
   against the live host yet — the sandbox this session runs in cannot reach
   `pages.dev` (proxy returns 403 on CONNECT), so the smoke check has to be
   run from a normal network before Task 11 is signed off.
-- **ci**: `monthly-fetch` re-run 34069575107 **still fails with
-  `GitHub Actions is not permitted to create or approve pull requests`**.
-  The pipeline half succeeded again and `monthly-update/2026-09` is current;
-  only PR creation is refused. Since the repository-level checkbox
-  (`.github/CI_SETUP.md` §0.1) was reported as enabled, the remaining
-  candidate is the account-level policy at
-  <https://github.com/settings/actions>, which governs every repository the
-  user owns and cannot be overridden per-repository. Task 7 Done-when #1
-  stays open.
+- **ci**: **the monthly pipeline opens PRs.** After the repository setting in
+  `.github/CI_SETUP.md` §0.1 was enabled and saved, `monthly-fetch` run
+  34070189628 completed green and opened
+  <https://github.com/s00048ri/agv-tracker/pull/1> from
+  `monthly-update/2026-09`. **Task 7 Done-when #1 closed** — every Task 7
+  Done-when item is now met. (Run 34069575107, before the setting was saved,
+  had failed on the same refusal as run #5; the setting is per-repository
+  only — there is no account-level equivalent for a personal account, the
+  org-level one applies to organizations.)
+- **data**: that first real PR carries **0 new venues, 0 updates, 0 conflicts,
+  67 stale candidates** over a canonical 118, from a candidate set of size 0.
+  The automation is now proven end to end while proposing nothing, which is
+  exactly what the 2026-09-05 fetcher finding predicts: five of seven
+  discovery fetchers match nothing on their live targets, so there is no
+  input for the classifier or the differ to work on. Rebuilding the fetchers
+  against real DOM is the gate on the monthly cycle producing substance
+  rather than an empty-but-valid PR. The 67 is the differ's own count under
+  §3.5 thresholds and supersedes the coarser month-arithmetic estimate used
+  in session notes.
 
 ## 2026-09-06
 
