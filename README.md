@@ -1,5 +1,7 @@
 # AGV Tracker
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22571203.svg)](https://doi.org/10.5281/zenodo.22571203)
+
 A static web tracker for **AI Governance Venues** — international organizations, intergovernmental fora, multistakeholder coalitions, and recurring conferences whose mandate addresses the governance of AI.
 
 This is a **v0.3 working dataset** with 118 human-verified venues produced
@@ -53,6 +55,18 @@ See `src/methodology.md` and the AGVO ontology specification.
 2. Diff against `data/agv.csv` is computed; new candidates are listed in an auto-opened PR.
 3. Maintainer reviews each candidate (~30–60 min), assigns ontology values, merges.
 4. CI rebuilds the site and Cloudflare Pages auto-deploys.
+
+## Citing this dataset
+
+Iida, R. (2026). *AGV Tracker: AI Governance Venues* (v0.3.0) [Data set].
+Zenodo. <https://doi.org/10.5281/zenodo.22571204>
+
+The badge above carries the **concept DOI**
+(`10.5281/zenodo.22571203`), which always resolves to the newest release —
+cite that when you mean the dataset rather than one edition of it. The
+version DOI above pins v0.3.0, and is what a reproducible analysis should
+reference. `/data-download` on the site carries a ready-made BibTeX block,
+generated from `data/citation.json` so it cannot drift from this file.
 
 ## License
 
