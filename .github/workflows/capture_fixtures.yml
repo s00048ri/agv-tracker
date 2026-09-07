@@ -1,0 +1,106 @@
+# Capture real HTML from the discovery sources and open a PR with it
+# (CLAUDE.md §9 Task 4 / the 2026-09-05 fetcher finding).
+#
+# The fixtures under tests/fixtures/ were authored to fit the selectors
+# rather than captured from the sources, so the fetcher tests prove that
+# each parser handles its own invention. Rebuilding the selectors needs
+# the real markup, and the test suite deliberately has no network. This
+# workflow is the one place that is allowed to reach the live sites: it
+# captures what they serve, commits it under `live/`, and opens a PR so
+# the bytes arrive through review rather than through a local run nobody
+# else can reproduce.
+#
+# It never edits an existing fixture — captures land beside them in
+# `<source>/live/` — so a green test suite cannot be silently rewritten by
+# a fetch. Promoting a capture into a fetcher's fixture is a deliberate,
+# reviewed edit.
+
+name: capture-fixtures
+
+on:
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Single source_id to capture (blank = all)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: capture-fixtures
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Install project with scraping extras
+        run: uv sync --extra dev --extra scraping
+
+      - name: Install Playwright Chromium
+        run: uv run playwright install --with-deps chromium
+
+      - name: Capture
+        id: capture
+        run: |
+          set -euo pipefail
+          if [ -n "${{ inputs.only }}" ]; then
+            uv run python scripts/capture_fixtures.py --only "${{ inputs.only }}" | tee capture.log
+          else
+            uv run python scripts/capture_fixtures.py | tee capture.log
+          fi
+
+      - name: Summarise into the run page
+        if: always()
+        run: |
+          {
+            echo '### Capture'
+            echo
+            echo '```'
+            cat capture.log 2>/dev/null || echo '(no output)'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open / update PR with the captured pages
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: fixtures/live-capture
+          title: "fixtures: capture live HTML from the discovery sources"
+          commit-message: "fixtures: capture live discovery-source HTML"
+          labels: fixtures
+          add-paths: tests/fixtures/**/live/**
+          delete-branch: true
+          body: |
+            Real HTML from the discovery sources, captured by
+            `capture-fixtures` so that the fetcher selectors can be rebuilt
+            against bytes nobody invented.
+
+            Each source gets `tests/fixtures/<source>/live/`:
+
+            - `static.html` — what `httpx.get` returns
+            - `rendered.html` — the DOM after the page's JavaScript runs
+            - `capture.json` — url, status, sizes, SHA-256 of each half,
+              whether JavaScript changes the DOM, and the most frequent
+              content-bearing `class` tokens
+
+            The static/rendered pair is the diagnosis: a listing present
+            only in `rendered.html` means the source is a SPA and the
+            Playwright path has to stay; present in both means the static
+            path suffices.
+
+            Nothing under an existing fixture is touched, so the current
+            (green, but self-referential) fetcher tests are unaffected
+            until a capture is deliberately promoted.
+
+            See the workflow run summary for the capture log.

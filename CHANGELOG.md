@@ -56,6 +56,23 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
+- **pipeline**: `scripts/capture_fixtures.py` + `capture_fixtures.yml` — the
+  first step out of the fetcher dead end. The discovery fetchers cannot be
+  rebuilt without the real markup, the test suite deliberately has no network,
+  and an agent session has none structurally, so the capture runs in CI and
+  arrives as a PR. For each source it stores both `static.html` (what
+  `httpx.get` returns) and `rendered.html` (the DOM after the page's
+  JavaScript), because that pair *is* the diagnosis: a listing present only in
+  the rendered half means the source is a SPA and the Playwright path has to
+  stay; present in both means the static path suffices. `capture.json` adds
+  sizes, SHA-256 of each half, whether JS changes the DOM, and the most
+  frequent content-bearing `class` tokens — a first read of the real selector
+  vocabulary, short enough to read in a CI log. Captures land in
+  `<source>/live/` and never overwrite an existing fixture, so a fetch cannot
+  silently rewrite what the tests assert; promoting a capture is a reviewed
+  edit. Targets import each fetcher's own `base_url` rather than retyping it,
+  and a test asserts that property — retyping is how the current fixtures came
+  to describe pages that do not exist. pytest: 406 green.
 - **ci**: `release.yml` added — `workflow_dispatch` that creates the tag and
   publishes the GitHub Release in one `gh release create`, which is the event
   Zenodo's webhook listens for (Task 12). It refuses to run unless the version
