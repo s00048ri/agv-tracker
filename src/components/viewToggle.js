@@ -67,6 +67,28 @@ export const VIEW_DESCRIPTIONS = {
   ),
 };
 
+// Render one VIEW_DESCRIPTIONS string.
+//
+// Observable Framework has no `md` tagged template — that is an Observable
+// notebook builtin, and calling it here throws "md is not defined" at
+// runtime while the rest of the page renders. The descriptions are authored
+// with inline Markdown, so the page renders them itself. Only the three
+// constructs the descriptions actually use are supported: **strong**, *em*,
+// and `code`. The source is HTML-escaped before any substitution, so a
+// description can never inject markup.
+export function renderInlineMarkdown(source) {
+  const markup = String(source)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  const span = document.createElement("span");
+  span.innerHTML = markup;
+  return span;
+}
+
 // Pure filter. Tests import this directly.
 export function filterByView(agvs, view) {
   if (view === "continuous") {

@@ -9,6 +9,7 @@ import {
   VIEW_VALUES,
   VIEW_LABELS,
   VIEW_DESCRIPTIONS,
+  renderInlineMarkdown,
 } from "./components/viewToggle.js";
 import {networkGraph} from "./components/networkGraph.js";
 const agv = await FileAttachment("./data/agv.json").json();
@@ -27,7 +28,7 @@ paragraph directly under the toggle tells you what you should and should
 not read into the current view**.
 
 ```js
-const view = view(Inputs.radio(VIEW_VALUES, {
+const selectedView = view(Inputs.radio(VIEW_VALUES, {
   label: "View",
   value: "one_off_included",
   format: (v) => VIEW_LABELS[v],
@@ -35,7 +36,7 @@ const view = view(Inputs.radio(VIEW_VALUES, {
 ```
 
 ```js
-const agvFiltered = filterByView(agv, view);
+const agvFiltered = filterByView(agv, selectedView);
 ```
 
 <div class="note" style="
@@ -45,7 +46,7 @@ const agvFiltered = filterByView(agv, view);
   background: var(--theme-background-alt, #f6f8fa);
   border-radius: 4px;
 ">
-${md`${VIEW_DESCRIPTIONS[view]}`}<br><br>
+${renderInlineMarkdown(VIEW_DESCRIPTIONS[selectedView])}<br><br>
 <small><strong>Current view contains ${agvFiltered.length} venue${agvFiltered.length === 1 ? "" : "s"}</strong> out of ${agv.length} in the full dataset.</small>
 </div>
 

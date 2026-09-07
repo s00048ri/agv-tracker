@@ -9,13 +9,47 @@ items are formally closed.
 
 ---
 
+## 0. Repository settings
+
+### 0.1 Allow Actions to open pull requests (required by `monthly_fetch.yml`)
+
+`Settings → Actions → General → Workflow permissions` →
+tick **"Allow GitHub Actions to create and approve pull requests"** → **Save**.
+
+Without it the monthly run does everything except the last step: the
+`monthly-update/YYYY-MM` branch is pushed and then PR creation fails with
+
+```
+GitHub Actions is not permitted to create or approve pull requests.
+```
+
+and the job is marked failed (observed on run 33993926637, 2026-09-05). The
+pushed branch survives, so after enabling the setting either re-run
+`monthly-fetch` or open the PR by hand from the existing branch — no
+pipeline work is lost.
+
+The setting is per-repository and cannot be set from inside a workflow.
+Equivalent via API (needs an admin-scoped token, not `GITHUB_TOKEN`):
+
+```bash
+gh api -X PUT repos/s00048ri/agv-tracker/actions/permissions/workflow \
+  -F default_workflow_permissions=write \
+  -F can_approve_pull_request_reviews=true
+```
+
+Note that the org/enterprise-level equivalent of this setting, where one
+exists, overrides the repository one — if the checkbox is greyed out, it
+has to be enabled at the owner level first.
+
+---
+
 ## 1. Repository secrets
 
 Set these in `Settings → Secrets and variables → Actions → Repository secrets`:
 
 | Secret | Used by | Behaviour if unset |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | `monthly_fetch.yml` | Classifier falls back to `--mock`; workflow still succeeds and opens a PR. |
+| `ANTHROPIC_API_KEY` | `monthly_fetch.yml` | Classifier falls back to `--mock`; the pipeline still runs and proposes candidates from the fetchers, with mock classifications. Not a substitute for a real run — the proposals carry no live classifier rationale. |
 | `CLOUDFLARE_API_TOKEN` | `deploy.yml` | Deploy step fails. Build and tests still run on every push. |
 | `CLOUDFLARE_ACCOUNT_ID` | `deploy.yml` | Deploy step fails. |
 
@@ -44,8 +78,16 @@ All other tokens (`GITHUB_TOKEN`) are auto-provisioned per run.
    **`agv-tracker`** (matches `wrangler.toml` and `deploy.yml`'s
    `--project-name`). Upload any placeholder HTML to complete project
    creation — it will be overwritten on the first CI deploy.
-2. Alternative: run `wrangler pages project create agv-tracker` locally
-   after `wrangler login`.
+2. Alternative: run
+   `wrangler pages project create agv-tracker --production-branch main`
+   locally after `wrangler login`. **Pass `--production-branch main`** — it
+   defaults to `production`, and `deploy.yml` deploys with `--branch=main`,
+   so a mismatch makes every green deploy a *preview*: the commit and
+   `main.agv-tracker.pages.dev` aliases serve the site while
+   `agv-tracker.pages.dev` keeps showing "Nothing is here yet" (observed
+   2026-09-07). On an existing project the branch is changed in the Pages
+   project settings; the next deploy then populates the production
+   hostname.
 3. Do NOT connect a Git source in the dashboard — deployments are driven
    from GitHub Actions via `cloudflare/wrangler-action@v3`.
 4. Verify the project appears at
@@ -141,9 +183,18 @@ Each of the four workflows carries its own Done-when item from Tasks 7 /
 - **PR body too large**: GitHub caps PR bodies at ~65k characters. Split
   `candidates_to_pr.py` output into multiple PRs or attach long sections
   as artifacts once the monthly diff exceeds this limit.
+- **`GitHub Actions is not permitted to create or approve pull requests`**:
+  the repository setting in §0.1 is off. Enable it, then re-run
+  `monthly-fetch`; the already-pushed `monthly-update/YYYY-MM` branch is
+  reused rather than recreated.
 - **Cloudflare deploy failing with 401**: the token needs
   `Account: Cloudflare Pages: Edit` and, for custom domain moves,
   `Zone: DNS: Edit` on the target zone.
+- **Deploy is green but `agv-tracker.pages.dev` shows "Nothing is here
+  yet"**: the project has no production deployment because its production
+  branch is not `main` (§2 step 2). Change it in the Pages project settings
+  and re-run `deploy`; the commit-specific and `main.` aliases work
+  throughout, so the build itself is not at fault.
 - **Cloudflare deploy failing with 404 "project not found"**: the Pages
   project does not exist yet. Create it in the dashboard or via
   `wrangler pages project create agv-tracker` (§2 step 2) before the next

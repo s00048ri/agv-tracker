@@ -30,8 +30,20 @@ def test_component_exports_required_symbols():
         "VIEW_LABELS",
         "VIEW_DESCRIPTIONS",
         "filterByView",
+        "renderInlineMarkdown",
     ):
         assert re.search(rf"export\s+(?:const|function)\s+{sym}\b", body), sym
+
+
+def test_render_inline_markdown_escapes_before_substituting():
+    """The renderer sets innerHTML, so escaping has to come first."""
+    body = COMPONENT.read_text(encoding="utf-8")
+    fn = body[body.index("export function renderInlineMarkdown") :]
+    fn = fn[: fn.index("\n}\n")]
+    escape_at = fn.index("&amp;")
+    strong_at = fn.index("<strong>")
+    assert escape_at < strong_at, "HTML escaping must precede markup substitution"
+    assert "innerHTML" in fn
 
 
 def test_continuous_entity_types_matches_agvo_62():
@@ -139,7 +151,36 @@ def test_dashboard_declares_all_six_sections():
 
 def test_dashboard_interpolates_view_description():
     body = DASHBOARD.read_text(encoding="utf-8")
-    assert "${md`${VIEW_DESCRIPTIONS[view]}`}" in body or "VIEW_DESCRIPTIONS[view]" in body
+    assert "VIEW_DESCRIPTIONS[selectedView]" in body
+
+
+def test_dashboard_does_not_shadow_the_view_builtin():
+    """`const view = view(...)` is a temporal-dead-zone self-reference.
+
+    `view` is Observable Framework's own builtin for wiring an Input as a
+    reactive value. Binding the result to a `const` of the same name shadows
+    it for the whole block, so the call reads the not-yet-initialised
+    binding and the page dies with "Cannot access 'view' before
+    initialization" — which shipped to production on 2026-09-07.
+    """
+    body = DASHBOARD.read_text(encoding="utf-8")
+    assert not re.search(r"\bconst\s+view\s*=\s*view\s*\(", body)
+
+
+def test_pages_do_not_use_the_md_tagged_template():
+    """`md` is an Observable *notebook* builtin, absent from Framework.
+
+    A page using it builds fine and then throws "md is not defined" in the
+    browser, so this can only be caught by reading the source (or the live
+    page). Use `html` or `renderInlineMarkdown` instead.
+    """
+    offenders = []
+    for page in sorted((REPO_ROOT / "src").rglob("*.md")):
+        for i, line in enumerate(page.read_text(encoding="utf-8").splitlines(), 1):
+            # A tagged template call: `md` immediately followed by a backtick.
+            if re.search(r"(?<![\w.`])md`", line):
+                offenders.append(f"{page.relative_to(REPO_ROOT)}:{i}")
+    assert not offenders, f"`md` tagged template used in: {offenders}"
 
 
 def test_dashboard_uses_agvFiltered_for_all_charts():

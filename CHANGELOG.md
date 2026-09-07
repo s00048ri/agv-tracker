@@ -3,6 +3,88 @@
 Runtime data/decisions accepted into the repository. Spec revisions are tracked
 in `CLAUDE.md §0`.
 
+## 2026-09-07
+
+- **site**: **two runtime errors were visible on the deployed dashboard** and
+  are fixed. (1) `src/dashboard.md` declared `const view = view(Inputs.radio(…))`
+  — `view` is Framework's own builtin for wiring an Input as a reactive value,
+  so binding the result to a `const` of the same name shadows it for the whole
+  block and the call reads the not-yet-initialised binding:
+  `ReferenceError: Cannot access 'view' before initialization`, which took the
+  view toggle out with it. Renamed to `selectedView`. (2) `md` is an Observable
+  *notebook* builtin and does not exist in Framework, so
+  `${md`…`}` threw `RuntimeError: md is not defined` in `dashboard.md` (the
+  per-view explanatory paragraph) and in `methodology.md` (the Zenodo citation
+  note). `methodology.md` now uses `html`; `dashboard.md` renders its
+  description strings through a new `renderInlineMarkdown` export in
+  `viewToggle.js` (escape-then-substitute, supporting only the `**strong**`,
+  `*em*` and `` `code` `` the descriptions use).
+  Both errors build cleanly and only fail in the browser, and
+  `tests/test_dashboard.py` had asserted the broken form
+  (``"${md`${VIEW_DESCRIPTIONS[view]}`}" in body``) — a test written against
+  what the file said rather than what Framework provides. The tests now reject
+  `const view = view(` and scan every `src/**/*.md` for the `md` tagged
+  template. pytest: 400 green (397 + 3).
+- **infra**: `deploy` run 34069569021 (`workflow_dispatch` on `main`) went
+  green end to end after `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`
+  were provisioned and the `agv-tracker` Pages project was created: 182
+  files uploaded, `✨ Deployment complete!` at
+  <https://d709cd24.agv-tracker.pages.dev>, branch alias
+  <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
+  builds and ships to Cloudflare Pages.
+- **infra**: **but the production alias <https://agv-tracker.pages.dev> serves
+  Cloudflare's "Nothing is here yet" placeholder**, which is what Pages shows
+  for a project with no *production* deployment. `deploy.yml` deploys with
+  `--branch=main`, and `wrangler pages project create` defaults the project's
+  production branch to `production` unless `--production-branch` is passed —
+  so a green deploy lands as a preview and the production hostname stays
+  empty. Fix is on the Pages project (Settings → production branch → `main`),
+  not in the workflow. **Task 11 Done-when #1 stays open** until the
+  production hostname serves the site and `scripts/verify_deployment.sh`
+  passes against it; that check also still needs a normal network, since the
+  sandbox this session runs in gets 403 on CONNECT to `pages.dev`.
+  Recorded because the earlier version of this entry called the site live on
+  the strength of the workflow log alone — "Deployment complete" names a
+  deployment, not the hostname a reader will visit.
+- **ci**: **the monthly pipeline opens PRs.** After the repository setting in
+  `.github/CI_SETUP.md` §0.1 was enabled and saved, `monthly-fetch` run
+  34070189628 completed green and opened
+  <https://github.com/s00048ri/agv-tracker/pull/1> from
+  `monthly-update/2026-09`. **Task 7 Done-when #1 closed** — every Task 7
+  Done-when item is now met. (Run 34069575107, before the setting was saved,
+  had failed on the same refusal as run #5; the setting is per-repository
+  only — there is no account-level equivalent for a personal account, the
+  org-level one applies to organizations.)
+- **data**: that first real PR carries **0 new venues, 0 updates, 0 conflicts,
+  67 stale candidates** over a canonical 118, from a candidate set of size 0.
+  The automation is now proven end to end while proposing nothing, which is
+  exactly what the 2026-09-05 fetcher finding predicts: five of seven
+  discovery fetchers match nothing on their live targets, so there is no
+  input for the classifier or the differ to work on. Rebuilding the fetchers
+  against real DOM is the gate on the monthly cycle producing substance
+  rather than an empty-but-valid PR. The 67 is the differ's own count under
+  §3.5 thresholds and supersedes the coarser month-arithmetic estimate used
+  in session notes.
+
+## 2026-09-06
+
+- **ci**: first `deploy` run (33993566147, push to `main`) **failed at the
+  wrangler step** — `CLOUDFLARE_API_TOKEN` is not provisioned. Everything
+  before it passed: venue-page regeneration, `npm ci`, and `npm run build`.
+  So the Observable Framework build is green on CI, and Task 11 Done-when #1
+  is blocked only on (a) the two Cloudflare repository secrets and (b) the
+  `agv-tracker` Pages project existing (`.github/CI_SETUP.md` §1–§2).
+- **ci**: `monthly-fetch` run #5 (33993926637) is the first run to reach PR
+  creation, and it **failed there**: `GitHub Actions is not permitted to
+  create or approve pull requests`. The pipeline itself succeeded and
+  `monthly-update/2026-09` was pushed with `pipelines/reports/2026-09.json`,
+  so no work was lost — the blocker is the repository setting
+  `Settings → Actions → General → Workflow permissions`, which cannot be set
+  from inside a workflow. Documented as `.github/CI_SETUP.md` §0.1 with the
+  UI path, the `gh api` equivalent, and the org-level override caveat; the
+  §1 secrets table no longer claims the monthly workflow "opens a PR"
+  regardless of that setting. Task 7 Done-when #1 remains open.
+
 ## 2026-09-05
 
 - **infra**: repository published at <https://github.com/s00048ri/agv-tracker>
