@@ -1,11 +1,10 @@
 {
   "version": "0.3.0",
-  "released_at": "2026-04-23",
-  "doi": "10.5281/zenodo.PLACEHOLDER",
-  "doi_url": "https://doi.org/10.5281/zenodo.PLACEHOLDER",
-  "concept_doi": "10.5281/zenodo.PLACEHOLDER",
-  "concept_doi_url": "https://doi.org/10.5281/zenodo.PLACEHOLDER",
-  "citation_text": "Iida, R. (2026). AGV Tracker: AI Governance Venues (v0.3.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.PLACEHOLDER",
-  "bibtex": "@dataset{iida_2026_agv_tracker,\n  author    = {Iida, Ren},\n  title     = {AGV Tracker: AI Governance Venues},\n  year      = {2026},\n  month     = {apr},\n  version   = {0.3.0},\n  publisher = {Zenodo},\n  doi       = {10.5281/zenodo.PLACEHOLDER},\n  url       = {https://doi.org/10.5281/zenodo.PLACEHOLDER}\n}",
-  "note": "DOI placeholder until the first Zenodo release. Run `scripts/update_citation.sh VERSION VERSION_DOI CONCEPT_DOI` once Zenodo mints one; the script rewrites this file plus CITATION.cff and .zenodo.json atomically."
+  "released_at": "2026-09-07",
+  "doi": "10.5281/zenodo.22571204",
+  "doi_url": "https://doi.org/10.5281/zenodo.22571204",
+  "concept_doi": "10.5281/zenodo.22571203",
+  "concept_doi_url": "https://doi.org/10.5281/zenodo.22571203",
+  "citation_text": "Iida, R. (2026). AGV Tracker: AI Governance Venues (v0.3.0) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.22571204",
+  "bibtex": "@dataset{iida_2026_agv_tracker,\n  author    = {Iida, Ren},\n  title     = {AGV Tracker: AI Governance Venues},\n  year      = {2026},\n  version   = {0.3.0},\n  publisher = {Zenodo},\n  doi       = {10.5281/zenodo.22571204},\n  url       = {https://doi.org/10.5281/zenodo.22571204}\n}"
 }

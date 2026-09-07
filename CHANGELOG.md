@@ -5,6 +5,20 @@ in `CLAUDE.md §0`.
 
 ## 2026-09-07
 
+- **release**: **the first Zenodo DOI is minted and wired in.** Version DOI
+  `10.5281/zenodo.22571204` (v0.3.0), concept DOI
+  `10.5281/zenodo.22571203`. `scripts/update_citation.sh` rewrote
+  `data/citation.json` and `CITATION.cff`; the site's "Cite this release"
+  blocks on `/methodology` and `/data-download` read from the former, so they
+  follow without a second edit. README gains the badge — pointed at the
+  *concept* DOI, which always resolves to the newest release — and a citing
+  section that says which of the two to use for what: concept when you mean
+  the dataset, version when you mean a reproducible analysis. **Task 12
+  closed.**
+  The stale header comment in `CITATION.cff` calling its DOI a placeholder is
+  replaced; `update_citation.sh` rewrites values, not prose, so a comment
+  describing the old state survives the update that falsifies it.
+
 - **ci**: **`validate.yml` had never passed, on two defects that predate every
   change in it.** It runs only on pull requests, and this repo had none until
   2026-09-07, so the gate went unexercised from the day it was written.

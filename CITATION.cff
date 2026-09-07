@@ -1,8 +1,9 @@
 # GitHub-native citation metadata (Citation File Format 1.2.0).
 # Rendered by the "Cite this repository" widget on the repo homepage.
-# `identifiers[0].value` is the placeholder DOI until the first Zenodo
-# release; run `scripts/update_citation.sh VERSION VERSION_DOI CONCEPT_DOI`
-# after Zenodo mints one to replace it.
+# `identifiers` carries the version DOI first, then the concept DOI. Do
+# not edit them by hand: `scripts/update_citation.sh VERSION VERSION_DOI
+# CONCEPT_DOI` rewrites this file together with data/citation.json, and
+# the two disagreeing is worse than either being stale.
 cff-version: "1.2.0"
 message: "If you use this dataset, please cite it using the metadata below."
 type: dataset
@@ -18,7 +19,7 @@ authors:
     given-names: Ren
     affiliation: GPAI Tokyo Centre / NICT
 version: "0.3.0"
-date-released: "2026-04-23"
+date-released: "2026-09-07"
 license: CC-BY-4.0
 repository-code: "https://github.com/s00048ri/agv-tracker"
 url: "https://agv-tracker.pages.dev/"
@@ -32,7 +33,7 @@ keywords:
 identifiers:
   - description: "Zenodo DOI for this version"
     type: doi
-    value: "10.5281/zenodo.PLACEHOLDER"
+    value: "10.5281/zenodo.22571204"
   - description: "Zenodo concept DOI (always resolves to the latest version)"
     type: doi
-    value: "10.5281/zenodo.PLACEHOLDER"
+    value: "10.5281/zenodo.22571203"
