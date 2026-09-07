@@ -75,8 +75,19 @@ in `CLAUDE.md §0`.
   - **One self-inflicted**: the note added today recording OECD.AI's dead
     endpoint wrote it as a live URL, so the checker dutifully chased a link
     we had just documented as a 404. Written without a scheme now.
-  (`techpolicy.press`'s feed also returned 500 on that run; watching whether
-  it recurs before deciding it is more than a blip.)
+  Three hosts refused an honest automated client even after lychee was
+  given a user agent that identifies itself and links back to this repo
+  (mlcommons.org 401, g20.org an HTTP/2 protocol error, techpolicy.press's
+  feed 500 — a feed `tech_policy_press.py` itself reads successfully, so the
+  resource is alive and the 500 is the WAF's answer). Those, and the dead
+  IEEE URL, now live in a root `.lycheeignore`, which lychee reads
+  automatically so the PR-scoped and weekly jobs cannot drift apart. Each
+  entry states its kind (`DEAD` vs `REFUSES`), its reason and the date
+  observed, and a test fails the build on any pattern without a comment
+  above it: these are the URLs behind `primary_reference_url` values, and an
+  exclusion with no reason cannot be told from a hidden break. What this
+  buys is a link check that goes green on the 33 URLs it can actually
+  speak for, and names the five it cannot.
 - **sources**: **the five discovery targets were captured live, and the
   fetchers' problems turn out not to be the same problem.** The 2026-09-05
   entry called them all "selectors_unverified"; the real markup says
