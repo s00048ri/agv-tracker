@@ -1,0 +1,114 @@
+{
+  "source_id": "oecd_ai_navigator",
+  "url": "https://oecd.ai/en/dashboards/overview/policy",
+  "captured_at": "2026-09-07T02:07:52+00:00",
+  "note": "policy-initiative listing; 60 invented initiative-card nodes today",
+  "static_status": 404,
+  "static_bytes": 96661,
+  "static_sha256": "06ea375cbc414f0a0d367cc5eb2c105f9d48e553c07b16805c47cf72313f1263",
+  "rendered_bytes": 97023,
+  "rendered_sha256": "36f53f76d1b462f9f446140a385d8c5e324a79132d3d7de3b46d6b70b7c14650",
+  "top_class_tokens": [
+    {
+      "token": "icon",
+      "count": 28
+    },
+    {
+      "token": "content",
+      "count": 28
+    },
+    {
+      "token": "nav-item-link",
+      "count": 27
+    },
+    {
+      "token": "ghost",
+      "count": 27
+    },
+    {
+      "token": "nav-item-media",
+      "count": 27
+    },
+    {
+      "token": "icon-text",
+      "count": 27
+    },
+    {
+      "token": "fa-chevron-right",
+      "count": 27
+    },
+    {
+      "token": "navbar-item",
+      "count": 11
+    },
+    {
+      "token": "no-deco",
+      "count": 9
+    },
+    {
+      "token": "navbar-link",
+      "count": 4
+    },
+    {
+      "token": "align-center",
+      "count": 4
+    },
+    {
+      "token": "navbar-dropdown",
+      "count": 4
+    },
+    {
+      "token": "navbar-dropdown--large",
+      "count": 4
+    },
+    {
+      "token": "button",
+      "count": 3
+    },
+    {
+      "token": "title",
+      "count": 3
+    },
+    {
+      "token": "justify-center",
+      "count": 2
+    },
+    {
+      "token": "xsmall-meta",
+      "count": 2
+    },
+    {
+      "token": "navbar",
+      "count": 1
+    },
+    {
+      "token": "nav-left",
+      "count": 1
+    },
+    {
+      "token": "navbar__logo",
+      "count": 1
+    },
+    {
+      "token": "nav-right",
+      "count": 1
+    },
+    {
+      "token": "nav-top",
+      "count": 1
+    },
+    {
+      "token": "nav-main",
+      "count": 1
+    },
+    {
+      "token": "icon-Search",
+      "count": 1
+    },
+    {
+      "token": "searchbar-wrap",
+      "count": 1
+    }
+  ],
+  "javascript_changes_dom": true
+}
