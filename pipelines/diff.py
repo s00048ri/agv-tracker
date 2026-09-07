@@ -36,7 +36,7 @@ import logging
 import sys
 import uuid
 from dataclasses import asdict, dataclass, field
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -179,7 +179,7 @@ class Differ:
     ):
         self.canonical_rows = list(canonical_rows or [])
         self.name_history_rows = list(name_history_rows or [])
-        self.today = today or datetime.now(timezone.utc).date()
+        self.today = today or datetime.now(UTC).date()
 
     @classmethod
     def from_paths(
@@ -187,7 +187,7 @@ class Differ:
         canonical_path: Path = DEFAULT_CANONICAL,
         name_history_path: Path = DEFAULT_NAME_HISTORY,
         today: date | None = None,
-    ) -> "Differ":
+    ) -> Differ:
         return cls(
             canonical_rows=load_csv(canonical_path),
             name_history_rows=load_csv(name_history_path),
@@ -197,7 +197,7 @@ class Differ:
     def diff(self, candidates: list[dict]) -> DiffReport:
         run_id = (
             "diff-"
-            + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+            + datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
             + "-" + uuid.uuid4().hex[:8]
         )
         report = DiffReport(
@@ -328,7 +328,7 @@ class Differ:
                     existing_value=existing, proposed_value=proposed,
                     rationale=(
                         f"field locked by override_policy='{override_policy}'"
-                        + (f" and listed in human_verified_fields" if f in hv_fields else "")
+                        + (" and listed in human_verified_fields" if f in hv_fields else "")
                     ),
                     existing_verified_at=verified_at,
                     override_policy=override_policy,

@@ -22,7 +22,7 @@ import time
 import urllib.robotparser
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -241,4 +241,4 @@ class BaseFetcher(ABC):
 
     @staticmethod
     def now_iso() -> str:
-        return datetime.now(timezone.utc).isoformat(timespec="seconds")
+        return datetime.now(UTC).isoformat(timespec="seconds")

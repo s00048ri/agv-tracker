@@ -23,8 +23,8 @@ from pipelines.classify import (
     TOPIC_FOCI,
     BudgetExceededError,
     BudgetGuard,
-    Classifier,
     ClassificationResult,
+    Classifier,
     anthropic_llm_call,
     compute_cost,
     extract_json,
@@ -53,7 +53,7 @@ def test_all_six_prompt_files_present():
 
 
 def test_every_enum_value_appears_in_its_prompt():
-    for field_name, filename, values in DIMENSIONS:
+    for _field_name, filename, values in DIMENSIONS:
         body = (PROMPTS_DIR / filename).read_text(encoding="utf-8")
         for v in values:
             assert v in body, (
@@ -109,7 +109,10 @@ def test_mock_returns_valid_enum_for_each_dimension(field_name, filename, values
 
 def test_classifier_happy_path_mock():
     c = Classifier(model="claude-sonnet-4-5", cache_dir=None, llm_call=mock_llm_call)
-    text = "OECD AI Principles — non-binding principles adopted by the OECD secretariat; global scope."
+    text = (
+        "OECD AI Principles — non-binding principles adopted by the "
+        "OECD secretariat; global scope."
+    )
     results = c.classify_all("oecd_ai_principles", text)
     assert len(results) == 6
     field_names = [r.field_name for r in results]

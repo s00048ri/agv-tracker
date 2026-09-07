@@ -6,14 +6,12 @@ applier emits the right CSV deltas for each (category × action) combination.
 from __future__ import annotations
 
 import csv
-import json
 from pathlib import Path
 
 import pytest
 
 from tools.review.apply_decisions import Applier
 from tools.review.schema import validate_decision
-
 
 AGV_HEADER = [
     "agv_id", "name_en", "name_native", "entity_type",

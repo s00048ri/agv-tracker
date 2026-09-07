@@ -43,3 +43,11 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+# The test modules import several fetchers' `DEFAULT_FIXTURE_PATH` / `main`
+# under module-specific aliases. Without this, isort splits every aliased
+# name into its own `from X import (...)` statement — one import block in
+# tests/test_fetchers.py expands from 12 lines to 60 with no gain in
+# readability. Keep aliases grouped with the module they come from.
+combine-as-imports = true

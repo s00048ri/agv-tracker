@@ -49,7 +49,7 @@ import re
 import sys
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
@@ -380,7 +380,7 @@ class BudgetGuard:
 
     @staticmethod
     def _now_month() -> str:
-        return datetime.now(timezone.utc).strftime("%Y-%m")
+        return datetime.now(UTC).strftime("%Y-%m")
 
     def _load(self) -> dict:
         if not self.path.exists():
@@ -434,7 +434,7 @@ class Classifier:
         self.budget_guard = budget_guard
         self.run_id = run_id or (
             "run-"
-            + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+            + datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
             + "-" + uuid.uuid4().hex[:8]
         )
         self._cumulative_cost = 0.0
@@ -541,7 +541,7 @@ class Classifier:
 # ---- Evidence emission ----
 
 def results_to_evidence_rows(results: list[ClassificationResult]) -> list[dict]:
-    today = datetime.now(timezone.utc).date().isoformat()
+    today = datetime.now(UTC).date().isoformat()
     return [
         {
             "agv_id": r.agv_id,

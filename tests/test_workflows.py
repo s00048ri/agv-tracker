@@ -262,3 +262,23 @@ def test_ci_setup_doc_present():
     text = doc.read_text(encoding="utf-8")
     for secret in ("ANTHROPIC_API_KEY", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"):
         assert secret in text, f"{secret} not documented"
+
+
+def test_lychee_args_use_only_flags_that_exist_in_v2():
+    """`--exclude-mail` was removed in lychee v2.
+
+    lychee rejects the whole invocation with a usage error (exit 2) rather
+    than ignoring the unknown flag, so no URL is ever fetched. In
+    `validate.yml` that failed the linkcheck job on every pull request; in
+    `linkcheck.yml`, where `fail: false` masks the exit status, it would
+    have filed a "broken URLs detected" issue every week off a usage error
+    rather than off any real link. Excluding `mailto:` is v2's default —
+    `--include-mail` opts back in.
+    """
+    for name in ("validate.yml", "linkcheck.yml"):
+        body = (WORKFLOWS_DIR / name).read_text(encoding="utf-8")
+        offenders = [
+            line for line in body.splitlines()
+            if "--exclude-mail" in line and not line.strip().startswith("#")
+        ]
+        assert not offenders, f"{name}: {offenders}"

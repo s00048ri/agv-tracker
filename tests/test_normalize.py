@@ -100,7 +100,10 @@ def test_normalize_emits_candidate_and_evidence():
 def test_normalize_explicit_verification_url_overrides_registry():
     rec = {
         "name": "Some IGO Initiative",
-        "description": "An initiative within the OECD intergovernmental organization. Global scope.",
+        "description": (
+            "An initiative within the OECD intergovernmental organization. "
+            "Global scope."
+        ),
         "primary_reference_url": "https://example.invalid/explicit",
     }
     norm = Normalizer(registry=_registry(), classifier=_classifier())
