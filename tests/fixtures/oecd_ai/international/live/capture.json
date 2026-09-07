@@ -1,0 +1,114 @@
+{
+  "source_id": "ad-hoc:oecd_ai/international",
+  "url": "https://oecd.ai/en/dashboards/international",
+  "captured_at": "2026-09-07T05:35:19+00:00",
+  "note": "ad-hoc capture (--capture-url)",
+  "static_status": 200,
+  "static_bytes": 168849,
+  "static_sha256": "44d5d3e642da5baf7f708f66b5022c8bc28b641db2644424560d20650a9a5de8",
+  "rendered_bytes": 169157,
+  "rendered_sha256": "106e1dec419d6fc6151fafe34326179a1760b07d0ff859450eb41a762ab2d3b6",
+  "top_class_tokens": [
+    {
+      "token": "content",
+      "count": 44
+    },
+    {
+      "token": "ghost",
+      "count": 41
+    },
+    {
+      "token": "icon",
+      "count": 28
+    },
+    {
+      "token": "nav-item-link",
+      "count": 27
+    },
+    {
+      "token": "nav-item-media",
+      "count": 27
+    },
+    {
+      "token": "icon-text",
+      "count": 27
+    },
+    {
+      "token": "fa-chevron-right",
+      "count": 27
+    },
+    {
+      "token": "pointer",
+      "count": 14
+    },
+    {
+      "token": "intergovernmental-card",
+      "count": 14
+    },
+    {
+      "token": "navbar-item",
+      "count": 11
+    },
+    {
+      "token": "no-deco",
+      "count": 9
+    },
+    {
+      "token": "button",
+      "count": 6
+    },
+    {
+      "token": "navbar-link",
+      "count": 4
+    },
+    {
+      "token": "align-center",
+      "count": 4
+    },
+    {
+      "token": "navbar-dropdown",
+      "count": 4
+    },
+    {
+      "token": "navbar-dropdown--large",
+      "count": 4
+    },
+    {
+      "token": "justify-center",
+      "count": 2
+    },
+    {
+      "token": "title",
+      "count": 2
+    },
+    {
+      "token": "xsmall-meta",
+      "count": 2
+    },
+    {
+      "token": "navbar",
+      "count": 1
+    },
+    {
+      "token": "nav-left",
+      "count": 1
+    },
+    {
+      "token": "navbar__logo",
+      "count": 1
+    },
+    {
+      "token": "nav-right",
+      "count": 1
+    },
+    {
+      "token": "nav-top",
+      "count": 1
+    },
+    {
+      "token": "nav-main",
+      "count": 1
+    }
+  ],
+  "javascript_changes_dom": true
+}
