@@ -62,10 +62,10 @@ const isPlaceholder = citation.doi.includes("PLACEHOLDER");
 ```
 
 ${isPlaceholder
-  ? md`_A Zenodo DOI has not yet been minted for this release. The block
+  ? html`<em>A Zenodo DOI has not yet been minted for this release. The block
 below shows the citation layout that will be populated once the first
-tagged release lands on Zenodo (see \`.github/CI_SETUP.md\` §7)._`
-  : md`This release carries a citable Zenodo DOI. Please cite as below.`}
+tagged release lands on Zenodo (see <code>.github/CI_SETUP.md</code> §7).</em>`
+  : html`This release carries a citable Zenodo DOI. Please cite as below.`}
 
 ```js
 display(html`

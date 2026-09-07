@@ -5,6 +5,26 @@ in `CLAUDE.md §0`.
 
 ## 2026-09-07
 
+- **site**: **two runtime errors were visible on the deployed dashboard** and
+  are fixed. (1) `src/dashboard.md` declared `const view = view(Inputs.radio(…))`
+  — `view` is Framework's own builtin for wiring an Input as a reactive value,
+  so binding the result to a `const` of the same name shadows it for the whole
+  block and the call reads the not-yet-initialised binding:
+  `ReferenceError: Cannot access 'view' before initialization`, which took the
+  view toggle out with it. Renamed to `selectedView`. (2) `md` is an Observable
+  *notebook* builtin and does not exist in Framework, so
+  `${md`…`}` threw `RuntimeError: md is not defined` in `dashboard.md` (the
+  per-view explanatory paragraph) and in `methodology.md` (the Zenodo citation
+  note). `methodology.md` now uses `html`; `dashboard.md` renders its
+  description strings through a new `renderInlineMarkdown` export in
+  `viewToggle.js` (escape-then-substitute, supporting only the `**strong**`,
+  `*em*` and `` `code` `` the descriptions use).
+  Both errors build cleanly and only fail in the browser, and
+  `tests/test_dashboard.py` had asserted the broken form
+  (``"${md`${VIEW_DESCRIPTIONS[view]}`}" in body``) — a test written against
+  what the file said rather than what Framework provides. The tests now reject
+  `const view = view(` and scan every `src/**/*.md` for the `md` tagged
+  template. pytest: 400 green (397 + 3).
 - **infra**: `deploy` run 34069569021 (`workflow_dispatch` on `main`) went
   green end to end after `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`
   were provisioned and the `agv-tracker` Pages project was created: 182
