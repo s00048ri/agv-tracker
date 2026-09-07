@@ -15,7 +15,7 @@ from pathlib import Path
 from pipelines.candidates_to_pr import render_pr_body
 from pipelines.classify import Classifier, mock_llm_call
 from pipelines.diff import Differ
-from pipelines.fetchers.oecd_ai import DEFAULT_FIXTURE_PATH, OECDFetcher
+from pipelines.fetchers.oecd_ai import DEFAULT_FIXTURE_DIR, OECDFetcher
 from pipelines.normalize import Normalizer
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -26,9 +26,13 @@ REGISTRY = REPO_ROOT / "sources" / "registry.yml"
 
 def test_fetcher_to_pr_body_end_to_end():
     # 1. Fetch from shipped OECD.AI fixture
-    fetcher = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH)
+    fetcher = OECDFetcher(fixture_dir=DEFAULT_FIXTURE_DIR)
     raw_venues = fetcher.fetch()
-    assert len(raw_venues) >= 50
+    # 10, from the three organisation pages shipped as captures. The old
+    # `>= 50` came from a hand-written fixture with 60 invented cards on a
+    # URL that returns 404; the number to assert here is "the pipeline
+    # carries whatever the fetcher found", not a target.
+    assert raw_venues
 
     # 2. Normalize → v0.3 candidates
     classifier = Classifier(cache_dir=None, llm_call=mock_llm_call, budget_guard=None)

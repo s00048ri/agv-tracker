@@ -39,7 +39,11 @@ from pipelines.fetchers.iapp import (
     IAPPFetcher,
     main as iapp_main,
 )
-from pipelines.fetchers.oecd_ai import DEFAULT_FIXTURE_PATH, OECDFetcher, main as oecd_main
+from pipelines.fetchers.oecd_ai import (
+    DEFAULT_FIXTURE_DIR as OECD_FIXTURE_DIR,
+    OECDFetcher,
+    main as oecd_main,
+)
 from pipelines.fetchers.tech_policy_press import (
     DEFAULT_CONFIG_PATH as NEWS_CONFIG_PATH,
     DEFAULT_FIXTURE_DIR as NEWS_FIXTURE_DIR,
@@ -235,53 +239,149 @@ def test_static_http_success(monkeypatch, tmp_path: Path):
 
 
 # ---- OECDFetcher ----
+#
+# The fetcher walks two levels: the international dashboard indexes 14
+# intergovernmental organisations, and each organisation's page lists its
+# AI initiatives. Tests run against the captures under
+# tests/fixtures/oecd_ai/, which are the pages OECD.AI actually served.
+#
+# The fixture it used to run against described `/dashboards/overview/policy`
+# — a URL that returns 404 — with 60 `initiative-card` nodes that have never
+# existed on the site. Those tests asserted ">= 50 records" and passed.
 
-def test_default_fixture_exists():
-    assert DEFAULT_FIXTURE_PATH.exists(), (
-        f"default fixture missing at {DEFAULT_FIXTURE_PATH}"
+OECD_INDEX_FIXTURE = OECD_FIXTURE_DIR / "international" / "live" / "static.html"
+
+
+def test_oecd_index_capture_is_present():
+    """The one place a missing index fails loudly.
+
+    Everywhere else the fetcher is deliberately tolerant of absent
+    captures, so without this the whole OECD suite would quietly parse
+    nothing.
+    """
+    assert OECD_INDEX_FIXTURE.exists(), OECD_INDEX_FIXTURE
+
+
+def test_oecd_index_lists_the_intergovernmental_organisations():
+    """The index is the entry point; if it stops parsing, nothing follows."""
+    html = OECD_INDEX_FIXTURE.read_text(encoding="utf-8")
+    orgs = OECDFetcher.parse_organisations(html)
+    assert len(orgs) >= 10
+    by_slug = {o.slug: o.name for o in orgs}
+    for slug in ("council-of-europe", "european-union", "g7", "oecd-gpai",
+                 "united-nations", "african-union"):
+        assert slug in by_slug, slug
+    assert by_slug["council-of-europe"] == "Council of Europe"
+    for org in orgs:
+        assert org.url.startswith("https://oecd.ai/"), org
+
+
+def test_oecd_organisation_captures_are_named_for_their_index_slug():
+    """A capture directory whose name misses the slug is silently skipped.
+
+    That is the fetcher behaving as designed — one absent organisation
+    must not cost the other thirteen — which makes a misnamed directory
+    invisible unless something checks. ISO shipped as `international-iso`
+    and contributed nothing until it was renamed to the slug the index
+    actually uses.
+    """
+    captured = list(OECD_FIXTURE_DIR.glob("international-*/live/static.html"))
+    assert captured, "no per-organisation captures under tests/fixtures/oecd_ai/"
+
+    slugs = {o.slug for o in OECDFetcher.parse_organisations(
+        OECD_INDEX_FIXTURE.read_text(encoding="utf-8"))}
+    for path in captured:
+        name = path.parent.parent.name.removeprefix("international-")
+        assert name in slugs, (
+            f"{path.parent.parent.name} matches no organisation on the index"
+        )
+
+
+def test_oecd_initiatives_parse_from_a_real_organisation_page():
+    """Council of Europe's page, parsed without going through the index."""
+    path = OECD_FIXTURE_DIR / "international-council-of-europe" / "live" / "static.html"
+    if not path.exists():
+        pytest.skip(f"capture not present at {path}")
+
+    from pipelines.fetchers.oecd_ai import Organisation
+
+    org = Organisation(
+        slug="council-of-europe",
+        name="Council of Europe",
+        url="https://oecd.ai/en/dashboards/international/council-of-europe",
     )
+    venues = OECDFetcher.parse_initiatives(
+        path.read_text(encoding="utf-8"), org, "2026-09-07T00:00:00+00:00",
+        FETCH_STRATEGY_FIXTURE,
+    )
+    names = [v.name for v in venues]
+    assert any("Framework Convention" in n for n in names), names
+    assert any("HUDERIA" in n for n in names), names
+
+    # Each initiative renders as two anchors to the same href — title then
+    # description — so they must collapse into one record carrying both.
+    framework = next(v for v in venues if "Framework Convention" in v.name)
+    assert framework.description and framework.description != framework.name
+    assert framework.url.startswith("https://oecd.ai/en/dashboards/policy-initiatives/")
+    assert framework.raw_blob["organisation"] == "Council of Europe"
+    assert framework.raw_blob["organisation_slug"] == "council-of-europe"
+    # Intergovernmental by construction: a country would be a category error.
+    assert framework.country is None
 
 
-def test_oecd_fetcher_fixture_returns_at_least_50():
-    fetcher = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH)
-    venues = fetcher.fetch()
-    assert len(venues) >= 50, f"expected >=50 records, got {len(venues)}"
-
-
-def test_oecd_fetcher_all_records_are_discovery():
-    fetcher = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH)
-    venues = fetcher.fetch()
-    assert venues, "no records parsed"
+def test_oecd_fetcher_walks_index_to_initiatives():
+    venues = OECDFetcher(fixture_dir=OECD_FIXTURE_DIR).fetch()
+    assert venues, "no records parsed from the shipped captures"
     for v in venues:
         assert v.source_role == "discovery", v
         assert v.source_registry == "oecd_ai_navigator"
         assert v.fetch_strategy == FETCH_STRATEGY_FIXTURE
-
-
-def test_oecd_fetcher_record_shape():
-    fetcher = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH)
-    venues = fetcher.fetch()
-    for v in venues:
         assert v.name, v
         assert v.url.startswith("https://"), v
         assert v.source_id.startswith("oecd.ai:"), v
         assert v.fetched_at, v
+        assert v.raw_blob["organisation"], v
+
+
+def test_oecd_fetcher_tolerates_organisations_without_a_capture():
+    """14 organisations are indexed; only a few pages are shipped.
+
+    A fixture run should exercise what is there rather than fail on what
+    is not — and live, one unreachable organisation must not cost the
+    other thirteen.
+    """
+    orgs = OECDFetcher.parse_organisations(
+        OECD_INDEX_FIXTURE.read_text(encoding="utf-8"),
+    )
+    captured = {
+        p.parent.parent.name.removeprefix("international-")
+        for p in OECD_FIXTURE_DIR.glob("international-*/live/static.html")
+    }
+    assert len(orgs) > len(captured), "test is vacuous if every page is shipped"
+
+    venues = OECDFetcher(fixture_dir=OECD_FIXTURE_DIR).fetch()
+    assert {v.raw_blob["organisation_slug"] for v in venues} <= captured
 
 
 def test_oecd_fetcher_fixture_mode_does_not_hit_network(monkeypatch):
     import httpx
     calls = []
     monkeypatch.setattr(httpx, "get", lambda *a, **kw: calls.append((a, kw)))
-    fetcher = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH)
-    fetcher.fetch()
+    OECDFetcher(fixture_dir=OECD_FIXTURE_DIR).fetch()
     assert calls == [], "fixture-mode fetcher must not call httpx.get"
 
 
-def test_oecd_fetcher_empty_fixture(tmp_path: Path):
-    empty = tmp_path / "empty.html"
-    empty.write_text("<html><body>no cards</body></html>", encoding="utf-8")
-    fetcher = OECDFetcher(fixture_path=empty)
-    assert fetcher.fetch() == []
+def test_oecd_parse_initiatives_on_a_page_with_none(tmp_path: Path):
+    from pipelines.fetchers.oecd_ai import Organisation
+
+    org = Organisation("x", "X", "https://oecd.ai/en/dashboards/international/x")
+    assert OECDFetcher.parse_initiatives(
+        "<html><body>no initiatives</body></html>", org, "t", "fixture",
+    ) == []
+
+
+def test_oecd_parse_organisations_on_an_empty_index():
+    assert OECDFetcher.parse_organisations("<html><body></body></html>") == []
 
 
 def test_oecd_cli_from_fixture_outputs_jsonl(capsys):
@@ -290,12 +390,12 @@ def test_oecd_cli_from_fixture_outputs_jsonl(capsys):
     captured = capsys.readouterr()
     import json
     lines = [ln for ln in captured.out.splitlines() if ln.strip()]
-    assert len(lines) >= 50
-    # every line parses as JSON and carries source_role=discovery
+    assert lines
     for ln in lines:
         obj = json.loads(ln)
         assert obj["source_role"] == "discovery"
     assert "source_role=discovery" in captured.err
+
 
 
 # ---- UNESCOGaigoFetcher ----
@@ -380,7 +480,7 @@ def test_unesco_cli_from_fixture_outputs_jsonl(capsys):
 def test_unesco_fetcher_source_id_distinct_from_oecd():
     """Guard against the two fetchers' source_id namespaces colliding."""
     unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
-    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_dir=OECD_FIXTURE_DIR).fetch()
     u_ids = {v.source_id for v in unesco}
     o_ids = {v.source_id for v in oecd}
     assert not (u_ids & o_ids), "source_id collision between fetchers"
@@ -587,7 +687,7 @@ def test_gov_fetcher_source_ids_distinct_from_other_fetchers():
     gov = GovernmentPagesFetcher(
         config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
     ).fetch()
-    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_dir=OECD_FIXTURE_DIR).fetch()
     unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
     all_others = {v.source_id for v in oecd} | {v.source_id for v in unesco}
     for v in gov:
@@ -721,7 +821,7 @@ def test_tpp_cli_from_fixture_outputs_jsonl(capsys):
 
 def test_tpp_source_ids_distinct_from_other_fetchers():
     tpp = TechPolicyPressFetcher(fixture_path=TPP_FIXTURE_PATH).fetch()
-    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_dir=OECD_FIXTURE_DIR).fetch()
     unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
     gov = GovernmentPagesFetcher(
         config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
@@ -972,7 +1072,7 @@ def test_iapp_cli_from_fixture_outputs_jsonl(capsys):
 
 def test_iapp_source_ids_distinct_from_other_fetchers():
     iapp = IAPPFetcher(fixture_path=IAPP_FIXTURE_PATH).fetch()
-    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_dir=OECD_FIXTURE_DIR).fetch()
     unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
     gov = GovernmentPagesFetcher(
         config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
@@ -1127,7 +1227,7 @@ def test_aidl_cli_from_fixture_outputs_jsonl(capsys):
 
 def test_aidl_source_ids_distinct_from_other_fetchers():
     aidl = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH).fetch()
-    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_dir=OECD_FIXTURE_DIR).fetch()
     unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
     gov = GovernmentPagesFetcher(
         config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
@@ -1217,7 +1317,7 @@ def test_ecom_cli_from_fixture_outputs_jsonl(capsys):
 
 def test_ecom_source_ids_distinct_from_other_fetchers():
     ecom = EvalCommunityMapFetcher(fixture_path=ECOM_FIXTURE_PATH).fetch()
-    oecd = OECDFetcher(fixture_path=DEFAULT_FIXTURE_PATH).fetch()
+    oecd = OECDFetcher(fixture_dir=OECD_FIXTURE_DIR).fetch()
     unesco = UNESCOGaigoFetcher(fixture_path=UNESCO_FIXTURE_PATH).fetch()
     gov = GovernmentPagesFetcher(
         config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
