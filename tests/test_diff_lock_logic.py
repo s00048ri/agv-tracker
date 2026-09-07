@@ -244,7 +244,14 @@ def test_unmatched_former_name_ignored():
 
 
 def test_current_official_name_does_not_trigger_rename():
-    """Only `former_official_en` rows participate in rename detection."""
+    """Only `former_official_en` rows participate in rename detection.
+
+    It is still the same venue, though, so it must not be proposed as new —
+    it matches by name instead. This test previously asserted the opposite,
+    which is how the 2026-09-07 run came to propose the ASEAN guide, the UN
+    scientific panel and the UN global dialogue as new venues alongside the
+    rows they already are.
+    """
     canon = _canonical(agv_id="existing", name_en="Existing Venue")
     name_history = [
         {
@@ -256,8 +263,8 @@ def test_current_official_name_does_not_trigger_rename():
     cand = _candidate(agv_id="different_id_same_name", name_en="Existing Venue")
     report = _differ(canonical=[canon], history=name_history).diff([cand])
     assert report.renames == []
-    # With no rename match it's a brand-new venue proposal:
-    assert len(report.new_venues) == 1
+    assert report.new_venues == []
+    assert [m.matched_agv_id for m in report.name_matches] == ["existing"]
 
 
 # ---- candidate omits a field ----
@@ -427,3 +434,77 @@ def test_diff_cli_empty_candidates_file(tmp_path):
         "--quiet",
     ])
     assert rc == 0
+
+
+# ---- name matching (the same venue under a different id) ----
+
+def test_name_match_survives_punctuation_and_case():
+    """`agv_id` comes from whatever wording a source printed."""
+    canon = _canonical(agv_id="iso_42001", name_en="ISO/IEC 42001")
+    cand = _candidate(agv_id="iso_iec_42001", name_en="iso iec  42001")
+    report = _differ(canonical=[canon]).diff([cand])
+    assert report.new_venues == []
+    assert [m.matched_agv_id for m in report.name_matches] == ["iso_42001"]
+
+
+def test_an_alias_in_name_history_also_identifies_the_venue():
+    canon = _canonical(agv_id="uk_aisi", name_en="UK AI Security Institute")
+    history = [
+        {
+            "agv_id": "uk_aisi", "name": "AI Security Institute",
+            "name_type": "alias", "valid_from": "2025-02-14", "valid_to": "",
+        }
+    ]
+    cand = _candidate(agv_id="ai_security_institute", name_en="AI Security Institute")
+    report = _differ(canonical=[canon], history=history).diff([cand])
+    assert report.new_venues == []
+    assert [m.matched_agv_id for m in report.name_matches] == ["uk_aisi"]
+
+
+def test_a_name_two_rows_share_matches_neither():
+    """Guessing between them would attach the proposal to the wrong venue."""
+    a = _canonical(agv_id="venue_a", name_en="AI Advisory Body")
+    b = _canonical(agv_id="venue_b", name_en="AI Advisory Body")
+    cand = _candidate(agv_id="third_thing", name_en="AI Advisory Body")
+    report = _differ(canonical=[a, b]).diff([cand])
+    assert report.name_matches == []
+    assert len(report.new_venues) == 1
+
+
+def test_a_near_name_is_flagged_for_review_not_merged():
+    """"Global Dialogue on AI Governance" vs "UN Global Dialogue on AI Governance".
+
+    Close enough that a reviewer must look; not close enough for the differ
+    to decide. It stays a new-venue proposal, carrying the pointer.
+    """
+    canon = _canonical(
+        agv_id="un_global_dialogue", name_en="UN Global Dialogue on AI Governance",
+    )
+    cand = _candidate(
+        agv_id="global_dialogue_on_ai_governance",
+        name_en="Global Dialogue on AI Governance",
+    )
+    report = _differ(canonical=[canon]).diff([cand])
+    assert report.name_matches == []
+    assert len(report.new_venues) == 1
+    assert [d["agv_id"] for d in report.new_venues[0].possible_duplicates] == [
+        "un_global_dialogue"
+    ]
+
+
+def test_short_names_do_not_trigger_duplicate_warnings():
+    """Two- and three-word names overlap far too easily to be a signal."""
+    from pipelines.diff import looks_like_same_venue
+
+    assert not looks_like_same_venue("AI Office", "EU AI Office")
+    assert not looks_like_same_venue("G7", "G7 Hiroshima AI Process")
+    assert looks_like_same_venue(
+        "Global Dialogue on AI Governance", "UN Global Dialogue on AI Governance",
+    )
+
+
+def test_an_unrelated_venue_is_not_flagged_as_a_duplicate():
+    canon = _canonical(agv_id="facct", name_en="ACM Conference on Fairness")
+    cand = _candidate(agv_id="iso_42001", name_en="ISO IEC 42001 Management System")
+    report = _differ(canonical=[canon]).diff([cand])
+    assert report.new_venues[0].possible_duplicates == []

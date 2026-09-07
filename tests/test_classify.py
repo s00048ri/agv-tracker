@@ -202,7 +202,8 @@ def test_evidence_row_shape_matches_agvschema(tmp_path: Path):
     for row in rows:
         assert row["source_type"] == "llm_classification"
         assert re.match(r"^internal://classifier-run/run-\d{8}T", row["source_url"])
-        assert row["reviewer"] == "claude-sonnet-4-5"
+        # The mock backend must not sign its work with the model's name.
+        assert row["reviewer"] == "mock (no claude-sonnet-4-5 call)"
         assert row["confidence"] in {"high", "medium", "low"}
         assert row["evidence_note"]
         assert row["accessed_at"]
@@ -306,3 +307,56 @@ def test_anthropic_llm_call_raises_clear_error_without_sdk(monkeypatch):
     with pytest.raises(ImportError) as ei:
         anthropic_llm_call("claude-sonnet-4-5", "irrelevant prompt")
     assert "uv sync --extra classifier" in str(ei.value)
+
+
+# ---- Backend attribution ----
+
+def test_mock_results_do_not_claim_a_model_call():
+    """`agv_evidence.reviewer` is provenance, and provenance must be true.
+
+    Recording "claude-sonnet-4-5" for a classification the mock produced
+    puts a false attribution into the dataset's own audit trail
+    (CLAUDE.md §4.4) and makes a plumbing run indistinguishable from a
+    real one — which is exactly what happened to the 2026-09-07 monthly
+    run before this was fixed.
+    """
+    c = Classifier(model="claude-sonnet-4-5", cache_dir=None, llm_call=mock_llm_call)
+    for r in c.classify_all("sample", "OECD AI Principles: non-binding; global."):
+        assert r.backend == "mock"
+        assert "claude-sonnet-4-5" not in r.reviewer.split("(")[0]
+        assert r.reviewer.startswith("mock")
+
+
+def test_a_live_backend_signs_with_the_model_name():
+    def fake_live(model, prompt, max_tokens=600):
+        out = mock_llm_call(model, prompt, max_tokens)
+        out["_backend"] = "anthropic"
+        return out
+
+    c = Classifier(model="claude-sonnet-4-5", cache_dir=None, llm_call=fake_live)
+    for r in c.classify_all("sample", "OECD AI Principles: non-binding; global."):
+        assert r.backend == "anthropic"
+        assert r.reviewer == "claude-sonnet-4-5"
+
+
+def test_cached_mock_answers_stay_labelled_mock(tmp_path: Path):
+    """A cache hit must not launder a mock answer into a live one.
+
+    `_cache_write` strips underscore-prefixed keys, so the backend has to
+    be persisted deliberately or a replayed answer comes back wearing the
+    model's name months later.
+    """
+    cache = tmp_path / "cache"
+    first = Classifier(model="claude-sonnet-4-5", cache_dir=cache, llm_call=mock_llm_call)
+    first.classify_all("sample", "OECD AI Principles: non-binding; global.")
+
+    def explode(model, prompt, max_tokens=600):  # pragma: no cover - must not run
+        raise AssertionError("cache miss: the second run should not call a backend")
+
+    second = Classifier(model="claude-sonnet-4-5", cache_dir=cache, llm_call=explode)
+    results = second.classify_all("sample", "OECD AI Principles: non-binding; global.")
+    assert results and all(r.cached for r in results)
+    for r in results:
+        assert r.backend == "mock"
+        assert r.reviewer.startswith("mock")
+

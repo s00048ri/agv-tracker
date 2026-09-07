@@ -38,6 +38,16 @@ def _truncate(s: str, n: int = _CELL_MAX) -> str:
     return s[: n - 1] + "…"
 
 
+def _classifier_backends(report: dict) -> set[str]:
+    """Backends that actually answered across this report's proposals."""
+    backends: set[str] = set()
+    for nv in (report.get("new_venues") or []):
+        backend = (nv.get("provenance") or {}).get("backend")
+        if backend:
+            backends.add(str(backend))
+    return backends
+
+
 def render_pr_body(report: dict) -> str:
     """Render the (dict form of) a ``DiffReport`` as Markdown."""
     lines: list[str] = []
@@ -50,11 +60,27 @@ def render_pr_body(report: dict) -> str:
     lines.append(f"- Candidate rows: **{report.get('candidate_size', 0)}**")
     lines.append("")
 
+    # A run whose classifications came from the mock backend must say so at
+    # the top. The 2026-09-07 run did not, and read as a fully classified
+    # proposal set; a reviewer accepting those values would have merged
+    # keyword guesses recorded as model output.
+    backends = _classifier_backends(report)
+    if backends and backends != {"anthropic"}:
+        listed = ", ".join(f"`{b}`" for b in sorted(backends))
+        lines.append(
+            f"> ⚠️ **Classifications are not from a live model** (backend: {listed}). "
+            "The mock backend keyword-matches; its values are plumbing output, not "
+            "judgements. Treat every ontology field below as unset, and re-run with "
+            "`ANTHROPIC_API_KEY` set before reviewing them on their merits."
+        )
+        lines.append("")
+
     n_new = len(report.get("new_venues") or [])
     n_upd = len(report.get("unverified_updates") or [])
     n_conf = len(report.get("conflicts") or [])
     n_stale = len(report.get("stale_candidates") or [])
     n_ren = len(report.get("renames") or [])
+    n_namematch = len(report.get("name_matches") or [])
     n_match = int(report.get("matches_count", 0))
 
     lines.append("| Category | Count |")
@@ -64,6 +90,7 @@ def render_pr_body(report: dict) -> str:
     lines.append(f"| ⚠️ Conflicts (locked fields) | {n_conf} |")
     lines.append(f"| Stale candidates | {n_stale} |")
     lines.append(f"| Rename detections | {n_ren} |")
+    lines.append(f"| Matched to an existing row by name | {n_namematch} |")
     lines.append(f"| Matches (no action) | {n_match} |")
     lines.append("")
 
@@ -105,11 +132,40 @@ def render_pr_body(report: dict) -> str:
                 lines.append(f"- discovery_url: {disc}")
             if row.get("notes"):
                 lines.append(f"- notes: {_truncate(row['notes'])}")
+            dupes = nv.get("possible_duplicates") or []
+            if dupes:
+                listed = ", ".join(
+                    f"`{d.get('agv_id','?')}` ({d.get('name_en','')})" for d in dupes
+                )
+                lines.append(
+                    f"- ⚠️ **may already exist**: {listed} — the names overlap but "
+                    "do not match exactly, so this was left as a new-venue "
+                    "proposal. Check before accepting."
+                )
             lines.append("")
             lines.append("- [ ] accept new venue (merge as-is)")
             lines.append("- [ ] needs edits before merge (list in PR comments)")
             lines.append("- [ ] reject (out of scope)")
             lines.append("")
+
+    # ---- Matched by name ----
+    if n_namematch:
+        lines.append("## Matched to an existing row by name")
+        lines.append("")
+        lines.append(
+            "These candidates carried a different `agv_id` — ids are derived "
+            "from whatever wording a source printed — but name an existing "
+            "row exactly. They were diffed against that row rather than "
+            "proposed as new."
+        )
+        lines.append("")
+        for m in report.get("name_matches") or []:
+            lines.append(
+                f"- `{m.get('candidate_agv_id','?')}` "
+                f"({m.get('candidate_name','')}) → `{m.get('matched_agv_id','?')}` "
+                f"({m.get('matched_name','')})"
+            )
+        lines.append("")
 
     # ---- Unverified updates ----
     if n_upd:

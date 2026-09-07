@@ -5,6 +5,45 @@ in `CLAUDE.md §0`.
 
 ## 2026-09-07
 
+- **pipeline**: **the evidence trail was crediting Claude for work the mock
+  backend did.** Every classification in the 2026-09-07 monthly run carried
+  `reviewer: claude-sonnet-4-5` in `agv_evidence` and `model:
+  claude-sonnet-4-5` in provenance, while its own `evidence_note` read
+  `[mock backend] keyword-matched to …`. `normalize.py` recorded the
+  *configured* model rather than the backend that answered, so a plumbing run
+  was indistinguishable from a real one in the dataset's own audit trail
+  (§4.4) — and `monthly_update.sh`'s comment claiming "the PR body will say
+  `model: mock`" was simply not true.
+  Backends now tag their replies (`_backend`), `ClassificationResult.backend`
+  carries it, and `reviewer` reads `mock (no claude-sonnet-4-5 call)` unless a
+  live call happened. The classifier cache persists the backend too: it strips
+  underscore-prefixed keys, so without that a cached mock answer would come
+  back months later wearing the model's name. Provenance gains `backend`
+  alongside `model`, and the PR body opens with a warning banner whenever the
+  classifications are not from a live model — the 2026-09-07 body had none,
+  and read as a fully classified proposal set.
+- **pipeline**: **the differ proposed venues it already had.** 30 of 30
+  candidates came back `new` against 118 canonical rows with `matches_count:
+  0`, including three the dataset already holds — the ASEAN guide,
+  `un_scientific_panel` and `un_global_dialogue`. Matching was by `agv_id`
+  alone, and an id is derived from whatever wording a source printed, so the
+  same venue arrives under a different id whenever the wording differs.
+  Two mechanisms now, deliberately separated:
+  - **Exact normalised name** (punctuation and case flattened) → treated as
+    the same venue and diffed against it, drawing on `agv_name_history` too,
+    since an alias or former name identifies a venue as well as its current
+    one. A name two rows share matches neither, rather than guessing.
+  - **Overlapping name** (one contains the other on a token boundary, both
+    ≥3 tokens) → the proposal stays new and carries a "may already exist"
+    pointer. "Global Dialogue on AI Governance" against "UN Global Dialogue
+    on AI Governance" is worth a reviewer's eye, but "AI Safety Institute"
+    matches several distinct national institutes — close names are a reason
+    to look, not a decision.
+  Replayed against the real 2026-09-07 report: 30 new becomes 29 new, 1 name
+  match (ASEAN, with 6 field matches), and 2 duplicate warnings on the UN
+  proposals. A test that had asserted the old behaviour — same name, different
+  id, proposed as new — now asserts the new one. pytest: 430 green;
+  `pipelines.diff` coverage 99%.
 - **release**: **the first Zenodo DOI is minted and wired in.** Version DOI
   `10.5281/zenodo.22571204` (v0.3.0), concept DOI
   `10.5281/zenodo.22571203`. `scripts/update_citation.sh` rewrote
