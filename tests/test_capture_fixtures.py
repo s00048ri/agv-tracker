@@ -87,3 +87,57 @@ def test_top_class_tokens_survives_markup_with_no_classes():
 def test_max_bytes_is_a_real_ceiling():
     """Set low enough to catch a wrong URL, high enough for a real page."""
     assert 1_000_000 <= capture_fixtures.MAX_BYTES <= 20_000_000
+
+
+# ---- --probe helpers ----
+
+def test_internal_links_keeps_same_host_and_drops_the_rest():
+    html = '''
+    <a href="/en/dashboards/policy-initiatives">Policy initiatives</a>
+    <a href="https://oecd.ai/en/catalogue/tools">Tools catalogue</a>
+    <a href="https://twitter.com/oecd_ai">Follow our policy feed</a>
+    <a href="/en/about">About</a>
+    '''
+    links = capture_fixtures.internal_links(
+        html, "https://oecd.ai/", capture_fixtures.DEFAULT_LINK_FILTER,
+    )
+    urls = [x["url"] for x in links]
+
+    # Relative hrefs are resolved against the page, not dropped.
+    assert "https://oecd.ai/en/dashboards/policy-initiatives" in urls
+    assert "https://oecd.ai/en/catalogue/tools" in urls
+    # Off-site, even though its anchor text matches the filter.
+    assert not any("twitter.com" in u for u in urls)
+    # On-site but uninteresting.
+    assert "https://oecd.ai/en/about" not in urls
+
+
+def test_internal_links_matches_on_anchor_text_too():
+    """A useful destination need not say so in its path."""
+    html = '<a href="https://oecd.ai/en/p/12">National AI policy database</a>'
+    links = capture_fixtures.internal_links(
+        html, "https://oecd.ai/", capture_fixtures.DEFAULT_LINK_FILTER,
+    )
+    assert [x["url"] for x in links] == ["https://oecd.ai/en/p/12"]
+    assert links[0]["text"] == "National AI policy database"
+
+
+def test_internal_links_dedupes_by_href_and_strips_fragments():
+    """Site chrome repeats the same nav on every page."""
+    html = (
+        '<a href="/en/dashboards">Dashboards</a>'
+        '<a href="/en/dashboards#top">Dashboards</a>'
+        '<a href="/en/dashboards">Dashboards</a>'
+    )
+    links = capture_fixtures.internal_links(
+        html, "https://oecd.ai/", capture_fixtures.DEFAULT_LINK_FILTER,
+    )
+    assert [x["url"] for x in links] == ["https://oecd.ai/en/dashboards"]
+
+
+def test_internal_links_flattens_markup_inside_the_anchor():
+    html = '<a href="/en/dashboards"><span>Policy</span> <b>initiatives</b></a>'
+    links = capture_fixtures.internal_links(
+        html, "https://oecd.ai/", capture_fixtures.DEFAULT_LINK_FILTER,
+    )
+    assert links[0]["text"] == "Policy initiatives"

@@ -35,11 +35,24 @@ DOM. That last field is the practical one: it is a first look at the real
 selector vocabulary, and it is short enough to read in a CI log before the
 captured pages have landed anywhere.
 
+Probing for a URL that no longer exists
+---------------------------------------
+A capture answers "what does this page contain". When the page is gone —
+oecd.ai's dashboard target returns 404 — the question is instead "where
+did it move to", and guessing URLs one CI run at a time is slow and
+mostly wrong. So `--probe` fetches candidates *and* prints the internal
+links each one offers, which lets the site's own navigation answer the
+question rather than a list of guesses. Nothing is written to disk: the
+report goes to stdout, where a CI log can carry it back.
+
 Usage
 -----
     python scripts/capture_fixtures.py                 # every target
     python scripts/capture_fixtures.py --only oecd_ai_navigator
     python scripts/capture_fixtures.py --list
+    python scripts/capture_fixtures.py --probe https://oecd.ai/
+    python scripts/capture_fixtures.py --probe https://oecd.ai/ \
+        --link-filter "dashboard|initiative"
 """
 from __future__ import annotations
 
@@ -222,6 +235,83 @@ def capture(target: Target) -> dict:
     return entry
 
 
+# Default interest filter for --probe: the vocabulary a listing of policy
+# initiatives is likely to use somewhere in its path or link text.
+DEFAULT_LINK_FILTER = r"dashboard|initiativ|polic|database|observator|search|catalog"
+
+
+def internal_links(html: str, base_url: str, pattern: str) -> list[dict]:
+    """Same-site links whose href or anchor text matches `pattern`.
+
+    Deduplicated by href and capped, because a site's chrome repeats the
+    same nav on every page and the useful signal is the set of distinct
+    destinations, not their frequency.
+    """
+    from urllib.parse import urljoin, urlparse
+
+    host = urlparse(base_url).netloc
+    rx = re.compile(pattern, re.I)
+    seen: dict[str, str] = {}
+    for href, text in re.findall(
+        r'<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', html, re.I | re.S,
+    ):
+        label = re.sub(r"<[^>]+>", " ", text)
+        label = re.sub(r"\s+", " ", label).strip()
+        absolute = urljoin(base_url, href)
+        if urlparse(absolute).netloc != host:
+            continue
+        if not (rx.search(absolute) or rx.search(label)):
+            continue
+        seen.setdefault(absolute.split("#")[0], label)
+    return [{"url": u, "text": t} for u, t in sorted(seen.items())]
+
+
+def probe(url: str, link_filter: str) -> dict:
+    """Fetch one candidate URL and describe what came back."""
+    import httpx
+
+    result: dict = {"url": url}
+    try:
+        resp = httpx.get(
+            url,
+            timeout=30,
+            follow_redirects=True,
+            headers={"User-Agent": "agv-tracker-fixture-capture"},
+        )
+    except Exception as e:  # noqa: BLE001 — an unreachable candidate is an answer
+        result["error"] = f"{type(e).__name__}: {e}"
+        return result
+
+    html = resp.text
+    result["status"] = resp.status_code
+    result["final_url"] = str(resp.url)
+    result["bytes"] = len(html.encode("utf-8"))
+    title = re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S)
+    result["title"] = re.sub(r"\s+", " ", title.group(1)).strip() if title else ""
+    result["top_class_tokens"] = top_class_tokens(html, limit=12)
+    result["links"] = internal_links(html, str(resp.url), link_filter)
+    return result
+
+
+def _report_probe(result: dict) -> None:
+    print(f"\n=== {result['url']} ===")
+    if "error" in result:
+        print(f"  FAILED — {result['error']}")
+        return
+    print(f"  status     {result['status']}  ({result['bytes']:,} bytes)")
+    if result["final_url"] != result["url"]:
+        print(f"  redirected {result['final_url']}")
+    print(f"  title      {result['title'][:100]!r}")
+    tokens = result.get("top_class_tokens") or []
+    if tokens:
+        print("  classes    " + ", ".join(
+            f"{t['token']}x{t['count']}" for t in tokens[:10]))
+    links = result.get("links") or []
+    print(f"  matching internal links: {len(links)}")
+    for link in links[:40]:
+        print(f"    {link['url']}\n        {link['text'][:80]!r}")
+
+
 def _report(entry: dict) -> None:
     print(f"\n=== {entry['source_id']} ===")
     print(f"  url        {entry['url']}")
@@ -244,7 +334,24 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--only", action="append", help="capture just this source_id")
     ap.add_argument("--list", action="store_true", help="list targets and exit")
+    ap.add_argument(
+        "--probe", action="append",
+        help="fetch this URL and report status, title and internal links "
+             "instead of capturing (repeatable; writes nothing to disk)",
+    )
+    ap.add_argument(
+        "--link-filter", default=DEFAULT_LINK_FILTER,
+        help="regex a link's href or text must match to be reported",
+    )
     args = ap.parse_args(argv)
+
+    if args.probe:
+        results = [probe(u, args.link_filter) for u in args.probe]
+        for result in results:
+            _report_probe(result)
+        reached = sum(1 for r in results if "error" not in r)
+        print(f"\nprobed {reached}/{len(results)} URLs")
+        return 0 if reached else 1
 
     targets = _targets()
     if args.list:

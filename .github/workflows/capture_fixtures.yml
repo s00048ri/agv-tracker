@@ -24,6 +24,17 @@ on:
         description: "Single source_id to capture (blank = all)"
         required: false
         type: string
+      probe:
+        description: >-
+          Space-separated candidate URLs to probe instead of capturing.
+          Reports status, title and matching internal links to the run
+          summary; writes nothing and opens no PR.
+        required: false
+        type: string
+      link_filter:
+        description: "Regex a probed page's links must match to be reported"
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -51,15 +62,24 @@ jobs:
       - name: Install Playwright Chromium
         run: uv run playwright install --with-deps chromium
 
-      - name: Capture
+      - name: Capture (or probe)
         id: capture
+        env:
+          PROBE: ${{ inputs.probe }}
+          ONLY: ${{ inputs.only }}
+          LINK_FILTER: ${{ inputs.link_filter }}
         run: |
           set -euo pipefail
-          if [ -n "${{ inputs.only }}" ]; then
-            uv run python scripts/capture_fixtures.py --only "${{ inputs.only }}" | tee capture.log
-          else
-            uv run python scripts/capture_fixtures.py | tee capture.log
+          args=()
+          if [ -n "$PROBE" ]; then
+            # Probing answers "where did this page move to" and writes
+            # nothing, so the PR step below is skipped for it.
+            for url in $PROBE; do args+=(--probe "$url"); done
+            if [ -n "$LINK_FILTER" ]; then args+=(--link-filter "$LINK_FILTER"); fi
+          elif [ -n "$ONLY" ]; then
+            args+=(--only "$ONLY")
           fi
+          uv run python scripts/capture_fixtures.py "${args[@]}" | tee capture.log
 
       - name: Summarise into the run page
         if: always()
@@ -73,6 +93,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Open / update PR with the captured pages
+        if: ${{ !inputs.probe }}
         uses: peter-evans/create-pull-request@v7
         with:
           branch: fixtures/live-capture
