@@ -1,0 +1,114 @@
+{
+  "source_id": "ai_deadlines",
+  "url": "https://aideadlin.es/",
+  "captured_at": "2026-09-07T02:08:11+00:00",
+  "note": "conference deadlines; upstream also publishes a machine-readable feed",
+  "static_status": 200,
+  "static_bytes": 821900,
+  "static_sha256": "7ec14d6de71bcf390df07f3a6924eb33d8dee40534c46d2a048725a9ce3adcdc",
+  "rendered_bytes": 823136,
+  "rendered_sha256": "0d93e4db7f0d458ebca76b7e47931c5ffad5d7749cc311410e236a47c313ca1b",
+  "top_class_tokens": [
+    {
+      "token": "conf-sub",
+      "count": 223
+    },
+    {
+      "token": "badge-link",
+      "count": 222
+    },
+    {
+      "token": "meta",
+      "count": 195
+    },
+    {
+      "token": "ConfItem",
+      "count": 192
+    },
+    {
+      "token": "past",
+      "count": 192
+    },
+    {
+      "token": "conf-row",
+      "count": 192
+    },
+    {
+      "token": "conf-title",
+      "count": 192
+    },
+    {
+      "token": "conf-title-small",
+      "count": 192
+    },
+    {
+      "token": "conf-title-icon",
+      "count": 192
+    },
+    {
+      "token": "deadline",
+      "count": 192
+    },
+    {
+      "token": "deadline-time",
+      "count": 192
+    },
+    {
+      "token": "conf-date",
+      "count": 192
+    },
+    {
+      "token": "conf-place",
+      "count": 192
+    },
+    {
+      "token": "note",
+      "count": 109
+    },
+    {
+      "token": "NLP-conf",
+      "count": 32
+    },
+    {
+      "token": "NLP-tag",
+      "count": 32
+    },
+    {
+      "token": "CV-conf",
+      "count": 30
+    },
+    {
+      "token": "CV-tag",
+      "count": 30
+    },
+    {
+      "token": "DM-conf",
+      "count": 28
+    },
+    {
+      "token": "DM-tag",
+      "count": 28
+    },
+    {
+      "token": "RO-conf",
+      "count": 22
+    },
+    {
+      "token": "RO-tag",
+      "count": 22
+    },
+    {
+      "token": "SP-conf",
+      "count": 14
+    },
+    {
+      "token": "SP-tag",
+      "count": 14
+    },
+    {
+      "token": "dropdown-item",
+      "count": 11
+    }
+  ],
+  "javascript_changes_dom": true
+}

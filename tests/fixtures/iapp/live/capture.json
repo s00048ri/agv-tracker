@@ -1,0 +1,114 @@
+{
+  "source_id": "iapp_ai_law_tracker",
+  "url": "https://iapp.org/resources/article/global-ai-legislation-tracker",
+  "captured_at": "2026-09-07T02:08:03+00:00",
+  "note": "global AI legislation tracker; iapp-law-entry appears 0 times live",
+  "static_status": 200,
+  "static_bytes": 354620,
+  "static_sha256": "747424b3d07d21abf6c62db5a0caa2bc1783085e8b51bba32b35a44c912474f2",
+  "rendered_bytes": 541216,
+  "rendered_sha256": "48a7ba3eb077b47644003fc1feff1c86fc871802e2de73a3b99dd7a78b1e8e38",
+  "top_class_tokens": [
+    {
+      "token": "chakra-link",
+      "count": 45
+    },
+    {
+      "token": "chakra-list__item",
+      "count": 41
+    },
+    {
+      "token": "chakra-stack",
+      "count": 16
+    },
+    {
+      "token": "svg-inline--fa",
+      "count": 15
+    },
+    {
+      "token": "css-1q6abmu",
+      "count": 14
+    },
+    {
+      "token": "css-1h4xve9",
+      "count": 14
+    },
+    {
+      "token": "chakra-icon",
+      "count": 12
+    },
+    {
+      "token": "chakra-list__root",
+      "count": 10
+    },
+    {
+      "token": "css-c9vb59",
+      "count": 8
+    },
+    {
+      "token": "chakra-container",
+      "count": 8
+    },
+    {
+      "token": "chakra-heading",
+      "count": 8
+    },
+    {
+      "token": "css-1rbq36g",
+      "count": 7
+    },
+    {
+      "token": "css-1l0sxr6",
+      "count": 7
+    },
+    {
+      "token": "css-cwjrqb",
+      "count": 6
+    },
+    {
+      "token": "css-1udv4dl",
+      "count": 6
+    },
+    {
+      "token": "css-w3k4lw",
+      "count": 6
+    },
+    {
+      "token": "css-62vdmy",
+      "count": 6
+    },
+    {
+      "token": "chakra-accordion__item",
+      "count": 6
+    },
+    {
+      "token": "css-j257i8",
+      "count": 6
+    },
+    {
+      "token": "chakra-accordion__itemTrigger",
+      "count": 6
+    },
+    {
+      "token": "css-143mc7j",
+      "count": 6
+    },
+    {
+      "token": "css-1uywhqt",
+      "count": 6
+    },
+    {
+      "token": "fa-chevron-down",
+      "count": 6
+    },
+    {
+      "token": "css-13uy2u",
+      "count": 6
+    },
+    {
+      "token": "chakra-accordion__itemContent",
+      "count": 6
+    }
+  ],
+  "javascript_changes_dom": true
+}

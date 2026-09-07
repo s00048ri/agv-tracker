@@ -1,0 +1,114 @@
+{
+  "source_id": "unesco_gaigo",
+  "url": "https://www.unesco.org/ethics-ai/en",
+  "captured_at": "2026-09-07T02:08:00+00:00",
+  "note": "GAIGO landing page; gaigo-entry appears 0 times live",
+  "static_status": 200,
+  "static_bytes": 49232,
+  "static_sha256": "f0ffe32d4002be4995433f3f3e5642ff0136031ae2adf9fe9d8607b1e12398e6",
+  "rendered_bytes": 53950,
+  "rendered_sha256": "3a2eae1e85a80772e2fb157fe6714cc95587788012e281bfb008120cb2a9af4e",
+  "top_class_tokens": [
+    {
+      "token": "field__item",
+      "count": 37
+    },
+    {
+      "token": "field",
+      "count": 26
+    },
+    {
+      "token": "field--label-hidden",
+      "count": 26
+    },
+    {
+      "token": "card-text",
+      "count": 16
+    },
+    {
+      "token": "nav-item",
+      "count": 14
+    },
+    {
+      "token": "nav-link",
+      "count": 14
+    },
+    {
+      "token": "paragraph",
+      "count": 12
+    },
+    {
+      "token": "paragraph--view-mode--default",
+      "count": 12
+    },
+    {
+      "token": "card",
+      "count": 10
+    },
+    {
+      "token": "card-height-fixed",
+      "count": 10
+    },
+    {
+      "token": "card-overlay",
+      "count": 10
+    },
+    {
+      "token": "card-body",
+      "count": 10
+    },
+    {
+      "token": "card-title",
+      "count": 10
+    },
+    {
+      "token": "block",
+      "count": 9
+    },
+    {
+      "token": "field--type-string",
+      "count": 9
+    },
+    {
+      "token": "card-link-wrapper",
+      "count": 9
+    },
+    {
+      "token": "card-arrow",
+      "count": 9
+    },
+    {
+      "token": "arrow-black",
+      "count": 9
+    },
+    {
+      "token": "img-fluid",
+      "count": 7
+    },
+    {
+      "token": "region",
+      "count": 6
+    },
+    {
+      "token": "btn-primary",
+      "count": 6
+    },
+    {
+      "token": "node",
+      "count": 5
+    },
+    {
+      "token": "field--type-image",
+      "count": 5
+    },
+    {
+      "token": "field--name-field-title",
+      "count": 5
+    },
+    {
+      "token": "block-unesco-common",
+      "count": 4
+    }
+  ],
+  "javascript_changes_dom": true
+}
