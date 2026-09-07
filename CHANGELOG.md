@@ -56,6 +56,86 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
+- **sources**: **`sources/registry.yml` was link-checked for the first time,
+  and seven of its URLs fail.** `validate.yml`'s link job only looks at files
+  a PR changes, so the registry had never been in scope. The failures split
+  three ways:
+  - **A dead verification source.**
+    `https://standards.ieee.org/practices/intelligent-systems/` returns 404.
+    It backs the `primary_reference_url` family for every `standards_body_wg`
+    row (§5.2), so it is recorded in place — `link_status: dead` plus a
+    comment — rather than repointed at a guessed replacement, and excluded by
+    name in both link-check workflows so the exclusion is legible and
+    removable. **This one needs a human to confirm the new URL.**
+  - **Four hosts that refuse robots**: coe.int, g20.org, iso.org and
+    mofa.go.jp answer a CI link checker with 403 while serving fine in a
+    browser. 403 cannot distinguish "gone" from "refuses automated clients",
+    so the workflows now accept it. Treating it as breakage would only teach
+    people to ignore the job.
+  - **One self-inflicted**: the note added today recording OECD.AI's dead
+    endpoint wrote it as a live URL, so the checker dutifully chased a link
+    we had just documented as a 404. Written without a scheme now.
+  Three hosts refused an honest automated client even after lychee was
+  given a user agent that identifies itself and links back to this repo
+  (mlcommons.org 401, g20.org an HTTP/2 protocol error, techpolicy.press's
+  feed 500 — a feed `tech_policy_press.py` itself reads successfully, so the
+  resource is alive and the 500 is the WAF's answer). Those, and the dead
+  IEEE URL, now live in a root `.lycheeignore`, which lychee reads
+  automatically so the PR-scoped and weekly jobs cannot drift apart. Each
+  entry states its kind (`DEAD` vs `REFUSES`), its reason and the date
+  observed, and a test fails the build on any pattern without a comment
+  above it: these are the URLs behind `primary_reference_url` values, and an
+  exclusion with no reason cannot be told from a hidden break. What this
+  buys is a link check that goes green on the 33 URLs it can actually
+  speak for, and names the five it cannot.
+- **sources**: **the five discovery targets were captured live, and the
+  fetchers' problems turn out not to be the same problem.** The 2026-09-05
+  entry called them all "selectors_unverified"; the real markup says
+  otherwise, and `sources/registry.yml` now records each diagnosis
+  separately:
+  - **oecd_ai** — `https://oecd.ai/en/dashboards/overview/policy` returns
+    **HTTP 404**. The capture is the site's 404 chrome, whose only classes
+    are navigation. There is no listing to select from, so no selector work
+    is possible until the correct dashboard URL is found. This is the single
+    highest-value unknown left in the discovery layer.
+  - **unesco_gaigo** — HTTP 200, Drupal (`field__item` / `card` /
+    `card-title`), so the selector is wrong; but the landing page carries
+    only ~10 cards, so the *page* is wrong too. Needs a target URL before it
+    needs selectors.
+  - **iapp** — HTTP 200, a Next.js app on Chakra UI whose class names are
+    build-hashed (`css-1q6abmu`). A class-based fetcher is the wrong shape
+    here whichever class is picked: it breaks at the next upstream deploy.
+    The data arrives in `self.__next_f` streaming payloads; that, or a JSON
+    endpoint, is the route worth trying.
+  - **evalcommunity_map** — static returns HTTP 202 with a 213-byte body and
+    the rendered DOM is 12 KB with one class: a bot-protection interstitial.
+    The content is not being served to a non-browser client at all. Evidence
+    for the §12 #7 probation decision.
+  - **ai_deadlines** — the one straightforward case, now fixed (below).
+  Also settled, having been "TBD on first online run" since Task 4:
+  **static HTTP suffices for all of them.** `ConfItem` appears 195 times in
+  both halves of the aideadlin.es capture, `card-title` 10 times in both
+  halves of UNESCO's, `chakra-list__item` 41 times in both of IAPP's. The
+  Playwright fallback is a safety net, not the expected path.
+- **pipeline**: **`ai_deadlines` rebuilt against the captured page and is the
+  first `operational` discovery fetcher.** The live listing uses
+  `div.ConfItem` (192 of them); the fetcher looked for
+  `article.conf-entry`, which matches none. The parser now reads the real
+  structure — title from `.conf-title`, the venue's own homepage from
+  `.conf-title-icon` (never the aideadlin.es detail page, which would be a
+  discovery URL standing in for a verification one, §5.2), dates from
+  `.deadline-time` / `.conf-date` / `.conf-place`, and the subject tag from
+  the element's own class list rather than child `.tag` nodes.
+  `DEFAULT_FIXTURE_PATH` now points at the capture and the hand-written
+  `conferences.html` is deleted.
+  **The yield is 1 venue — FAccT — and the tests now say so.** They
+  previously asserted eight flagship governance workshops (AIES, EAAMO,
+  TrustNLP, "AI Safety", "Trustworthy", "Bias", "Accountability") that
+  aideadlin.es does not list; every one of those assertions passed against
+  markup written to satisfy it. A new test pins the selector against all
+  192 entries, separately from the filter, so a future break is legible as
+  either "stopped seeing the page" or "stopped matching the topic".
+  pytest: 409 green.
 - **pipeline**: `scripts/capture_fixtures.py` + `capture_fixtures.yml` — the
   first step out of the fetcher dead end. The discovery fetchers cannot be
   rebuilt without the real markup, the test suite deliberately has no network,

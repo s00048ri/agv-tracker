@@ -210,8 +210,12 @@ def test_linkcheck_covers_registry_and_dataset():
     args = lychee["with"]["args"]
     assert "sources/registry.yml" in args
     assert "data/agv.csv" in args
-    # internal://... URLs from llm_classification evidence must be excluded
-    assert "internal://" in args
+    # internal://... URLs from llm_classification evidence must be excluded.
+    # The exclusion may live in `args` or in .lycheeignore, which lychee
+    # reads automatically; what matters is that it is excluded somewhere.
+    ignore = (REPO_ROOT / ".lycheeignore")
+    ignore_body = ignore.read_text(encoding="utf-8") if ignore.exists() else ""
+    assert "internal://" in args or "internal://" in ignore_body
 
 
 # ---- monthly_update.sh ----
@@ -282,3 +286,46 @@ def test_lychee_args_use_only_flags_that_exist_in_v2():
             if "--exclude-mail" in line and not line.strip().startswith("#")
         ]
         assert not offenders, f"{name}: {offenders}"
+
+
+# ---- .lycheeignore ----
+
+LYCHEEIGNORE = REPO_ROOT / ".lycheeignore"
+
+
+def test_lycheeignore_exists_and_both_jobs_can_use_it():
+    """lychee reads .lycheeignore from the working directory automatically.
+
+    Keeping the exclusions there rather than in `args` is what stops the
+    PR-scoped job and the weekly job from drifting apart.
+    """
+    assert LYCHEEIGNORE.exists()
+    for name in ("validate.yml", "linkcheck.yml"):
+        body = (WORKFLOWS_DIR / name).read_text(encoding="utf-8")
+        assert "--exclude " not in body, (
+            f"{name}: per-URL exclusions belong in .lycheeignore"
+        )
+
+
+def test_every_lycheeignore_entry_states_a_reason():
+    """An exclusion without a reason cannot be told from a hidden break.
+
+    These are the URLs behind `primary_reference_url` values, so each
+    pattern must be preceded by a comment line explaining it.
+    """
+    lines = LYCHEEIGNORE.read_text(encoding="utf-8").splitlines()
+    undocumented = []
+    for i, line in enumerate(lines):
+        pattern = line.strip()
+        if not pattern or pattern.startswith("#"):
+            continue
+        # Walk back over the contiguous comment block above the pattern.
+        j = i - 1
+        comment = []
+        while j >= 0 and lines[j].strip().startswith("#"):
+            comment.append(lines[j].strip("# ").strip())
+            j -= 1
+        if not any(comment):
+            undocumented.append(pattern)
+    assert not undocumented, f"undocumented exclusions: {undocumented}"
+

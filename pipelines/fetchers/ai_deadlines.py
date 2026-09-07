@@ -16,11 +16,19 @@ responsible / accountability / governance / policy). Purely
 technical tracks without a policy layer (e.g. "Optimization",
 "Reinforcement Learning Theory") are filtered out.
 
-**Live strategy TBD.** aideadlin.es is a mostly-static Jekyll site
-built from a YAML data file (the project is open source on GitHub);
-static HTML is likely sufficient, but the BaseFetcher contract
-falls back to Playwright automatically if the expected selectors
-are missing.
+**Live strategy: static HTTP.** Confirmed 2026-09-07 against a real
+capture (`tests/fixtures/ai_deadlines/live/`): `div.ConfItem` occurs
+195 times in the static response and 195 times in the rendered DOM,
+so the page needs no browser. The Playwright fallback stays as a
+safety net but is not on the expected path.
+
+**Yield is low and that is the honest number.** The live listing
+carries 192 conferences, of which exactly one — FAccT — passes the
+governance filter. aideadlin.es indexes submission deadlines for
+technical ML venues; the governance workshops this fetcher was
+written for are largely not on it. It is kept because the cost is a
+single request and FAccT-class venues do appear, not because it is
+a productive discovery source.
 
 CLI::
 
@@ -42,8 +50,11 @@ from bs4 import BeautifulSoup
 from .base import FETCH_STRATEGY_FIXTURE, BaseFetcher, RawVenue
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# The captured live page, not a hand-written stand-in. The previous
+# fixture was authored to fit the selectors below and asserted eight
+# flagship governance workshops that aideadlin.es does not list.
 DEFAULT_FIXTURE_PATH = (
-    REPO_ROOT / "tests" / "fixtures" / "ai_deadlines" / "conferences.html"
+    REPO_ROOT / "tests" / "fixtures" / "ai_deadlines" / "live" / "static.html"
 )
 
 # Governance-layer keywords. A conference/workshop passes the filter when
@@ -59,10 +70,16 @@ INCLUDE_REGEX = re.compile(
 )
 
 
+def _class_text(card, class_name: str) -> str | None:
+    """Text of the first descendant carrying `class_name`, or None."""
+    el = card.find(class_=class_name)
+    return el.get_text(" ", strip=True) if el else None
+
+
 class AIDeadlinesFetcher(BaseFetcher):
     source_id = "ai_deadlines"
     base_url = "https://aideadlin.es/"
-    required_selectors = ['class="conf-entry"']
+    required_selectors = ["ConfItem"]
 
     def __init__(
         self,
@@ -82,31 +99,56 @@ class AIDeadlinesFetcher(BaseFetcher):
         return self._parse(html, strategy)
 
     def _parse(self, html: str, strategy: str) -> list[RawVenue]:
+        """Parse the live aideadlin.es DOM.
+
+        Structure (captured 2026-09-07):
+
+            div#<id>.ConfItem.<TAG>-conf[.past]
+              .conf-title       > a[href="/conference?id=<id>"]  title
+              .conf-title-icon  > a[href=...]                    homepage
+              .deadline-time                                     deadline
+              .conf-date                                         event dates
+              .conf-place                                        location
+              .note                                              free text
+
+        The subject tag lives in the element's own class list as
+        `ML-conf`, `NLP-conf` and so on, not in child `.tag` nodes.
+        """
         soup = BeautifulSoup(html, "html.parser")
-        cards = soup.find_all("article", class_="conf-entry")
+        cards = soup.find_all("div", class_="ConfItem")
         ts = self.now_iso()
         venues: list[RawVenue] = []
         for card in cards:
-            entry_id = (card.get("data-id") or "").strip()
-            title_el = card.find(["h2", "h3"])
-            name = title_el.get_text(strip=True) if title_el else ""
-            link_el = card.find("a", class_="conf-link")
-            url = (link_el.get("href") if link_el else "") or ""
-            deadline_el = card.find(class_="deadline")
-            deadline = deadline_el.get_text(strip=True) if deadline_el else None
-            date_el = card.find(class_="event-date")
-            event_date = date_el.get_text(strip=True) if date_el else None
-            desc_el = card.find(class_="description")
-            description = desc_el.get_text(strip=True) if desc_el else None
-            tag_els = card.find_all(class_="tag")
-            tags = [t.get_text(strip=True) for t in tag_els]
-            venue_el = card.find(class_="venue")
-            venue = venue_el.get_text(strip=True) if venue_el else None
+            entry_id = (card.get("id") or "").strip()
+            classes = card.get("class") or []
+            tags = [c[: -len("-conf")] for c in classes if c.endswith("-conf")]
+
+            title_el = card.find(class_="conf-title")
+            name = title_el.get_text(" ", strip=True) if title_el else ""
+
+            # Prefer the conference's own site; the detail page is the
+            # fallback, and is aideadlin.es itself — a discovery source,
+            # never acceptable as a primary_reference_url (CLAUDE.md §5.2).
+            url = ""
+            icon_el = card.find(class_="conf-title-icon")
+            if icon_el:
+                link = icon_el.find("a", href=True)
+                if link:
+                    url = link["href"].strip()
+            if not url and title_el:
+                link = title_el.find("a", href=True)
+                if link:
+                    href = link["href"].strip()
+                    url = href if href.startswith("http") else f"{self.base_url.rstrip('/')}{href}"
+
+            deadline = _class_text(card, "deadline-time")
+            event_date = _class_text(card, "conf-date")
+            venue_place = _class_text(card, "conf-place")
+            description = _class_text(card, "note")
 
             if not (name and url):
                 continue
 
-            # Filter on title + tags + description.
             haystack = " ".join([name, *tags, description or ""])
             if not INCLUDE_REGEX.search(haystack):
                 continue
@@ -129,7 +171,7 @@ class AIDeadlinesFetcher(BaseFetcher):
                         "tags": tags,
                         "deadline": deadline,
                         "event_date": event_date,
-                        "venue": venue,
+                        "venue": venue_place,
                     },
                 )
             )

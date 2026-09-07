@@ -1,0 +1,44 @@
+# URLs the link checker cannot verify, one regex per line.
+#
+# lychee reads this file automatically, so both `validate.yml` (changed
+# files on a PR) and `linkcheck.yml` (the whole dataset, weekly) honour it.
+#
+# Every entry states why it is here and when that was observed. An
+# exclusion without a reason is indistinguishable from hiding a broken
+# link, and these are the URLs behind `primary_reference_url` values —
+# the dataset's evidence trail (CLAUDE.md §5.2). Two kinds live here:
+#
+#   * DEAD    — genuinely broken, kept visible until someone confirms a
+#               replacement. Excluded so one known failure does not mask
+#               the next new one.
+#   * REFUSES — alive in a browser, refuses an automated client. The
+#               checker cannot speak for these; a human has to. Note that
+#               `--user-agent` was tried first, honestly identifying the
+#               checker and linking back to the repo (2026-09-07); these
+#               three still refused, so the block is not about the UA
+#               string.
+#
+# Re-check these by hand at each release and delete the line when it
+# starts working. Nothing else belongs in this file.
+
+# DEAD 2026-09-07 — HTTP 404. Backs the primary_reference_url family for
+# every standards_body_wg row, so it needs a confirmed replacement rather
+# than a guessed one. See sources/registry.yml → ieee_sa_ai.
+^https://standards\.ieee\.org/practices/intelligent-systems/$
+
+# REFUSES 2026-09-07 — HTTP 401 to any automated client.
+^https://mlcommons\.org/working-groups/ai-safety/
+
+# REFUSES 2026-09-07 — closes the connection with an HTTP/2 protocol
+# error; answered 403 before the user agent was set, so the refusal is
+# the point, not the protocol.
+^https://www\.g20\.org/
+
+# REFUSES 2026-09-07 — HTTP 500 to the checker. The same feed is fetched
+# successfully by pipelines/fetchers/tech_policy_press.py, so the
+# resource is plainly alive; the 500 is the WAF's answer, not the site's.
+^https://www\.techpolicy\.press/category/artificial-intelligence/feed/$
+
+# Not a URL: the classifier's synthetic provenance scheme for
+# LLM-classified fields (CLAUDE.md §4.4).
+^internal://
