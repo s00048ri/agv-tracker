@@ -35,6 +35,13 @@ on:
         description: "Regex a probed page's links must match to be reported"
         required: false
         type: string
+      capture_url:
+        description: >-
+          Space-separated DIR=URL pairs to capture into
+          tests/fixtures/DIR/live/, for pages a probe has just identified.
+          Opens the same PR as a normal capture.
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -68,10 +75,13 @@ jobs:
           PROBE: ${{ inputs.probe }}
           ONLY: ${{ inputs.only }}
           LINK_FILTER: ${{ inputs.link_filter }}
+          CAPTURE_URL: ${{ inputs.capture_url }}
         run: |
           set -euo pipefail
           args=()
-          if [ -n "$PROBE" ]; then
+          if [ -n "$CAPTURE_URL" ]; then
+            for spec in $CAPTURE_URL; do args+=(--capture-url "$spec"); done
+          elif [ -n "$PROBE" ]; then
             # Probing answers "where did this page move to" and writes
             # nothing, so the PR step below is skipped for it.
             for url in $PROBE; do args+=(--probe "$url"); done
