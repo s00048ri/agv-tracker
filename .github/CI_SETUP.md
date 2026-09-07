@@ -78,8 +78,16 @@ All other tokens (`GITHUB_TOKEN`) are auto-provisioned per run.
    **`agv-tracker`** (matches `wrangler.toml` and `deploy.yml`'s
    `--project-name`). Upload any placeholder HTML to complete project
    creation — it will be overwritten on the first CI deploy.
-2. Alternative: run `wrangler pages project create agv-tracker` locally
-   after `wrangler login`.
+2. Alternative: run
+   `wrangler pages project create agv-tracker --production-branch main`
+   locally after `wrangler login`. **Pass `--production-branch main`** — it
+   defaults to `production`, and `deploy.yml` deploys with `--branch=main`,
+   so a mismatch makes every green deploy a *preview*: the commit and
+   `main.agv-tracker.pages.dev` aliases serve the site while
+   `agv-tracker.pages.dev` keeps showing "Nothing is here yet" (observed
+   2026-09-07). On an existing project the branch is changed in the Pages
+   project settings; the next deploy then populates the production
+   hostname.
 3. Do NOT connect a Git source in the dashboard — deployments are driven
    from GitHub Actions via `cloudflare/wrangler-action@v3`.
 4. Verify the project appears at
@@ -182,6 +190,11 @@ Each of the four workflows carries its own Done-when item from Tasks 7 /
 - **Cloudflare deploy failing with 401**: the token needs
   `Account: Cloudflare Pages: Edit` and, for custom domain moves,
   `Zone: DNS: Edit` on the target zone.
+- **Deploy is green but `agv-tracker.pages.dev` shows "Nothing is here
+  yet"**: the project has no production deployment because its production
+  branch is not `main` (§2 step 2). Change it in the Pages project settings
+  and re-run `deploy`; the commit-specific and `main.` aliases work
+  throughout, so the build itself is not at fault.
 - **Cloudflare deploy failing with 404 "project not found"**: the Pages
   project does not exist yet. Create it in the dashboard or via
   `wrangler pages project create agv-tracker` (§2 step 2) before the next

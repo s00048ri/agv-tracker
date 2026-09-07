@@ -5,18 +5,27 @@ in `CLAUDE.md §0`.
 
 ## 2026-09-07
 
-- **infra**: **the site is live.** `deploy` run 34069569021 (`workflow_dispatch`
-  on `main`) went green end to end after `CLOUDFLARE_API_TOKEN` /
-  `CLOUDFLARE_ACCOUNT_ID` were provisioned and the `agv-tracker` Pages project
-  was created: 182 files uploaded, `✨ Deployment complete!`. URLs —
-  commit deployment <https://d709cd24.agv-tracker.pages.dev>, branch alias
-  <https://main.agv-tracker.pages.dev>, production
-  <https://agv-tracker.pages.dev>. Task 7 Done-when #2 closed; Task 11
-  Done-when #1 closed for the `pages.dev` host (custom domain still open,
-  §9 Task 11 steps 3–4). `scripts/verify_deployment.sh` has not been run
-  against the live host yet — the sandbox this session runs in cannot reach
-  `pages.dev` (proxy returns 403 on CONNECT), so the smoke check has to be
-  run from a normal network before Task 11 is signed off.
+- **infra**: `deploy` run 34069569021 (`workflow_dispatch` on `main`) went
+  green end to end after `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`
+  were provisioned and the `agv-tracker` Pages project was created: 182
+  files uploaded, `✨ Deployment complete!` at
+  <https://d709cd24.agv-tracker.pages.dev>, branch alias
+  <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
+  builds and ships to Cloudflare Pages.
+- **infra**: **but the production alias <https://agv-tracker.pages.dev> serves
+  Cloudflare's "Nothing is here yet" placeholder**, which is what Pages shows
+  for a project with no *production* deployment. `deploy.yml` deploys with
+  `--branch=main`, and `wrangler pages project create` defaults the project's
+  production branch to `production` unless `--production-branch` is passed —
+  so a green deploy lands as a preview and the production hostname stays
+  empty. Fix is on the Pages project (Settings → production branch → `main`),
+  not in the workflow. **Task 11 Done-when #1 stays open** until the
+  production hostname serves the site and `scripts/verify_deployment.sh`
+  passes against it; that check also still needs a normal network, since the
+  sandbox this session runs in gets 403 on CONNECT to `pages.dev`.
+  Recorded because the earlier version of this entry called the site live on
+  the strength of the workflow log alone — "Deployment complete" names a
+  deployment, not the hostname a reader will visit.
 - **ci**: **the monthly pipeline opens PRs.** After the repository setting in
   `.github/CI_SETUP.md` §0.1 was enabled and saved, `monthly-fetch` run
   34070189628 completed green and opened
