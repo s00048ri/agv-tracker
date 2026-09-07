@@ -56,6 +56,18 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
+- **pipeline**: `capture_fixtures.py --probe` — for the source whose page is
+  not merely mis-selected but gone. A capture answers "what is on this page";
+  when the page 404s, as OECD.AI's does, the question is "where did it move
+  to", and firing candidate URLs at CI one run at a time is slow and mostly
+  wrong. `--probe` reports each candidate's status, redirect target and title,
+  **and the site's own internal links** whose href or anchor text matches an
+  interest filter — so the site's navigation answers the question instead of a
+  list of guesses. Same-host only, deduped by href with fragments stripped
+  (a site's chrome repeats its nav on every page, and the signal is the set of
+  distinct destinations). Writes nothing and opens no PR; the report goes to
+  the workflow summary, which is how it reaches a session that cannot reach
+  the network itself.
 - **sources**: **`sources/registry.yml` was link-checked for the first time,
   and seven of its URLs fail.** `validate.yml`'s link job only looks at files
   a PR changes, so the registry had never been in scope. The failures split
