@@ -1,0 +1,3682 @@
+{
+  "run_id": "diff-20260907T081725Z-2f905b60",
+  "today": "2026-09-07",
+  "canonical_size": 118,
+  "candidate_size": 30,
+  "new_venues": [
+    {
+      "agv_row": {
+        "agv_id": "afcfta_digital_trade_protocol",
+        "name_en": "AfCFTA Digital Trade Protocol",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "afcfta_digital_trade_protocol",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "afcfta_digital_trade_protocol",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "afcfta_digital_trade_protocol",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "afcfta_digital_trade_protocol",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "afcfta_digital_trade_protocol",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "afcfta_digital_trade_protocol",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:afcfta-digital-trade-protocol-6196",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/afcfta-digital-trade-protocol-6196",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "asean_data_management_framework",
+        "name_en": "ASEAN Data Management Framework",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "privacy_data",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "asean_data_management_framework",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_data_management_framework",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_data_management_framework",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'privacy_data'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_data_management_framework",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_data_management_framework",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_data_management_framework",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:asean-data-management-framework-8097",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/asean-data-management-framework-8097",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "asean_digital_masterplan_2025",
+        "name_en": "ASEAN Digital Masterplan 2025",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "asean_digital_masterplan_2025",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_digital_masterplan_2025",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_digital_masterplan_2025",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_digital_masterplan_2025",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_digital_masterplan_2025",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "asean_digital_masterplan_2025",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:asean-digital-masterplan-2025-6848",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/asean-digital-masterplan-2025-6848",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "huderia_methodology_for_assessing_the_risks_and_",
+        "name_en": "HUDERIA – Methodology for assessing the risks and impacts of artificial intelligence systems",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ethics_rights",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "huderia_methodology_for_assessing_the_risks_and_",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "huderia_methodology_for_assessing_the_risks_and_",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "huderia_methodology_for_assessing_the_risks_and_",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ethics_rights'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "huderia_methodology_for_assessing_the_risks_and_",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "huderia_methodology_for_assessing_the_risks_and_",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "huderia_methodology_for_assessing_the_risks_and_",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:huderia-methodology-for-assessing-the-risks-and-impacts-of-artificial-intelligence-systems",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/huderia-methodology-for-assessing-the-risks-and-impacts-of-artificial-intelligence-systems",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "european_high_performance_computing_joint_undert",
+        "name_en": "European High Performance Computing Joint Undertaking (EuroHPC JU)",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "research_monitoring",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "domain_labor",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "european_high_performance_computing_joint_undert",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_high_performance_computing_joint_undert",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'research_monitoring'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_high_performance_computing_joint_undert",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'domain_labor'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_high_performance_computing_joint_undert",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_high_performance_computing_joint_undert",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_high_performance_computing_joint_undert",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:european-high-performance-computing-joint-undertaking-eurohpc-ju",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/european-high-performance-computing-joint-undertaking-eurohpc-ju",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "eu_general_purpose_ai_gpai_code_of_practice",
+        "name_en": "EU General-Purpose AI (GPAI) Code of Practice",
+        "name_native": "",
+        "entity_type": "national_regulator_intl",
+        "governance_modality_primary": "evaluation_benchmarking",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "safety_frontier",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://www.aisi.gov.uk/",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "eu_general_purpose_ai_gpai_code_of_practice",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'national_regulator_intl'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "eu_general_purpose_ai_gpai_code_of_practice",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'evaluation_benchmarking'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "eu_general_purpose_ai_gpai_code_of_practice",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'safety_frontier'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "eu_general_purpose_ai_gpai_code_of_practice",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "eu_general_purpose_ai_gpai_code_of_practice",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "eu_general_purpose_ai_gpai_code_of_practice",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:eu-general-purpose-ai-gpai-code-of-practice",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/eu-general-purpose-ai-gpai-code-of-practice",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "european_commission",
+        "name_en": "European Commission",
+        "name_native": "",
+        "entity_type": "national_regulator_intl",
+        "governance_modality_primary": "research_monitoring",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "domain_climate",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://www.aisi.gov.uk/",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "european_commission",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'national_regulator_intl'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'research_monitoring'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'domain_climate'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:eu-ai-continent-action-plan",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/eu-ai-continent-action-plan",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "european_commission",
+        "name_en": "European Commission",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "european_commission",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "european_commission",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:eu-scaleup-europe-fund",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/eu-scaleup-europe-fund",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "frontier_ai_initiative",
+        "name_en": "Frontier AI Initiative",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "research_monitoring",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "safety_frontier",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "frontier_ai_initiative",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "frontier_ai_initiative",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'research_monitoring'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "frontier_ai_initiative",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'safety_frontier'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "frontier_ai_initiative",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "frontier_ai_initiative",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "frontier_ai_initiative",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:frontier-ai-initiative",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/frontier-ai-initiative",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "ai_for_development_donors_partnership",
+        "name_en": "AI for Development Donors Partnership",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "declaration_principles",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "plurilateral",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "ai_for_development_donors_partnership",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ai_for_development_donors_partnership",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'declaration_principles'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ai_for_development_donors_partnership",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ai_for_development_donors_partnership",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'plurilateral'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ai_for_development_donors_partnership",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ai_for_development_donors_partnership",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:ai-hub-for-sustainable-development-7187",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/ai-hub-for-sustainable-development-7187",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "g7_hiroshima_process_on_generative_artificial_in",
+        "name_en": "G7 Hiroshima Process on Generative Artificial Intelligence",
+        "name_native": "",
+        "entity_type": "intergov_forum",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "genai_content",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "plurilateral",
+        "region_code": "",
+        "lead_actor_primary": "state_govt",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://www.mofa.go.jp/policy/economy/g7_hiroshima/",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "g7_hiroshima_process_on_generative_artificial_in",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'intergov_forum'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "g7_hiroshima_process_on_generative_artificial_in",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "g7_hiroshima_process_on_generative_artificial_in",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'genai_content'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "g7_hiroshima_process_on_generative_artificial_in",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'plurilateral'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "g7_hiroshima_process_on_generative_artificial_in",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'state_govt'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "g7_hiroshima_process_on_generative_artificial_in",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:g7-hiroshima-process-on-generative-artificial-intelligence-6634",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/g7-hiroshima-process-on-generative-artificial-intelligence-6634",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "fair_lac",
+        "name_en": "fAIr LAC",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "civil_society",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "fair_lac",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "fair_lac",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "fair_lac",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "fair_lac",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "fair_lac",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'civil_society'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "fair_lac",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:fair-lac-1635",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/fair-lac-1635",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "hiroshima_artificial_intelligence_process_code_o",
+        "name_en": "Hiroshima Artificial Intelligence Process Code of Conduct Reporting Framework",
+        "name_native": "",
+        "entity_type": "intergov_forum",
+        "governance_modality_primary": "declaration_principles",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ethics_rights",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "plurilateral",
+        "region_code": "",
+        "lead_actor_primary": "state_govt",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://www.mofa.go.jp/policy/economy/g7_hiroshima/",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "hiroshima_artificial_intelligence_process_code_o",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'intergov_forum'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "hiroshima_artificial_intelligence_process_code_o",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'declaration_principles'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "hiroshima_artificial_intelligence_process_code_o",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ethics_rights'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "hiroshima_artificial_intelligence_process_code_o",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'plurilateral'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "hiroshima_artificial_intelligence_process_code_o",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'state_govt'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "hiroshima_artificial_intelligence_process_code_o",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:hiroshima-artificial-intelligence-process-code-of-conduct-reporting-framework-1820",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/hiroshima-artificial-intelligence-process-code-of-conduct-reporting-framework-1820",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "oecd_ai_capabilities_indicators",
+        "name_en": "OECD AI Capabilities Indicators",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "oecd_ai_capabilities_indicators",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "oecd_ai_capabilities_indicators",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "oecd_ai_capabilities_indicators",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "oecd_ai_capabilities_indicators",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "oecd_ai_capabilities_indicators",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "oecd_ai_capabilities_indicators",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:oecd-ai-capabilities-indicators-5760",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/oecd-ai-capabilities-indicators-5760",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "integrated_partnership_between_oecd_and_gpai",
+        "name_en": "Integrated Partnership Between OECD and GPAI",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "declaration_principles",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "integrated_partnership_between_oecd_and_gpai",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "integrated_partnership_between_oecd_and_gpai",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'declaration_principles'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "integrated_partnership_between_oecd_and_gpai",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "integrated_partnership_between_oecd_and_gpai",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "integrated_partnership_between_oecd_and_gpai",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "integrated_partnership_between_oecd_and_gpai",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:integrated-partnership-between-oecd-and-gpai-7128",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/integrated-partnership-between-oecd-and-gpai-7128",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "independent_international_scientific_panel_on_ai",
+        "name_en": "Independent International Scientific Panel on AI",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "independent_international_scientific_panel_on_ai",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "independent_international_scientific_panel_on_ai",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "independent_international_scientific_panel_on_ai",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "independent_international_scientific_panel_on_ai",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "independent_international_scientific_panel_on_ai",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "independent_international_scientific_panel_on_ai",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:independent-international-scientific-panel-on-ai",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/independent-international-scientific-panel-on-ai",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": [
+        {
+          "agv_id": "un_scientific_panel",
+          "name_en": "UN Independent International Scientific Panel on AI"
+        }
+      ]
+    },
+    {
+      "agv_row": {
+        "agv_id": "global_dialogue_on_ai_governance",
+        "name_en": "Global Dialogue on AI Governance",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "global_dialogue_on_ai_governance",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "global_dialogue_on_ai_governance",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "global_dialogue_on_ai_governance",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "global_dialogue_on_ai_governance",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "global_dialogue_on_ai_governance",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "global_dialogue_on_ai_governance",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:global-dialogue-on-ai-governance",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/global-dialogue-on-ai-governance",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": [
+        {
+          "agv_id": "un_global_dialogue",
+          "name_en": "UN Global Dialogue on AI Governance"
+        }
+      ]
+    },
+    {
+      "agv_row": {
+        "agv_id": "un_secretary_general_s_high_level_advisory_body_",
+        "name_en": "UN Secretary-General's High-level Advisory Body on Artificial Intelligence (HLAB-AI)",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "un_secretary_general_s_high_level_advisory_body_",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "un_secretary_general_s_high_level_advisory_body_",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "un_secretary_general_s_high_level_advisory_body_",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "un_secretary_general_s_high_level_advisory_body_",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "un_secretary_general_s_high_level_advisory_body_",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "un_secretary_general_s_high_level_advisory_body_",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:un-secretary-generals-high-level-advisory-body-on-artificial-intelligence-hlab-ai-5433",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/un-secretary-generals-high-level-advisory-body-on-artificial-intelligence-hlab-ai-5433",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "human_rights_council",
+        "name_en": "Human Rights Council",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "declaration_principles",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ethics_rights",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "human_rights_council",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "human_rights_council",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'declaration_principles'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "human_rights_council",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ethics_rights'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "human_rights_council",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "human_rights_council",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "human_rights_council",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:guiding-principles-on-business-and-human-rights-implementing-the-united-nations-protect,-respect-and-remedy-framework",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/guiding-principles-on-business-and-human-rights-implementing-the-united-nations-protect,-respect-and-remedy-framework",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "third_ministerial_summit",
+        "name_en": "Third Ministerial Summit",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "declaration_principles",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ethics_rights",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "third_ministerial_summit",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "third_ministerial_summit",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'declaration_principles'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "third_ministerial_summit",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ethics_rights'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "third_ministerial_summit",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "third_ministerial_summit",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "third_ministerial_summit",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:santo-domingo-declaration-%E2%80%94-third-ministerial-summit-and-high-authorities-on-the-ethics-of-artificial-intelligence-in-latin-america-and-the-caribbean",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/santo-domingo-declaration-%E2%80%94-third-ministerial-summit-and-high-authorities-on-the-ethics-of-artificial-intelligence-in-latin-america-and-the-caribbean",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "second_ministerial_and_high_level_authorities_su",
+        "name_en": "Second Ministerial and High-Level Authorities Summit",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "declaration_principles",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ethics_rights",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "second_ministerial_and_high_level_authorities_su",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "second_ministerial_and_high_level_authorities_su",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'declaration_principles'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "second_ministerial_and_high_level_authorities_su",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ethics_rights'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "second_ministerial_and_high_level_authorities_su",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "second_ministerial_and_high_level_authorities_su",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "second_ministerial_and_high_level_authorities_su",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:declaration-of-montevideo-5789",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/declaration-of-montevideo-5789",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "santiago_ministerial_summit",
+        "name_en": "Santiago Ministerial Summit",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "declaration_principles",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ethics_rights",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "santiago_ministerial_summit",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "santiago_ministerial_summit",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'declaration_principles'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "santiago_ministerial_summit",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ethics_rights'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "santiago_ministerial_summit",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "santiago_ministerial_summit",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "santiago_ministerial_summit",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:cartagena-de-indias-declaration-on-governance,-the-building-of-artificial-intelligence-ai-ecosystems,-and-the-promotion-of-ethical-and-responsible-ai-education-in-latin-america-and-the-caribbean",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/cartagena-de-indias-declaration-on-governance,-the-building-of-artificial-intelligence-ai-ecosystems,-and-the-promotion-of-ethical-and-responsible-ai-education-in-latin-america-and-the-caribbean",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "ministerial_and_high_level_authorities_summit",
+        "name_en": "Ministerial and High-Level Authorities Summit",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "declaration_principles",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "ministerial_and_high_level_authorities_summit",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ministerial_and_high_level_authorities_summit",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'declaration_principles'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ministerial_and_high_level_authorities_summit",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ministerial_and_high_level_authorities_summit",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ministerial_and_high_level_authorities_summit",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "ministerial_and_high_level_authorities_summit",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:declaration-of-santiago-1017",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/declaration-of-santiago-1017",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "inter_american_framework_and_guidelines_on_data_",
+        "name_en": "Inter-American Framework and Guidelines on Data Governance and Artificial Intelligence (MIGDIA)",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "declaration_principles",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "privacy_data",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "inter_american_framework_and_guidelines_on_data_",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "inter_american_framework_and_guidelines_on_data_",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'declaration_principles'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "inter_american_framework_and_guidelines_on_data_",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'privacy_data'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "inter_american_framework_and_guidelines_on_data_",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "inter_american_framework_and_guidelines_on_data_",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "inter_american_framework_and_guidelines_on_data_",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:inter-american-framework-on-data-governance-and-artificial-intelligence-migdia",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/inter-american-framework-on-data-governance-and-artificial-intelligence-migdia",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "apec_digital_ai_ministerial_meeting",
+        "name_en": "APEC Digital & AI Ministerial Meeting",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "safety_frontier",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "regional",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "apec_digital_ai_ministerial_meeting",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "apec_digital_ai_ministerial_meeting",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "apec_digital_ai_ministerial_meeting",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'safety_frontier'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "apec_digital_ai_ministerial_meeting",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'regional'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "apec_digital_ai_ministerial_meeting",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "apec_digital_ai_ministerial_meeting",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:apec-digital-and-ai-ministerial-meeting",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/apec-digital-and-ai-ministerial-meeting",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "standard_model_process",
+        "name_en": "Standard Model Process",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ethics_rights",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "academia",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "standard_model_process",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "standard_model_process",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "standard_model_process",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ethics_rights'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "standard_model_process",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "standard_model_process",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'academia'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "standard_model_process",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:institute-of-electrical-and-electronics-engineers-ieee-standard-model-process-for-addressing-ethical-concerns-during-system-design-7000-2021",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/institute-of-electrical-and-electronics-engineers-ieee-standard-model-process-for-addressing-ethical-concerns-during-system-design-7000-2021",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "information_technology_artificial_intelligence_g",
+        "name_en": "Information technology — Artificial intelligence — Guidance on risk management (ISO/IEC 23894)",
+        "name_native": "",
+        "entity_type": "standards_body_wg",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://www.iso.org/committee/6794475.html",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "information_technology_artificial_intelligence_g",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'standards_body_wg'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_g",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_g",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_g",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_g",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_g",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:information-technology-%E2%80%94-artificial-intelligence-%E2%80%94-guidance-on-risk-management-isoiec-23894",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/information-technology-%E2%80%94-artificial-intelligence-%E2%80%94-guidance-on-risk-management-isoiec-23894",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "information_technology_artificial_intelligence_m",
+        "name_en": "Information technology — Artificial intelligence — Management system (ISO/IEC 42001)",
+        "name_native": "",
+        "entity_type": "standards_body_wg",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://www.iso.org/committee/6794475.html",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "information_technology_artificial_intelligence_m",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'standards_body_wg'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_m",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_m",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_m",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_m",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "information_technology_artificial_intelligence_m",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "oecd.ai:information-technology-%E2%80%94-artificial-intelligence-%E2%80%94-management-system-isoiec-42001",
+        "source_registry": "oecd_ai_navigator",
+        "discovery_url": "https://oecd.ai/en/dashboards/policy-initiatives/information-technology-%E2%80%94-artificial-intelligence-%E2%80%94-management-system-isoiec-42001",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    },
+    {
+      "agv_row": {
+        "agv_id": "facct_2022",
+        "name_en": "FAccT 2022",
+        "name_native": "",
+        "entity_type": "igo_initiative",
+        "governance_modality_primary": "dialogue_coordination",
+        "governance_modality_secondary": "",
+        "topic_focus_primary": "ai_general",
+        "topic_focus_secondary_1": "",
+        "topic_focus_secondary_2": "",
+        "geographic_scope": "global",
+        "region_code": "",
+        "lead_actor_primary": "igo_secretariat",
+        "lead_actor_secondary": "",
+        "legal_character": "soft_law",
+        "founded_date": "",
+        "founded_date_precision": "day",
+        "establishment_basis": "announced",
+        "announced_date": "",
+        "first_output_date": "",
+        "current_state": "active",
+        "convening_frequency": "continuous",
+        "last_observed_activity_date": "2026-09-07",
+        "primary_reference_url": "https://oecd.ai/en/ai-principles",
+        "last_verified_date": "2026-09-07",
+        "confidence_entity_type": "medium",
+        "confidence_founded_date": "low",
+        "confidence_current_state": "low",
+        "confidence_legal_character": "medium",
+        "human_verified_at": "",
+        "human_verified_fields": "",
+        "override_policy": "lock_verified_only",
+        "notes": "normalize candidate — requires human verification of founded_date, current_state, and convening_frequency before merging. | primary_reference_url is the registry verification-family placeholder for this entity_type, not this venue's own page — replace it before merging."
+      },
+      "evidence_rows": [
+        {
+          "agv_id": "facct_2022",
+          "field_name": "entity_type",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_initiative'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "facct_2022",
+          "field_name": "governance_modality_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'dialogue_coordination'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "facct_2022",
+          "field_name": "topic_focus_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'ai_general'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "facct_2022",
+          "field_name": "geographic_scope",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'global'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "facct_2022",
+          "field_name": "lead_actor_primary",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'igo_secretariat'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        },
+        {
+          "agv_id": "facct_2022",
+          "field_name": "legal_character",
+          "source_url": "internal://classifier-run/run-20260907T081724Z-793f1fe5",
+          "source_type": "llm_classification",
+          "accessed_at": "2026-09-07",
+          "evidence_note": "[mock backend] keyword-matched to 'soft_law'",
+          "reviewer": "mock (no claude-sonnet-4-5 call)",
+          "confidence": "medium"
+        }
+      ],
+      "provenance": {
+        "source_id": "aideadlines:facct22",
+        "source_registry": "ai_deadlines",
+        "discovery_url": "https://facctconference.org/2022/",
+        "run_id": "run-20260907T081724Z-793f1fe5",
+        "model": "claude-sonnet-4-5",
+        "backend": "mock"
+      },
+      "possible_duplicates": []
+    }
+  ],
+  "unverified_updates": [
+    {
+      "agv_id": "asean_ai_governance_framework",
+      "name_en": "ASEAN Guide on AI Governance and Ethics",
+      "field_name": "governance_modality_primary",
+      "existing_value": "declaration_principles",
+      "proposed_value": "technical_standards",
+      "rationale": "unverified field; LLM proposed replacement",
+      "source_url": "https://oecd.ai/en/dashboards/policy-initiatives/asean-guide-on-ai-governance-and-ethics"
+    },
+    {
+      "agv_id": "asean_ai_governance_framework",
+      "name_en": "ASEAN Guide on AI Governance and Ethics",
+      "field_name": "lead_actor_primary",
+      "existing_value": "state_govt",
+      "proposed_value": "igo_secretariat",
+      "rationale": "unverified field; LLM proposed replacement",
+      "source_url": "https://oecd.ai/en/dashboards/policy-initiatives/asean-guide-on-ai-governance-and-ethics"
+    }
+  ],
+  "conflicts": [],
+  "stale_candidates": [
+    {
+      "agv_id": "fli_2014",
+      "name_en": "Future of Life Institute",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "partnership_ai",
+      "name_en": "Partnership on AI",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "oecd_ai_principles",
+      "name_en": "OECD AI Principles",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2024-05-03",
+      "months_since_loa": 28.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "gpai_2020",
+      "name_en": "Global Partnership on AI (founding coalition)",
+      "convening_frequency": "annual",
+      "last_observed_activity_date": "2024-07-01",
+      "months_since_loa": 26.2,
+      "threshold_months": 18
+    },
+    {
+      "agv_id": "iso_iec_sc42",
+      "name_en": "ISO/IEC JTC 1/SC 42 (AI)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "unesco_ai_ethics",
+      "name_en": "UNESCO Recommendation on the Ethics of AI",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-11-01",
+      "months_since_loa": 10.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "coe_ai_convention",
+      "name_en": "Council of Europe Framework Convention on AI",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-09-01",
+      "months_since_loa": 12.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "unesco_ram_ai",
+      "name_en": "UNESCO Readiness Assessment Methodology for AI",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "oecd_ai_wips",
+      "name_en": "OECD AI-WIPS (Work, Innovation, Productivity, Skills) Programme",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "oecd_one_ai",
+      "name_en": "OECD Network of Experts on AI (ONE AI)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "who_ai4h",
+      "name_en": "WHO Global Initiative on AI for Health",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "au_ai_continental_strategy",
+      "name_en": "African Union Continental AI Strategy",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-11-01",
+      "months_since_loa": 10.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "fair_lac_idb",
+      "name_en": "Inter-American Development Bank fAIr LAC Initiative",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-10-01",
+      "months_since_loa": 11.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "quad_critical_tech_ai",
+      "name_en": "QUAD Critical and Emerging Technology Working Group (AI track)",
+      "convening_frequency": "annual",
+      "last_observed_activity_date": "2024-09-21",
+      "months_since_loa": 23.5,
+      "threshold_months": 18
+    },
+    {
+      "agv_id": "cahai",
+      "name_en": "Council of Europe Ad hoc Committee on AI (CAHAI)",
+      "convening_frequency": "ad_hoc",
+      "last_observed_activity_date": "2021-12-03",
+      "months_since_loa": 57.1,
+      "threshold_months": 24
+    },
+    {
+      "agv_id": "eu_ai_board",
+      "name_en": "European Artificial Intelligence Board (under Regulation 2024/1689)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-02",
+      "months_since_loa": 7.1,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "eu_ai_scientific_panel",
+      "name_en": "European AI Scientific Panel (under EU AI Act)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "un_ccw_gge_laws",
+      "name_en": "UN CCW Group of Governmental Experts on Lethal Autonomous Weapons Systems",
+      "convening_frequency": "annual",
+      "last_observed_activity_date": "2024-09-06",
+      "months_since_loa": 24.0,
+      "threshold_months": 18
+    },
+    {
+      "agv_id": "pai_about_ml",
+      "name_en": "Partnership on AI — ABOUT ML Working Group",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-09-01",
+      "months_since_loa": 12.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "wef_ai_governance_alliance",
+      "name_en": "World Economic Forum AI Governance Alliance",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-01-15",
+      "months_since_loa": 7.7,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "rai_institute",
+      "name_en": "Responsible AI Institute (formerly AI Global)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "cosai",
+      "name_en": "Coalition for Secure AI (CoSAI)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "ai_alliance",
+      "name_en": "AI Alliance",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "c2pa",
+      "name_en": "Coalition for Content Provenance and Authenticity (C2PA)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "content_authenticity_initiative",
+      "name_en": "Content Authenticity Initiative (CAI)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "itic_ai_principles",
+      "name_en": "Information Technology Industry Council (ITI) AI Policy Principles",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-01-01",
+      "months_since_loa": 8.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "bsa_ai_framework",
+      "name_en": "BSA | The Software Alliance AI Framework",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-01-01",
+      "months_since_loa": 8.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "algorithmwatch",
+      "name_en": "AlgorithmWatch",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "ai_now",
+      "name_en": "AI Now Institute",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "govai_oxford",
+      "name_en": "Centre for the Governance of AI (GovAI)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "clt_resilience",
+      "name_en": "Centre for Long-Term Resilience (CLTR)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-01-01",
+      "months_since_loa": 8.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "metr",
+      "name_en": "Model Evaluation and Threat Research (METR)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "apollo_research",
+      "name_en": "Apollo Research",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "access_now_ai",
+      "name_en": "Access Now AI Rights Programme",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "ellis_network",
+      "name_en": "European Laboratory for Learning and Intelligent Systems (ELLIS)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "cifar_aistrategy",
+      "name_en": "CIFAR Pan-Canadian AI Strategy",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "ircai",
+      "name_en": "International Research Centre on AI (IRCAI) under the auspices of UNESCO",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "gaiec",
+      "name_en": "Global AI Ethics Consortium (GAIEC)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-11-01",
+      "months_since_loa": 10.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "apru_ai",
+      "name_en": "APRU AI for Social Good Program",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-10-01",
+      "months_since_loa": 11.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "iso_sc42_wg1",
+      "name_en": "ISO/IEC JTC 1/SC 42/WG 1 — Foundational Standards",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "iso_sc42_wg3",
+      "name_en": "ISO/IEC JTC 1/SC 42/WG 3 — Trustworthiness",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "iso_sc42_wg4",
+      "name_en": "ISO/IEC JTC 1/SC 42/WG 4 — Use Cases and Applications",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-12-01",
+      "months_since_loa": 9.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "iso_sc42_wg5",
+      "name_en": "ISO/IEC JTC 1/SC 42/WG 5 — Computational Approaches",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-12-01",
+      "months_since_loa": 9.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "ieee_p7001",
+      "name_en": "IEEE P7001 — Transparency of Autonomous Systems",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2022-03-01",
+      "months_since_loa": 54.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "ieee_p7003",
+      "name_en": "IEEE P7003 — Algorithmic Bias Considerations",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2024-06-01",
+      "months_since_loa": 27.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "ieee_p7007",
+      "name_en": "IEEE P7007 — Ontological Standard for Ethically Driven Robotics and Automation Systems",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2021-11-01",
+      "months_since_loa": 58.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "ieee_p7010",
+      "name_en": "IEEE P7010 — Well-being Metrics for Autonomous and Intelligent Systems",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2020-05-01",
+      "months_since_loa": 76.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "itu_fg_ai4h",
+      "name_en": "ITU-T Focus Group on AI for Health (FG-AI4H)",
+      "convening_frequency": "ad_hoc",
+      "last_observed_activity_date": "2023-05-01",
+      "months_since_loa": 40.2,
+      "threshold_months": 24
+    },
+    {
+      "agv_id": "itu_fg_ai4ee",
+      "name_en": "ITU-T Focus Group on Environmental Efficiency for AI and other Emerging Technologies (FG-AI4EE)",
+      "convening_frequency": "ad_hoc",
+      "last_observed_activity_date": "2022-08-01",
+      "months_since_loa": 49.2,
+      "threshold_months": 24
+    },
+    {
+      "agv_id": "aisi_network",
+      "name_en": "International Network of AI Safety Institutes",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-11-20",
+      "months_since_loa": 9.6,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "korea_aisi",
+      "name_en": "Korea AI Safety Institute (K-AISI)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "singapore_imda_ai",
+      "name_en": "Singapore Infocomm Media Development Authority (IMDA) — AI Governance",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-01-01",
+      "months_since_loa": 8.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "canada_aisi",
+      "name_en": "Canadian AI Safety Institute (CAISI)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-11-01",
+      "months_since_loa": 10.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "india_aisi",
+      "name_en": "IndiaAI Mission — AI Safety Institute",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-10-01",
+      "months_since_loa": 11.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "france_cnil_ai",
+      "name_en": "CNIL AI Department (France)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "spain_aesia",
+      "name_en": "Spain Agencia Española de Supervisión de la Inteligencia Artificial (AESIA)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "australia_esafety_ai",
+      "name_en": "Australia eSafety Commissioner — AI-generated harms remit",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-01-01",
+      "months_since_loa": 8.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "china_cac_genai",
+      "name_en": "China Cyberspace Administration — Generative AI Governance",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-01-01",
+      "months_since_loa": 8.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "aaai_safe_ai_track",
+      "name_en": "AAAI Safe and Trustworthy AI Special Track",
+      "convening_frequency": "annual",
+      "last_observed_activity_date": "2025-02-25",
+      "months_since_loa": 18.4,
+      "threshold_months": 18
+    },
+    {
+      "agv_id": "germany_bnetza_ai",
+      "name_en": "Bundesnetzagentur — Coordinating Authority for AI Act (Germany)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "italy_acn_ai",
+      "name_en": "Agenzia per la Cybersicurezza Nazionale — AI Act Notifying Authority (Italy)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "netherlands_ap_ai",
+      "name_en": "Autoriteit Persoonsgegevens — Algorithm & AI Coordination (Netherlands)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "brazil_anpd_ai",
+      "name_en": "Autoridade Nacional de Proteção de Dados — AI Sandbox & Guidance (Brazil)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-02-01",
+      "months_since_loa": 7.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "korea_pipc_ai",
+      "name_en": "Personal Information Protection Commission — AI Privacy Center (Korea)",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2026-03-01",
+      "months_since_loa": 6.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "smart_africa_ai",
+      "name_en": "Smart Africa Alliance — AI Blueprint Working Group",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-12-01",
+      "months_since_loa": 9.2,
+      "threshold_months": 6
+    },
+    {
+      "agv_id": "unesco_chairs_ai",
+      "name_en": "UNESCO Chairs and UNITWIN Network on AI Ethics",
+      "convening_frequency": "continuous",
+      "last_observed_activity_date": "2025-11-01",
+      "months_since_loa": 10.2,
+      "threshold_months": 6
+    }
+  ],
+  "renames": [],
+  "name_matches": [
+    {
+      "candidate_agv_id": "asean_guide_on_ai_governance_and_ethics",
+      "candidate_name": "ASEAN Guide on AI Governance and Ethics",
+      "matched_agv_id": "asean_ai_governance_framework",
+      "matched_name": "ASEAN Guide on AI Governance and Ethics"
+    }
+  ],
+  "matches_count": 6
+}
