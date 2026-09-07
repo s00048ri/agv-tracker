@@ -6,7 +6,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from pipelines.diff import Differ, STALE_THRESHOLDS_MONTHS
+from pipelines.diff import STALE_THRESHOLDS_MONTHS, Differ
 
 TODAY = date(2026, 4, 23)
 

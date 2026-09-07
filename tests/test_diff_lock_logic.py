@@ -7,12 +7,9 @@ from __future__ import annotations
 
 from datetime import date
 
-import pytest
-
 from pipelines.diff import (
     DIFFED_FIELDS,
     Differ,
-    DiffReport,
 )
 
 TODAY = date(2026, 4, 23)

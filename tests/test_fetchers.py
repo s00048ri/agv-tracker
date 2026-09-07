@@ -6,22 +6,26 @@ no httpx call fires.
 """
 from __future__ import annotations
 
-import time
 from pathlib import Path
 
 import pytest
 
 from pipelines.fetchers import BaseFetcher, RawVenue
+from pipelines.fetchers.ai_deadlines import (
+    DEFAULT_FIXTURE_PATH as AIDL_FIXTURE_PATH,
+    INCLUDE_REGEX as AIDL_INCLUDE_REGEX,
+    AIDeadlinesFetcher,
+    main as aidl_main,
+)
 from pipelines.fetchers.base import (
     FETCH_STRATEGY_CACHE,
     FETCH_STRATEGY_FIXTURE,
     FETCH_STRATEGY_STATIC,
 )
-from pipelines.fetchers.oecd_ai import DEFAULT_FIXTURE_PATH, OECDFetcher, main as oecd_main
-from pipelines.fetchers.unesco_gaigo import (
-    DEFAULT_FIXTURE_PATH as UNESCO_FIXTURE_PATH,
-    UNESCOGaigoFetcher,
-    main as unesco_main,
+from pipelines.fetchers.evalcommunity_map import (
+    DEFAULT_FIXTURE_PATH as ECOM_FIXTURE_PATH,
+    EvalCommunityMapFetcher,
+    main as ecom_main,
 )
 from pipelines.fetchers.government_pages import (
     DEFAULT_CONFIG_PATH as GOV_CONFIG_PATH,
@@ -30,27 +34,25 @@ from pipelines.fetchers.government_pages import (
     load_targets,
     main as gov_main,
 )
-from pipelines.fetchers.tech_policy_press import (
-    DEFAULT_FIXTURE_PATH as TPP_FIXTURE_PATH,
-    INCLUDE_REGEX as TPP_INCLUDE_REGEX,
-    TechPolicyPressFetcher,
-    main as tpp_main,
-)
 from pipelines.fetchers.iapp import (
     DEFAULT_FIXTURE_PATH as IAPP_FIXTURE_PATH,
     IAPPFetcher,
     main as iapp_main,
 )
-from pipelines.fetchers.ai_deadlines import (
-    DEFAULT_FIXTURE_PATH as AIDL_FIXTURE_PATH,
-    INCLUDE_REGEX as AIDL_INCLUDE_REGEX,
-    AIDeadlinesFetcher,
-    main as aidl_main,
+from pipelines.fetchers.oecd_ai import DEFAULT_FIXTURE_PATH, OECDFetcher, main as oecd_main
+from pipelines.fetchers.tech_policy_press import (
+    DEFAULT_CONFIG_PATH as NEWS_CONFIG_PATH,
+    DEFAULT_FIXTURE_DIR as NEWS_FIXTURE_DIR,
+    DEFAULT_FIXTURE_PATH as TPP_FIXTURE_PATH,
+    INCLUDE_REGEX as TPP_INCLUDE_REGEX,
+    TechPolicyPressFetcher,
+    load_feeds,
+    main as tpp_main,
 )
-from pipelines.fetchers.evalcommunity_map import (
-    DEFAULT_FIXTURE_PATH as ECOM_FIXTURE_PATH,
-    EvalCommunityMapFetcher,
-    main as ecom_main,
+from pipelines.fetchers.unesco_gaigo import (
+    DEFAULT_FIXTURE_PATH as UNESCO_FIXTURE_PATH,
+    UNESCOGaigoFetcher,
+    main as unesco_main,
 )
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -512,7 +514,6 @@ def test_gov_fetcher_emits_records_in_target_languages():
         config_path=GOV_CONFIG_PATH, fixture_dir=GOV_FIXTURE_DIR,
     )
     venues = fetcher.fetch()
-    by_target = {v.raw_blob["target_id"]: v for v in venues}
     # Pick one known-keyword fragment per language and assert it
     # appears in at least one record's name.
     expectations = [
@@ -735,12 +736,6 @@ def test_tpp_source_ids_distinct_from_other_fetchers():
 
 
 # ---- TechPolicyPressFetcher multi-feed wave ----
-
-from pipelines.fetchers.tech_policy_press import (
-    DEFAULT_CONFIG_PATH as NEWS_CONFIG_PATH,
-    DEFAULT_FIXTURE_DIR as NEWS_FIXTURE_DIR,
-    load_feeds,
-)
 
 
 def test_news_feeds_config_loads_and_has_required_fields():

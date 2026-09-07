@@ -25,15 +25,14 @@ import json
 import logging
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
 
 from .classify import (
-    Classifier,
     ClassificationResult,
-    DIMENSIONS as CLASSIFIER_DIMENSIONS,
+    Classifier,
     anthropic_llm_call,
     mock_llm_call,
     results_to_evidence_rows,
@@ -74,7 +73,7 @@ def slugify(text: str, maxlen: int = 48) -> str:
 
 
 def today_utc() -> str:
-    return datetime.now(timezone.utc).date().isoformat()
+    return datetime.now(UTC).date().isoformat()
 
 
 def load_registry(path: Path) -> list[dict]:
@@ -240,8 +239,12 @@ class Normalizer:
         row["last_verified_date"] = today
 
         # Confidences: from classifier where available, else 'low' placeholder.
-        row["confidence_entity_type"] = classified.get("entity_type", _empty_result()).confidence or "low"
-        row["confidence_legal_character"] = classified.get("legal_character", _empty_result()).confidence or "low"
+        row["confidence_entity_type"] = (
+            classified.get("entity_type", _empty_result()).confidence or "low"
+        )
+        row["confidence_legal_character"] = (
+            classified.get("legal_character", _empty_result()).confidence or "low"
+        )
         # founded_date / current_state have no classifier dimension; stay 'low' unless
         # the record carried an explicit override.
         row["confidence_founded_date"] = str(rec.get("confidence_founded_date", "low"))

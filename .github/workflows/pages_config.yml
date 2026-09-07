@@ -1,0 +1,87 @@
+# One-shot maintenance: point the Cloudflare Pages project at the branch
+# `deploy.yml` actually deploys (CLAUDE.md §9 Task 11).
+#
+# Why this exists as a workflow rather than a documented click-path: the
+# production branch is a property of the Pages *project*, not of the repo,
+# and `wrangler` has no `pages project update`. The two secrets that
+# `deploy.yml` already uses are enough to set it through the REST API, so
+# the change is reproducible and reviewable instead of living only in
+# someone's browser history.
+#
+# The symptom it fixes: `wrangler pages project create` defaults the
+# production branch to `production`, while `deploy.yml` deploys
+# `--branch=main`. Every deploy then lands as a *preview* — the commit and
+# `main.` aliases serve the site while `agv-tracker.pages.dev` keeps
+# showing Cloudflare's "Nothing is here yet" placeholder.
+#
+# Safe to re-run: the PATCH is idempotent. Safe to delete once the project
+# is configured, though keeping it costs nothing and documents the fix.
+
+name: pages-config
+
+on:
+  workflow_dispatch:
+    inputs:
+      production_branch:
+        description: "Branch Cloudflare Pages should treat as production"
+        required: false
+        default: "main"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  set-production-branch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Set and verify the Pages production branch
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PRODUCTION_BRANCH: ${{ inputs.production_branch }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID are not set."
+            exit 1
+          fi
+
+          api="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/agv-tracker"
+
+          # The project payload carries deployment_configs, which can hold
+          # environment variables. Never dump the whole response — read the
+          # one field we care about.
+          curl -sS -X GET "$api" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -o before.json
+          echo "before: production_branch=$(jq -r '.result.production_branch // "?"' before.json)"
+
+          curl -sS -X PATCH "$api" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "$(jq -nc --arg b "$PRODUCTION_BRANCH" '{production_branch: $b}')" \
+            -o after.json
+
+          if [ "$(jq -r '.success' after.json)" != "true" ]; then
+            echo "::error::Cloudflare rejected the update: $(jq -c '.errors' after.json)"
+            exit 1
+          fi
+
+          after=$(jq -r '.result.production_branch' after.json)
+          echo "after:  production_branch=${after}"
+          if [ "$after" != "$PRODUCTION_BRANCH" ]; then
+            echo "::error::Expected '${PRODUCTION_BRANCH}', got '${after}'."
+            exit 1
+          fi
+
+          {
+            echo "### Cloudflare Pages — \`agv-tracker\`"
+            echo
+            echo "Production branch is now \`${after}\`."
+            echo
+            echo "Re-run \`deploy\` on that branch to populate"
+            echo "<https://agv-tracker.pages.dev>."
+          } >> "$GITHUB_STEP_SUMMARY"

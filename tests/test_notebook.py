@@ -172,7 +172,8 @@ def test_notebook_execution_fits_the_poisson_model(tmp_path):
             continue
         for output in cell.outputs:
             text = output.get("text", "") if output.output_type == "stream" else ""
-            data = output.get("data", {}) if output.output_type in {"execute_result", "display_data"} else {}
+            is_rich = output.output_type in {"execute_result", "display_data"}
+            data = output.get("data", {}) if is_rich else {}
             text += str(data.get("text/plain", ""))
             if "Poisson" in text and "Link Function" in text:
                 found_poisson = True

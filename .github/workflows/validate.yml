@@ -69,10 +69,13 @@ jobs:
         if: steps.changed.outputs.any_changed == 'true'
         uses: lycheeverse/lychee-action@v2
         with:
+          # No --exclude-mail: lychee v2 removed it and rejects the whole
+          # invocation with a usage error (exit 2) rather than ignoring it,
+          # so every PR failed this job before a single URL was fetched.
+          # Excluding mailto: is v2's default; --include-mail opts back in.
           args: >-
             --no-progress
             --accept 200..=299,429
-            --exclude-mail
             --exclude-path node_modules
             ${{ steps.changed.outputs.all_changed_files }}
           fail: true

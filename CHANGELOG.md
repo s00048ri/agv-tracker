@@ -5,6 +5,30 @@ in `CLAUDE.md §0`.
 
 ## 2026-09-07
 
+- **ci**: **`validate.yml` had never passed, on two defects that predate every
+  change in it.** It runs only on pull requests, and this repo had none until
+  2026-09-07, so the gate went unexercised from the day it was written.
+  (1) `ruff check pipelines scripts tests` reported 31 findings — mostly
+  `UP017` (`datetime.UTC`), import ordering, unused imports, six over-length
+  lines. All mechanical; all fixed. `pyproject.toml` gains
+  `[tool.ruff.lint.isort] combine-as-imports = true`, without which isort
+  splits each aliased import onto its own `from X import (...)` statement and
+  `tests/test_fetchers.py`'s import block goes from 12 lines to 60 against the
+  file's existing style. (2) Both link-check jobs passed `--exclude-mail`,
+  which lychee v2 removed; lychee rejects the invocation with a usage error
+  (exit 2) before fetching a single URL. In `validate.yml` that failed the
+  job on every PR; in `linkcheck.yml`, where `fail: false` masks the exit
+  status, it would have filed a "broken URLs detected" issue every week off
+  no broken link at all. Excluding `mailto:` is v2's default. A regression
+  test now rejects the flag in either workflow. pytest: 401 green; ruff clean;
+  `pipelines.diff` coverage 99%.
+- **ci**: `pages_config.yml` added — a `workflow_dispatch` one-shot that sets
+  the Cloudflare Pages project's `production_branch` through the REST API
+  using the secrets `deploy.yml` already holds. The production branch is a
+  property of the Pages project, not the repo, and `wrangler` has no
+  `pages project update`, so the alternative was an undocumented click-path.
+  Idempotent, and it reads back the value it set rather than trusting the
+  write.
 - **site**: **two runtime errors were visible on the deployed dashboard** and
   are fixed. (1) `src/dashboard.md` declared `const view = view(Inputs.radio(…))`
   — `view` is Framework's own builtin for wiring an Input as a reactive value,

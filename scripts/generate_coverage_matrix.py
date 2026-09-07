@@ -9,7 +9,7 @@ from __future__ import annotations
 import csv
 import sys
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import yaml
@@ -114,7 +114,7 @@ def render(sources: list[dict], agvs: list[dict]) -> str:
     role_counts = {
         role: sum(1 for s in sources if s["role"] == role) for role in VALID_ROLES
     }
-    today = datetime.now(timezone.utc).date().isoformat()
+    today = datetime.now(UTC).date().isoformat()
 
     gap_rows: list[str] = []
     missing_verification: list[str] = []
