@@ -33,6 +33,7 @@ import argparse
 import csv
 import json
 import logging
+import re
 import sys
 import uuid
 from dataclasses import asdict, dataclass, field
@@ -77,6 +78,9 @@ class NewVenue:
     agv_row: dict
     evidence_rows: list[dict] = field(default_factory=list)
     provenance: dict = field(default_factory=dict)
+    # Canonical rows this proposal might already be, by name. Never merged
+    # automatically — a near-name is a reason to look, not a decision.
+    possible_duplicates: list[dict] = field(default_factory=list)
 
 
 @dataclass
@@ -113,6 +117,23 @@ class Rename:
 
 
 @dataclass
+class NameMatch:
+    """A candidate matched to a canonical row by name rather than by id.
+
+    `agv_id` is derived from the name a source happens to print, so the
+    same venue arrives under a different id whenever the wording differs
+    — "UN Global Dialogue on AI Governance" from the dataset,
+    "Global Dialogue on AI Governance" from OECD.AI. Before this existed,
+    every such candidate was proposed as new.
+    """
+
+    candidate_agv_id: str
+    candidate_name: str
+    matched_agv_id: str
+    matched_name: str
+
+
+@dataclass
 class StaleCandidate:
     agv_id: str
     name_en: str
@@ -133,6 +154,7 @@ class DiffReport:
     conflicts: list[Conflict] = field(default_factory=list)
     stale_candidates: list[StaleCandidate] = field(default_factory=list)
     renames: list[Rename] = field(default_factory=list)
+    name_matches: list[NameMatch] = field(default_factory=list)
     matches_count: int = 0
 
     def as_dict(self) -> dict:
@@ -146,6 +168,7 @@ class DiffReport:
                     "agv_row": nv.agv_row,
                     "evidence_rows": nv.evidence_rows,
                     "provenance": nv.provenance,
+                    "possible_duplicates": nv.possible_duplicates,
                 }
                 for nv in self.new_venues
             ],
@@ -153,8 +176,47 @@ class DiffReport:
             "conflicts": [asdict(c) for c in self.conflicts],
             "stale_candidates": [asdict(s) for s in self.stale_candidates],
             "renames": [asdict(r) for r in self.renames],
+            "name_matches": [asdict(n) for n in self.name_matches],
             "matches_count": self.matches_count,
         }
+
+
+_NAME_NOISE_RE = re.compile(r"[^a-z0-9]+")
+
+
+def normalise_name(name: str) -> str:
+    """Casefold a venue name to a comparable form.
+
+    Punctuation and spacing vary between sources for the same venue
+    ("ISO/IEC 42001" vs "ISO IEC 42001"), so they are flattened. Nothing
+    else is removed: dropping words like a leading "UN" would make
+    genuinely different bodies collide, and this form is used for the
+    match that is acted on.
+    """
+    return _NAME_NOISE_RE.sub(" ", (name or "").casefold()).strip()
+
+
+def name_tokens(name: str) -> list[str]:
+    return normalise_name(name).split()
+
+
+def looks_like_same_venue(a: str, b: str, *, min_tokens: int = 3) -> bool:
+    """Whether two names are close enough to be worth a reviewer's eye.
+
+    One name containing the other, on a token boundary — which is how the
+    same venue usually differs between sources: an organisational prefix
+    the source assumed ("UN Global Dialogue on AI Governance" against
+    "Global Dialogue on AI Governance"). Deliberately *not* used to merge
+    rows: "AI Safety Institute" contains enough of several distinct
+    national institutes to be dangerous as a decision, and useful only as
+    a prompt.
+    """
+    ta, tb = name_tokens(a), name_tokens(b)
+    if len(ta) < min_tokens or len(tb) < min_tokens:
+        return False
+    short, long_ = (ta, tb) if len(ta) <= len(tb) else (tb, ta)
+    n = len(short)
+    return any(long_[i : i + n] == short for i in range(len(long_) - n + 1))
 
 
 # ---- CSV loaders ----
@@ -211,6 +273,7 @@ class Differ:
             r["agv_id"]: r for r in self.canonical_rows if r.get("agv_id")
         }
         rename_map = self._build_rename_map()
+        name_index, _ambiguous_names = self._build_name_index()
 
         seen_canonical_ids: set[str] = set()
 
@@ -233,7 +296,28 @@ class Differ:
                         name_history_valid_to=valid_to,
                     ))
 
-            effective_id = matched_via_rename or cand_id
+            # An id is derived from whatever wording a source printed, so
+            # the same venue arrives under a different id when the wording
+            # differs. Fall back to the name before calling it new.
+            matched_via_name: str | None = None
+            if (
+                matched_via_rename is None
+                and cand_name
+                and cand_id not in canonical_by_id
+            ):
+                hit = name_index.get(normalise_name(cand_name))
+                if hit is not None and hit != cand_id:
+                    matched_via_name = hit
+                    report.name_matches.append(NameMatch(
+                        candidate_agv_id=cand_id,
+                        candidate_name=cand_name,
+                        matched_agv_id=hit,
+                        matched_name=(
+                            canonical_by_id.get(hit, {}).get("name_en", "")
+                        ),
+                    ))
+
+            effective_id = matched_via_rename or matched_via_name or cand_id
             if effective_id in canonical_by_id:
                 seen_canonical_ids.add(effective_id)
                 canonical = canonical_by_id[effective_id]
@@ -248,6 +332,7 @@ class Differ:
                     agv_row=cand_row,
                     evidence_rows=list(cand.get("evidence_rows") or []),
                     provenance=dict(cand.get("provenance") or {}),
+                    possible_duplicates=self._possible_duplicates(cand_name),
                 ))
 
         # Stale detection over canonical rows not seen in candidate set
@@ -261,6 +346,52 @@ class Differ:
         return report
 
     # ---- internals ----
+
+    def _possible_duplicates(self, cand_name: str) -> list[dict]:
+        """Canonical rows whose name overlaps this one enough to check.
+
+        Surfaced beside the proposal rather than acted on. The exact-name
+        path above has already run, so anything here differs in wording —
+        which is as often two real venues as one venue twice.
+        """
+        if not cand_name:
+            return []
+        out: list[dict] = []
+        for row in self.canonical_rows:
+            other = row.get("name_en") or ""
+            if looks_like_same_venue(cand_name, other):
+                out.append({
+                    "agv_id": (row.get("agv_id") or "").strip(),
+                    "name_en": other,
+                })
+        return out
+
+    def _build_name_index(self) -> tuple[dict[str, str], dict[str, list[str]]]:
+        """Normalised name → agv_id, plus the names that are ambiguous.
+
+        Built from canonical `name_en` and from every `agv_name_history`
+        row: an alias or a former name identifies the venue just as well.
+        A name held by two rows resolves to neither — guessing there
+        would silently attach a proposal to the wrong venue.
+        """
+        by_name: dict[str, list[str]] = {}
+
+        def add(name: str, agv_id: str) -> None:
+            key = normalise_name(name)
+            if not key or not agv_id:
+                return
+            ids = by_name.setdefault(key, [])
+            if agv_id not in ids:
+                ids.append(agv_id)
+
+        for row in self.canonical_rows:
+            add(row.get("name_en") or "", (row.get("agv_id") or "").strip())
+        for row in self.name_history_rows:
+            add(row.get("name") or "", (row.get("agv_id") or "").strip())
+
+        unique = {k: v[0] for k, v in by_name.items() if len(v) == 1}
+        ambiguous = {k: v for k, v in by_name.items() if len(v) > 1}
+        return unique, ambiguous
 
     def _build_rename_map(self) -> dict[str, tuple[str, str, str]]:
         """Lowercase-name → (agv_id, name, valid_to) for former_official_en rows."""

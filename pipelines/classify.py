@@ -112,6 +112,16 @@ PRICING: dict[str, tuple[float, float]] = {
 }
 
 
+# Backend identifiers. Every backend tags its reply with `_backend`, and the
+# evidence trail records *who actually answered* rather than which model was
+# configured: writing "claude-sonnet-4-5" into `agv_evidence.reviewer` for a
+# classification no Claude ever saw is a false attribution in the dataset's
+# own provenance (CLAUDE.md §4.4), and it makes a plumbing run look exactly
+# like a real one.
+BACKEND_ANTHROPIC = "anthropic"
+BACKEND_MOCK = "mock"
+
+
 # ---- Data classes ----
 
 @dataclass
@@ -127,6 +137,19 @@ class ClassificationResult:
     tokens_out: int = 0
     cost_usd: float = 0.0
     cached: bool = False
+    backend: str = BACKEND_MOCK
+
+    @property
+    def reviewer(self) -> str:
+        """What to record as `agv_evidence.reviewer` for this field.
+
+        The configured model name only when that model was actually
+        called. A mock classification says so, so a reader of the
+        evidence trail can tell a real run from a plumbing exercise.
+        """
+        if self.backend == BACKEND_ANTHROPIC:
+            return self.model_version
+        return f"{BACKEND_MOCK} (no {self.model_version} call)"
 
 
 # ---- Helpers ----
@@ -191,6 +214,7 @@ def anthropic_llm_call(model: str, prompt: str, max_tokens: int = DEFAULT_MAX_TO
     parsed = extract_json(text)
     parsed["_tokens_in"] = msg.usage.input_tokens
     parsed["_tokens_out"] = msg.usage.output_tokens
+    parsed["_backend"] = BACKEND_ANTHROPIC
     return parsed
 
 
@@ -364,6 +388,7 @@ def mock_llm_call(model: str, prompt: str, max_tokens: int = DEFAULT_MAX_TOKENS)
         "rationale": f"[mock backend] keyword-matched to {value!r}",
         "_tokens_in": 0,
         "_tokens_out": 0,
+        "_backend": BACKEND_MOCK,
     }
 
 
@@ -470,6 +495,9 @@ class Classifier:
                 confidence=confidence, rationale=rationale,
                 model_version=self.model, run_id=self.run_id,
                 cached=True,
+                # A cache hit inherits the backend that produced the entry;
+                # absent that, assume mock rather than claim a live call.
+                backend=str(cached_response.get("backend") or BACKEND_MOCK),
             )
 
         if self.budget_guard:
@@ -489,6 +517,7 @@ class Classifier:
             confidence=confidence, rationale=rationale,
             model_version=self.model, run_id=self.run_id,
             tokens_in=tokens_in, tokens_out=tokens_out, cost_usd=cost,
+            backend=str(response.get("_backend") or BACKEND_MOCK),
         )
 
     def _extract_triple(
@@ -531,6 +560,10 @@ class Classifier:
             return
         p.parent.mkdir(parents=True, exist_ok=True)
         clean = {k: v for k, v in response.items() if not k.startswith("_")}
+        # `_backend` is stripped with the other underscore keys, but it has
+        # to survive: a cached mock answer replayed months later must not
+        # come back wearing the model's name.
+        clean["backend"] = response.get("_backend", BACKEND_MOCK)
         p.write_text(json.dumps(clean, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def finalize(self) -> None:
@@ -550,7 +583,7 @@ def results_to_evidence_rows(results: list[ClassificationResult]) -> list[dict]:
             "source_type": "llm_classification",
             "accessed_at": today,
             "evidence_note": r.rationale,
-            "reviewer": r.model_version,
+            "reviewer": r.reviewer,
             "confidence": r.confidence,
         }
         for r in results

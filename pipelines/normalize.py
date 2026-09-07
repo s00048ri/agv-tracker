@@ -113,6 +113,20 @@ def extract_name_and_text(record: dict) -> tuple[str, str, str]:
 
 # ---- Normalizer ----
 
+def _effective_backend(results: list[ClassificationResult]) -> str:
+    """Which backend answered for this venue.
+
+    Usually one; `mixed` when a run fell back part-way, which is worth
+    seeing rather than rounding to whichever came first.
+    """
+    backends = {r.backend for r in results if r.backend}
+    if not backends:
+        return "unknown"
+    if len(backends) == 1:
+        return next(iter(backends))
+    return "mixed:" + "+".join(sorted(backends))
+
+
 class Normalizer:
     def __init__(
         self,
@@ -196,7 +210,12 @@ class Normalizer:
                     "source_registry": rec.get("source_registry", ""),
                     "discovery_url": rec.get("url", ""),
                     "run_id": self.classifier.run_id,
+                    # The configured model, and separately what actually
+                    # answered. These differed silently on 2026-09-07: a
+                    # mock run was labelled `claude-sonnet-4-5` here and in
+                    # every evidence row it produced.
                     "model": self.classifier.model,
+                    "backend": _effective_backend(results),
                 },
             })
         return outputs
