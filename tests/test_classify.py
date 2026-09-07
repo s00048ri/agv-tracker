@@ -13,12 +13,14 @@ from pathlib import Path
 import pytest
 
 from pipelines.classify import (
+    DEFAULT_MODEL,
     DIMENSIONS,
     ENTITY_TYPES,
     GEO_SCOPES,
     GOVERNANCE_MODALITIES,
     LEAD_ACTORS,
     LEGAL_CHARACTERS,
+    PRICING,
     PROMPTS_DIR,
     TOPIC_FOCI,
     BudgetExceededError,
@@ -82,8 +84,25 @@ def test_extract_json_raises_on_garbage():
 
 
 def test_compute_cost_sonnet():
-    # 1000 in @ $3 + 500 out @ $15 per MTok = 0.003 + 0.0075 = 0.0105
-    assert compute_cost("claude-sonnet-4-5", 1000, 500) == pytest.approx(0.0105)
+    # 1000 in @ $2 + 500 out @ $10 per MTok = 0.002 + 0.005 = 0.007
+    assert compute_cost("claude-sonnet-5", 1000, 500) == pytest.approx(0.007)
+
+
+def test_compute_cost_falls_back_to_the_default_models_rate():
+    """An unknown id must not silently disable the budget guard.
+
+    A typo in `--model` would otherwise price every call at zero and let
+    a run spend past the monthly cap unchallenged.
+    """
+    assert compute_cost("claude-typo-9", 1000, 500) == compute_cost(
+        DEFAULT_MODEL, 1000, 500,
+    )
+    assert compute_cost("claude-typo-9", 1000, 500) > 0
+
+
+def test_priced_models_include_the_default():
+    """The fallback dereferences PRICING[DEFAULT_MODEL] — it must exist."""
+    assert DEFAULT_MODEL in PRICING
 
 
 def test_record_id_and_text_variants():
@@ -101,14 +120,14 @@ def test_record_id_and_text_variants():
 def test_mock_returns_valid_enum_for_each_dimension(field_name, filename, values):
     prompt = (PROMPTS_DIR / filename).read_text(encoding="utf-8")
     prompt = prompt.replace("{text}", "A generic AI governance body with global reach.")
-    resp = mock_llm_call("claude-sonnet-4-5", prompt)
+    resp = mock_llm_call("claude-sonnet-5", prompt)
     assert resp["value"] in values
 
 
 # ---- Classifier ----
 
 def test_classifier_happy_path_mock():
-    c = Classifier(model="claude-sonnet-4-5", cache_dir=None, llm_call=mock_llm_call)
+    c = Classifier(model="claude-sonnet-5", cache_dir=None, llm_call=mock_llm_call)
     text = (
         "OECD AI Principles — non-binding principles adopted by the "
         "OECD secretariat; global scope."
@@ -133,7 +152,7 @@ def test_invalid_enum_downgrades_confidence(tmp_path: Path):
             "_tokens_out": 50,
         }
 
-    c = Classifier(model="claude-sonnet-4-5", cache_dir=tmp_path, llm_call=bad_call,
+    c = Classifier(model="claude-sonnet-5", cache_dir=tmp_path, llm_call=bad_call,
                    budget_guard=None)
     results = c.classify_all("x", "some text")
     assert all(r.confidence == "low" for r in results)
@@ -150,13 +169,13 @@ def test_cache_hit_skips_llm_call(tmp_path: Path):
             "_tokens_in": 50, "_tokens_out": 20,
         }
 
-    c = Classifier(model="claude-sonnet-4-5", cache_dir=tmp_path, llm_call=counting)
+    c = Classifier(model="claude-sonnet-5", cache_dir=tmp_path, llm_call=counting)
     c._classify_one("x", "entity_type", "text", ENTITY_TYPES)
     first = calls["n"]
     c._classify_one("x", "entity_type", "text", ENTITY_TYPES)
     assert calls["n"] == first, "second call with same text should be served from cache"
 
-    fresh = Classifier(model="claude-sonnet-4-5", cache_dir=tmp_path, llm_call=counting)
+    fresh = Classifier(model="claude-sonnet-5", cache_dir=tmp_path, llm_call=counting)
     r = fresh._classify_one("x", "entity_type", "text", ENTITY_TYPES)
     assert r.cached is True
 
@@ -186,7 +205,7 @@ def test_classifier_respects_budget_guard(tmp_path: Path):
         return {"value": "igo_initiative", "confidence": "high", "rationale": "r",
                 "_tokens_in": 1000, "_tokens_out": 500}
 
-    c = Classifier(model="claude-sonnet-4-5", cache_dir=None, llm_call=costly,
+    c = Classifier(model="claude-sonnet-5", cache_dir=None, llm_call=costly,
                    budget_guard=bg)
     with pytest.raises(BudgetExceededError):
         c.classify_all("x", "some text")
@@ -195,7 +214,7 @@ def test_classifier_respects_budget_guard(tmp_path: Path):
 # ---- Evidence rows ----
 
 def test_evidence_row_shape_matches_agvschema(tmp_path: Path):
-    c = Classifier(model="claude-sonnet-4-5", cache_dir=None, llm_call=mock_llm_call)
+    c = Classifier(model="claude-sonnet-5", cache_dir=None, llm_call=mock_llm_call)
     results = c.classify_all("sample", "OECD AI Principles: non-binding principles; global.")
     rows = results_to_evidence_rows(results)
     assert len(rows) == 6
@@ -203,7 +222,7 @@ def test_evidence_row_shape_matches_agvschema(tmp_path: Path):
         assert row["source_type"] == "llm_classification"
         assert re.match(r"^internal://classifier-run/run-\d{8}T", row["source_url"])
         # The mock backend must not sign its work with the model's name.
-        assert row["reviewer"] == "mock (no claude-sonnet-4-5 call)"
+        assert row["reviewer"] == "mock (no claude-sonnet-5 call)"
         assert row["confidence"] in {"high", "medium", "low"}
         assert row["evidence_note"]
         assert row["accessed_at"]
@@ -221,7 +240,7 @@ def test_evidence_row_shape_matches_agvschema(tmp_path: Path):
 
 def test_evidence_csv_append_does_not_duplicate_header(tmp_path: Path):
     out = tmp_path / "evidence.csv"
-    c = Classifier(model="claude-sonnet-4-5", cache_dir=None, llm_call=mock_llm_call)
+    c = Classifier(model="claude-sonnet-5", cache_dir=None, llm_call=mock_llm_call)
     rows1 = results_to_evidence_rows(
         c.classify_all("a", "Foo research institute, research-only, global.")
     )
@@ -305,7 +324,7 @@ def test_anthropic_llm_call_raises_clear_error_without_sdk(monkeypatch):
 
     monkeypatch.setattr(builtins, "__import__", fake_import)
     with pytest.raises(ImportError) as ei:
-        anthropic_llm_call("claude-sonnet-4-5", "irrelevant prompt")
+        anthropic_llm_call("claude-sonnet-5", "irrelevant prompt")
     assert "uv sync --extra classifier" in str(ei.value)
 
 
@@ -314,16 +333,16 @@ def test_anthropic_llm_call_raises_clear_error_without_sdk(monkeypatch):
 def test_mock_results_do_not_claim_a_model_call():
     """`agv_evidence.reviewer` is provenance, and provenance must be true.
 
-    Recording "claude-sonnet-4-5" for a classification the mock produced
+    Recording "claude-sonnet-5" for a classification the mock produced
     puts a false attribution into the dataset's own audit trail
     (CLAUDE.md §4.4) and makes a plumbing run indistinguishable from a
     real one — which is exactly what happened to the 2026-09-07 monthly
     run before this was fixed.
     """
-    c = Classifier(model="claude-sonnet-4-5", cache_dir=None, llm_call=mock_llm_call)
+    c = Classifier(model="claude-sonnet-5", cache_dir=None, llm_call=mock_llm_call)
     for r in c.classify_all("sample", "OECD AI Principles: non-binding; global."):
         assert r.backend == "mock"
-        assert "claude-sonnet-4-5" not in r.reviewer.split("(")[0]
+        assert "claude-sonnet-5" not in r.reviewer.split("(")[0]
         assert r.reviewer.startswith("mock")
 
 
@@ -333,10 +352,10 @@ def test_a_live_backend_signs_with_the_model_name():
         out["_backend"] = "anthropic"
         return out
 
-    c = Classifier(model="claude-sonnet-4-5", cache_dir=None, llm_call=fake_live)
+    c = Classifier(model="claude-sonnet-5", cache_dir=None, llm_call=fake_live)
     for r in c.classify_all("sample", "OECD AI Principles: non-binding; global."):
         assert r.backend == "anthropic"
-        assert r.reviewer == "claude-sonnet-4-5"
+        assert r.reviewer == "claude-sonnet-5"
 
 
 def test_cached_mock_answers_stay_labelled_mock(tmp_path: Path):
@@ -347,13 +366,13 @@ def test_cached_mock_answers_stay_labelled_mock(tmp_path: Path):
     model's name months later.
     """
     cache = tmp_path / "cache"
-    first = Classifier(model="claude-sonnet-4-5", cache_dir=cache, llm_call=mock_llm_call)
+    first = Classifier(model="claude-sonnet-5", cache_dir=cache, llm_call=mock_llm_call)
     first.classify_all("sample", "OECD AI Principles: non-binding; global.")
 
     def explode(model, prompt, max_tokens=600):  # pragma: no cover - must not run
         raise AssertionError("cache miss: the second run should not call a backend")
 
-    second = Classifier(model="claude-sonnet-4-5", cache_dir=cache, llm_call=explode)
+    second = Classifier(model="claude-sonnet-5", cache_dir=cache, llm_call=explode)
     results = second.classify_all("sample", "OECD AI Principles: non-binding; global.")
     assert results and all(r.cached for r in results)
     for r in results:

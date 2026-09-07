@@ -5,6 +5,30 @@ in `CLAUDE.md §0`.
 
 ## 2026-09-07
 
+- **pipeline**: classifier moved to **`claude-sonnet-5`**, which is both current
+  and cheaper than the pinned `claude-sonnet-4-5` ($2/$10 per MTok against
+  $3/$15) — about a third off. `PRICING` refreshed against list prices on
+  2026-09-07 and now carries the current generation plus the previous one, for
+  costing older cached runs. The unknown-model fallback dereferences
+  `PRICING[DEFAULT_MODEL]` rather than a hard-coded id, so a typo in `--model`
+  can no longer price every call at zero and slip past the budget guard; two
+  tests cover that.
+  Measured cost, from the six prompt templates (13,868 chars) and the median
+  candidate payload (314 chars) rather than the guard's 1500/200 placeholder:
+  ~3,900–4,500 input and 720 output tokens per venue, **≈$0.015/venue**,
+  **≈$0.45 per 30-candidate run**.
+- **ci**: two things about classifier cost do not work the way the code reads,
+  both because `monthly_update.sh` puts them under a per-run temp dir that CI
+  discards:
+  - **The content-hash cache never survives a run.** Every monthly run
+    re-classifies every candidate it fetches, including ones it classified
+    last month. At ~$0.45 a run that is not worth fixing for cost; it matters
+    if the candidate set grows, and it means a re-run costs full price.
+  - **The $50 monthly budget guard is effectively per-run.** It keys spend by
+    calendar month, but its state file is discarded with the work dir, so the
+    counter starts at zero every time. It bounds a single run, not a month.
+    Nothing is at risk at current volumes — a run would need ~3,300 candidates
+    to reach the cap — but the guard does not do what its name says.
 - **pipeline**: **the evidence trail was crediting Claude for work the mock
   backend did.** Every classification in the 2026-09-07 monthly run carried
   `reviewer: claude-sonnet-4-5` in `agv_evidence` and `model:
