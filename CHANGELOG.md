@@ -56,6 +56,26 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
+- **pipeline**: `capture_fixtures.py --capture-url DIR=URL` — the step between
+  a probe and a rebuild. A probe names a promising page; capturing it used to
+  require first rewriting a fetcher's `base_url` to point at somewhere nobody
+  had inspected, which is the wrong order. The destination is confined to
+  `tests/fixtures/` and the URL must carry an http(s) scheme: a capture spec
+  is an argument, and arguments should not choose which tree gets written to.
+- **sources**: **OECD.AI's listing found, and it changes what the fetcher
+  should collect.** Probing `https://oecd.ai/` let the site's own navigation
+  answer: `/en/dashboards/policy-initiatives` (HTTP 200, ~20 initiatives per
+  page, links and titles present in the *static* HTML) and its
+  `?orderBy=startYearDesc&page=1` newest-first ordering. But reading what is
+  actually in it — Zimbabwe's national strategy, Sweden's AI strategy, Egypt's
+  guidelines, Japan's business guidelines — shows the database is largely
+  **national policy instruments**, which AGVO excludes as national-only
+  entities (§3.1). Pointing the fetcher there would propose mostly
+  out-of-scope rows, the same failure shape as September's run where all 17
+  proposals were news articles.
+  `/en/dashboards/international` is the better target: 168 KB, and its class
+  vocabulary is led by `intergovernmental-card` ×14 — a page of
+  intergovernmental initiatives, which is the AGV population itself.
 - **pipeline**: `capture_fixtures.py --probe` — for the source whose page is
   not merely mis-selected but gone. A capture answers "what is on this page";
   when the page 404s, as OECD.AI's does, the question is "where did it move

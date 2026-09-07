@@ -141,3 +141,37 @@ def test_internal_links_flattens_markup_inside_the_anchor():
         html, "https://oecd.ai/", capture_fixtures.DEFAULT_LINK_FILTER,
     )
     assert links[0]["text"] == "Policy initiatives"
+
+
+# ---- --capture-url ----
+
+def test_parse_capture_url_builds_a_target_under_fixtures():
+    target = capture_fixtures.parse_capture_url(
+        "oecd_ai/international=https://oecd.ai/en/dashboards/international",
+    )
+    assert target.fixture_dir == "oecd_ai/international"
+    assert target.url == "https://oecd.ai/en/dashboards/international"
+    assert "ad-hoc" in target.source_id
+
+
+def test_parse_capture_url_refuses_to_write_outside_fixtures():
+    """A capture spec is an argument; arguments should not pick the tree."""
+    import pytest
+
+    for spec in ("../../etc=https://x.test/", "/tmp/out=https://x.test/"):
+        with pytest.raises(ValueError):
+            capture_fixtures.parse_capture_url(spec)
+
+
+def test_parse_capture_url_rejects_malformed_specs():
+    import pytest
+
+    for spec in (
+        "no-equals-sign",
+        "=https://x.test/",
+        "dir=",
+        "dir=ftp://x.test/",
+        "dir=oecd.ai/dashboards",  # scheme-less: would be read as a path
+    ):
+        with pytest.raises(ValueError):
+            capture_fixtures.parse_capture_url(spec)

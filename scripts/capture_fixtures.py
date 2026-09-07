@@ -134,6 +134,34 @@ def _targets() -> list[Target]:
     ]
 
 
+def parse_capture_url(spec: str) -> Target:
+    """Turn `subdir/under/fixtures=https://...` into a Target.
+
+    A probe says which URL is worth capturing; this captures it without
+    first rewriting a fetcher's `base_url` to point somewhere nobody has
+    inspected yet. The destination is confined to tests/fixtures/ — a
+    capture spec is an argument, and arguments should not be able to
+    write outside the tree they name.
+    """
+    directory, sep, url = spec.partition("=")
+    if not sep or not directory.strip() or not url.strip():
+        raise ValueError(f"expected DIR=URL, got {spec!r}")
+    directory, url = directory.strip(), url.strip()
+    if not url.startswith(("http://", "https://")):
+        raise ValueError(f"not an http(s) URL: {url!r}")
+
+    resolved = (FIXTURES_DIR / directory).resolve()
+    if not resolved.is_relative_to(FIXTURES_DIR.resolve()):
+        raise ValueError(f"destination escapes tests/fixtures/: {directory!r}")
+
+    return Target(
+        source_id=f"ad-hoc:{directory}",
+        url=url,
+        fixture_dir=directory,
+        note="ad-hoc capture (--capture-url)",
+    )
+
+
 class _Capture(BaseFetcher):
     """Concrete BaseFetcher used only for its fetch helpers.
 
@@ -340,6 +368,11 @@ def main(argv: list[str] | None = None) -> int:
              "instead of capturing (repeatable; writes nothing to disk)",
     )
     ap.add_argument(
+        "--capture-url", action="append", metavar="DIR=URL",
+        help="capture an arbitrary URL into tests/fixtures/DIR/live/ "
+             "(repeatable; for pages a probe has just identified)",
+    )
+    ap.add_argument(
         "--link-filter", default=DEFAULT_LINK_FILTER,
         help="regex a link's href or text must match to be reported",
     )
@@ -352,6 +385,21 @@ def main(argv: list[str] | None = None) -> int:
         reached = sum(1 for r in results if "error" not in r)
         print(f"\nprobed {reached}/{len(results)} URLs")
         return 0 if reached else 1
+
+    if args.capture_url:
+        try:
+            targets = [parse_capture_url(spec) for spec in args.capture_url]
+        except ValueError as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 2
+        entries = [capture(t) for t in targets]
+        for entry in entries:
+            _report(entry)
+        captured = sum(
+            1 for e in entries if "static_sha256" in e or "rendered_sha256" in e
+        )
+        print(f"\ncaptured {captured}/{len(entries)} URLs")
+        return 0 if captured else 1
 
     targets = _targets()
     if args.list:
