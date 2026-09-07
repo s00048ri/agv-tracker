@@ -226,14 +226,21 @@ the site's "Cite this release" blocks on `/methodology` and
 
 ### 7.2 First release
 
-1. Make sure `CHANGELOG.md` has the release notes at the top.
-2. Tag the release and push:
-   ```bash
-   git tag -a v0.3.0 -m "AGV Tracker v0.3.0 — first public release"
-   git push origin v0.3.0
-   ```
-3. Create a GitHub Release from the tag (Releases → Draft a new release
-   → select tag → publish). Zenodo's webhook fires on this event.
+1. Write the release notes as `docs/release-notes/vX.Y.Z.md` and merge
+   them — notes worth reading are worth reviewing in a PR. Without that
+   file the release falls back to GitHub's generated notes.
+2. Check that `pyproject.toml` and `data/citation.json` both carry the
+   version you are about to release. The workflow refuses to run
+   otherwise: a Zenodo deposit whose metadata contradicts the archived
+   files cannot be corrected the way a git tag can.
+3. `Actions → release → Run workflow`, entering the version **without**
+   the leading `v` (e.g. `0.3.0`). `gh release create` makes the tag and
+   publishes the release in one step; Zenodo's webhook fires on the
+   publish event.
+
+   The workflow exists because tagging by hand is easy to get wrong and
+   because some environments cannot push tags at all — a sandboxed agent
+   session, for one, is typically restricted to its own branch.
 4. Wait ~30 seconds. Zenodo's GitHub page will show the new deposit
    and both DOIs (version + concept).
 5. Copy both DOIs.

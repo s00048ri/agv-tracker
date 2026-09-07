@@ -227,10 +227,22 @@ def test_ci_setup_has_zenodo_section():
 
 
 def test_readme_or_ci_setup_documents_first_release_flow():
-    # Either README or CI_SETUP must explain how to mint the first DOI.
+    """Either README or CI_SETUP must explain how to mint the first DOI.
+
+    Two mechanisms are acceptable, because the docs describe whichever one
+    the repo actually uses: a hand-cut `git tag vX.Y.Z`, or a dispatch of
+    the `release` workflow (which calls `gh release create`, and so makes
+    the tag itself). Asserting only the former made this test fail the
+    moment the flow moved into CI — the release still worked; the test was
+    pinned to a command rather than to the outcome.
+    """
     bodies = " ".join(p.read_text(encoding="utf-8")
                       for p in (README, CI_SETUP))
-    # Acceptable evidence: the tag command + update_citation.sh + DOI.
-    assert re.search(r"git\s+tag[^\n]*v\d+\.\d+\.\d+", bodies)
+    tags_by_hand = re.search(r"git\s+tag[^\n]*v\d+\.\d+\.\d+", bodies)
+    tags_via_workflow = "release" in bodies and "Run workflow" in bodies
+    assert tags_by_hand or tags_via_workflow, (
+        "neither a `git tag vX.Y.Z` command nor a `release` workflow "
+        "dispatch is documented"
+    )
     assert "update_citation.sh" in bodies
     assert "DOI" in bodies

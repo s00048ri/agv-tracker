@@ -56,6 +56,20 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
+- **ci**: `release.yml` added — `workflow_dispatch` that creates the tag and
+  publishes the GitHub Release in one `gh release create`, which is the event
+  Zenodo's webhook listens for (Task 12). It refuses to run unless the version
+  matches `pyproject.toml` *and* `data/citation.json`: a Zenodo deposit whose
+  metadata contradicts the archived files cannot be corrected the way a git
+  tag can. Notes come from `docs/release-notes/vX.Y.Z.md` when present, so
+  they get reviewed in a PR rather than typed into a web form; v0.3.0's are
+  written and state the gaps (non-functional discovery fetchers, uneven
+  entity_type coverage, the freshness backlog) alongside what the release
+  contains. Moving the flow into CI also sidesteps a constraint this session
+  hit: tag pushes from the agent sandbox are refused with HTTP 403, the git
+  relay allowing only the session's own branch.
+  `tests/test_zenodo_integration.py` had pinned the documented flow to a
+  literal `git tag vX.Y.Z` command; it now accepts either mechanism.
 - **infra**: **the production hostname now serves the site.**
   `pages_config.yml` set the Pages project's `production_branch` to `main`
   (run 34072442101, read back after the write), and `deploy` run 34072544186

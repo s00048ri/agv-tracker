@@ -1,0 +1,96 @@
+# Cut a tagged GitHub Release, which is what Zenodo's webhook listens for
+# (CLAUDE.md §9 Task 12; `.github/CI_SETUP.md` §7).
+#
+# `gh release create` creates the tag as well, so this is the whole of
+# §7.2 steps 2–3 in one dispatch. Doing it from CI rather than from a
+# maintainer's shell means the version guard below runs every time: a
+# release whose tag disagrees with `pyproject.toml` or
+# `data/citation.json` would publish a Zenodo deposit whose metadata
+# contradicts the archived files, and Zenodo deposits are not editable
+# after the fact in the way a git tag is.
+#
+# Release notes come from `docs/release-notes/vX.Y.Z.md` when that file
+# exists — notes worth reading are worth reviewing in a pull request —
+# and fall back to GitHub's generated notes when it does not.
+
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, without the leading v (e.g. 0.3.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Version must match pyproject.toml and data/citation.json
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          case "$VERSION" in
+            v*) echo "::error::Pass the version without the leading v (got '$VERSION')."; exit 1 ;;
+          esac
+
+          pyproject=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml | head -1)
+          citation=$(jq -r '.version' data/citation.json)
+
+          echo "input=$VERSION pyproject=$pyproject citation.json=$citation"
+          if [ "$pyproject" != "$VERSION" ] || [ "$citation" != "$VERSION" ]; then
+            echo "::error::Version mismatch — bump pyproject.toml and data/citation.json first."
+            exit 1
+          fi
+
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            echo "::error::Tag v$VERSION already exists."
+            exit 1
+          fi
+
+      - name: Create the tag and publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          notes="docs/release-notes/v${VERSION}.md"
+
+          if [ -f "$notes" ]; then
+            gh release create "v${VERSION}" \
+              --target "${{ github.sha }}" \
+              --title "v${VERSION}" \
+              --notes-file "$notes"
+          else
+            echo "::warning::$notes not found; falling back to generated notes."
+            gh release create "v${VERSION}" \
+              --target "${{ github.sha }}" \
+              --title "v${VERSION}" \
+              --generate-notes
+          fi
+
+          url=$(gh release view "v${VERSION}" --json url -q .url)
+          {
+            echo "### Released \`v${VERSION}\`"
+            echo
+            echo "<${url}>"
+            echo
+            echo "If the repository is enabled on Zenodo, the deposit appears"
+            echo "within a minute or so. Copy the version DOI and the concept"
+            echo "DOI, then run:"
+            echo
+            echo '```'
+            echo "scripts/update_citation.sh ${VERSION} 10.5281/zenodo.<version> 10.5281/zenodo.<concept>"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
