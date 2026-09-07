@@ -54,9 +54,9 @@ sources:
     update_frequency: monthly
     last_verified_alive: 2026-04-23
     fetcher_status: selectors_unverified
-    fetcher_status_checked: 2026-09-05
+    fetcher_status_checked: 2026-09-07
     fetcher_status_note: >-
-      Live https://oecd.ai/en/dashboards/overview returns 0 matches for the fetcher's 'initiative-card' selector (60 matches in its fixture); the old base_url .../overview/policy now 404s. Yields 0 records.
+      The fetcher's base_url https://oecd.ai/en/dashboards/overview/policy returns HTTP 404; the captured page is the site's 404 chrome, whose only classes are navigation (nav-item-link, navbar-item). So this is not selector rot — there is no listing to select from, and no selector work is possible until the correct dashboard URL is found. Captured at tests/fixtures/oecd_ai/live/. Yields 0 records.
     notes: "Best general-purpose discovery for international initiatives; Task 4 target."
 
   - id: unesco_gaigo
@@ -71,9 +71,9 @@ sources:
     update_frequency: quarterly
     last_verified_alive: 2026-04-23
     fetcher_status: selectors_unverified
-    fetcher_status_checked: 2026-09-05
+    fetcher_status_checked: 2026-09-07
     fetcher_status_note: >-
-      Live page returns 0 matches for 'gaigo-entry' (60 in fixture). Yields 0 records.
+      Live page (HTTP 200) is Drupal; the real markup is field__item / card / card-title, not the fetcher's 'gaigo-entry' (0 matches live, 60 in its fixture). The landing page carries only ~10 cards, so it is also the wrong page — the observatory's country and institution listings live deeper. Needs a new target URL before new selectors. Captured at tests/fixtures/unesco_gaigo/live/. Yields 0 records.
     notes: "Country-level entities and emerging regional bodies."
 
   - id: iapp_ai_law_tracker
@@ -89,9 +89,9 @@ sources:
     update_frequency: monthly
     last_verified_alive: 2026-04-24
     fetcher_status: selectors_unverified
-    fetcher_status_checked: 2026-09-05
+    fetcher_status_checked: 2026-09-07
     fetcher_status_note: >-
-      Live page returns 0 matches for 'iapp-law-entry' (40 in fixture). Two application/ld+json blocks on the page are an unexplored route. Yields 0 records.
+      Live page (HTTP 200) is a Next.js app using Chakra UI, whose class names are build-hashed (css-1q6abmu, css-1h4xve9). Selecting on them would break at the next upstream deploy, so a class-based fetcher is the wrong shape here regardless of which class is chosen. The page's data arrives in self.__next_f streaming payloads; parsing those, or finding a JSON endpoint, is the route worth trying. Captured at tests/fixtures/iapp/live/. Yields 0 records.
     notes: "Statutes / regulations / supervisory agencies by jurisdiction. Entry kinds (statute, regulation, agency) land in RawVenue.raw_blob.entry_kind; the 'agency' rows carry the national_regulator_intl / treaty_body candidates."
 
   - id: government_pages
@@ -128,9 +128,9 @@ sources:
     update_frequency: quarterly
     last_verified_alive: 2026-04-24
     fetcher_status: selectors_unverified
-    fetcher_status_checked: 2026-09-05
+    fetcher_status_checked: 2026-09-07
     fetcher_status_note: >-
-      Live page yields 0 records. Already on §12.7 probation.
+      Static fetch returns HTTP 202 with a 213-byte body and the rendered DOM is 12 KB carrying one class (head-image) — a bot-protection interstitial, not the map. The content is not reachable by any selector because it is not being served to a non-browser client. Captured at tests/fixtures/evalcommunity_map/live/. Yields 0 records.
     notes: "On §12.7 probation. Fetcher landed so the source can be evaluated empirically (update cadence + deduplication vs UNESCO GAIGO / IAPP). Drop by setting fetcher_module: null and unlinking from scripts/monthly_update.sh if the next three monthly runs show stale / duplicated output."
 
   - id: ai_deadlines
@@ -142,13 +142,13 @@ sources:
       - standalone_governance_conference
       - industry_conference
     fetcher_module: pipelines.fetchers.ai_deadlines
-    fetch_strategy: http_with_playwright_fallback
+    fetch_strategy: http_static
     update_frequency: monthly
-    last_verified_alive: 2026-04-24
-    fetcher_status: selectors_unverified
-    fetcher_status_checked: 2026-09-05
+    last_verified_alive: 2026-09-07
+    fetcher_status: operational
+    fetcher_status_checked: 2026-09-07
     fetcher_status_note: >-
-      Live page yields 0 records. Upstream conferences.yml (192 entries) is fetchable and structured, but holds ~1 governance venue (FAccT), so repair is low-yield.
+      Rebuilt against the captured live page and now parses it: 192 div.ConfItem entries (the old selector, article.conf-entry, matched none of them), of which 1 passes the governance filter — FAccT, linked to facctconference.org rather than to aideadlin.es. Static HTTP is sufficient: ConfItem occurs 195 times in the static response and 195 in the rendered DOM, so no browser is needed. The yield is genuinely ~1 venue; the source indexes technical ML deadlines and the governance workshops this fetcher was written for are largely not on it.
     notes: "Seeds candidate governance-relevant conference policy tracks (workshops at NeurIPS/ICML/ICLR/AAAI/ACL + standalone conferences FAccT/AIES/EAAMO/FORC/ICAIL). INCLUDE_REGEX filters to governance/ethics/safety-layered tracks only."
 
   - id: tech_policy_press

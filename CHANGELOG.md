@@ -56,6 +56,54 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
+- **sources**: **the five discovery targets were captured live, and the
+  fetchers' problems turn out not to be the same problem.** The 2026-09-05
+  entry called them all "selectors_unverified"; the real markup says
+  otherwise, and `sources/registry.yml` now records each diagnosis
+  separately:
+  - **oecd_ai** — `https://oecd.ai/en/dashboards/overview/policy` returns
+    **HTTP 404**. The capture is the site's 404 chrome, whose only classes
+    are navigation. There is no listing to select from, so no selector work
+    is possible until the correct dashboard URL is found. This is the single
+    highest-value unknown left in the discovery layer.
+  - **unesco_gaigo** — HTTP 200, Drupal (`field__item` / `card` /
+    `card-title`), so the selector is wrong; but the landing page carries
+    only ~10 cards, so the *page* is wrong too. Needs a target URL before it
+    needs selectors.
+  - **iapp** — HTTP 200, a Next.js app on Chakra UI whose class names are
+    build-hashed (`css-1q6abmu`). A class-based fetcher is the wrong shape
+    here whichever class is picked: it breaks at the next upstream deploy.
+    The data arrives in `self.__next_f` streaming payloads; that, or a JSON
+    endpoint, is the route worth trying.
+  - **evalcommunity_map** — static returns HTTP 202 with a 213-byte body and
+    the rendered DOM is 12 KB with one class: a bot-protection interstitial.
+    The content is not being served to a non-browser client at all. Evidence
+    for the §12 #7 probation decision.
+  - **ai_deadlines** — the one straightforward case, now fixed (below).
+  Also settled, having been "TBD on first online run" since Task 4:
+  **static HTTP suffices for all of them.** `ConfItem` appears 195 times in
+  both halves of the aideadlin.es capture, `card-title` 10 times in both
+  halves of UNESCO's, `chakra-list__item` 41 times in both of IAPP's. The
+  Playwright fallback is a safety net, not the expected path.
+- **pipeline**: **`ai_deadlines` rebuilt against the captured page and is the
+  first `operational` discovery fetcher.** The live listing uses
+  `div.ConfItem` (192 of them); the fetcher looked for
+  `article.conf-entry`, which matches none. The parser now reads the real
+  structure — title from `.conf-title`, the venue's own homepage from
+  `.conf-title-icon` (never the aideadlin.es detail page, which would be a
+  discovery URL standing in for a verification one, §5.2), dates from
+  `.deadline-time` / `.conf-date` / `.conf-place`, and the subject tag from
+  the element's own class list rather than child `.tag` nodes.
+  `DEFAULT_FIXTURE_PATH` now points at the capture and the hand-written
+  `conferences.html` is deleted.
+  **The yield is 1 venue — FAccT — and the tests now say so.** They
+  previously asserted eight flagship governance workshops (AIES, EAAMO,
+  TrustNLP, "AI Safety", "Trustworthy", "Bias", "Accountability") that
+  aideadlin.es does not list; every one of those assertions passed against
+  markup written to satisfy it. A new test pins the selector against all
+  192 entries, separately from the filter, so a future break is legible as
+  either "stopped seeing the page" or "stopped matching the topic".
+  pytest: 409 green.
 - **pipeline**: `scripts/capture_fixtures.py` + `capture_fixtures.yml` — the
   first step out of the fetcher dead end. The discovery fetchers cannot be
   rebuilt without the real markup, the test suite deliberately has no network,

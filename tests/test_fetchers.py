@@ -989,15 +989,42 @@ def test_iapp_source_ids_distinct_from_other_fetchers():
 
 
 # ---- AIDeadlinesFetcher ----
+#
+# These run against `tests/fixtures/ai_deadlines/live/static.html`, which is
+# the page aideadlin.es actually served on 2026-09-07. The fixture they used
+# to run against was written by hand to fit the selectors, and asserted eight
+# flagship governance workshops — FAccT, AIES, EAAMO, TrustNLP, "AI Safety",
+# "Trustworthy", "Bias", "Accountability" — that the real listing does not
+# carry. It listed 192 conferences, of which exactly one passes the filter.
 
 def test_aidl_default_fixture_exists():
     assert AIDL_FIXTURE_PATH.exists()
 
 
+def test_aidl_fixture_is_the_captured_live_page():
+    """Guard against quietly reverting to a hand-written fixture."""
+    assert AIDL_FIXTURE_PATH.parent.name == "live"
+
+
+def test_aidl_selector_matches_every_entry_on_the_real_page():
+    """The selector, not the filter: does the parser see the listing at all?
+
+    192 `div.ConfItem` nodes is what the live page carries. The old
+    selector, `article.conf-entry`, matched zero of them — which is the
+    whole reason the discovery layer produced nothing.
+    """
+    from bs4 import BeautifulSoup
+
+    html = AIDL_FIXTURE_PATH.read_text(encoding="utf-8")
+    soup = BeautifulSoup(html, "html.parser")
+    assert len(soup.find_all("div", class_="ConfItem")) == 192
+    assert soup.find_all("article", class_="conf-entry") == []
+
+
 def test_aidl_fetcher_fixture_returns_records():
     fetcher = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH)
     venues = fetcher.fetch()
-    assert len(venues) >= 20
+    assert venues, "the filter should still admit FAccT"
     for v in venues:
         assert v.source_role == "discovery"
         assert v.source_registry == "ai_deadlines"
@@ -1005,38 +1032,47 @@ def test_aidl_fetcher_fixture_returns_records():
         assert v.fetch_strategy == FETCH_STRATEGY_FIXTURE
 
 
+def test_aidl_yield_on_the_real_page_is_one_governance_venue():
+    """Record the real yield rather than an aspirational one.
+
+    A drop to zero means the filter or the selectors broke; a jump means
+    aideadlin.es started carrying governance venues, which is worth
+    noticing rather than absorbing silently.
+    """
+    venues = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH).fetch()
+    assert [v.name for v in venues] == ["FAccT 2022"]
+
+
+def test_aidl_links_to_the_conference_not_to_aideadlines():
+    """`url` must point at the venue's own site.
+
+    aideadlin.es is a discovery source, and a discovery URL is never
+    acceptable as a primary_reference_url (CLAUDE.md §5.2). The entry's
+    own detail page would be exactly that.
+    """
+    for v in AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH).fetch():
+        assert "aideadlin.es" not in v.url, v.url
+        assert v.url.startswith("https://"), v.url
+
+
 def test_aidl_raw_blob_carries_tags_and_dates():
     fetcher = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH)
     for v in fetcher.fetch():
         assert "tags" in v.raw_blob
         assert isinstance(v.raw_blob["tags"], list)
-        # Deadline / event_date present (strings).
         assert "deadline" in v.raw_blob
         assert "event_date" in v.raw_blob
-
-
-def test_aidl_catches_known_governance_workshops():
-    fetcher = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH)
-    names = [v.name for v in fetcher.fetch()]
-    for flagship in (
-        "FAccT", "AIES", "EAAMO", "TrustNLP", "AI Safety",
-        "Trustworthy", "Bias", "Accountability",
-    ):
-        assert any(flagship in n for n in names), flagship
+        # The subject tag lives in the ConfItem's own class list
+        # (`ML-conf`), not in child `.tag` nodes.
+        assert v.raw_blob["tags"] == ["ML"]
+        assert v.raw_blob["event_date"] == "June 21-24, 2022."
+        assert v.raw_blob["venue"].startswith("Seoul")
 
 
 def test_aidl_filters_off_topic_technical_tracks():
-    """Control: pure technical workshops (RL theory / GNN / distributed
-    training / 3D scene understanding) must not pass the filter."""
-    fetcher = AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH)
-    names = {v.name for v in fetcher.fetch()}
-    for noise in (
-        "Reinforcement Learning Theory",
-        "Geometric Deep Learning",
-        "Large-Scale Distributed Training",
-        "Graph Neural Networks",
-        "3D Scene Understanding",
-    ):
+    """Control: the 191 technical conferences must not pass the filter."""
+    names = {v.name for v in AIDeadlinesFetcher(fixture_path=AIDL_FIXTURE_PATH).fetch()}
+    for noise in ("AISTATS", "NeurIPS", "CVPR", "ICRA", "ICASSP", "KDD"):
         for n in names:
             assert noise not in n, f"noise leaked: {n}"
 
@@ -1082,7 +1118,7 @@ def test_aidl_cli_from_fixture_outputs_jsonl(capsys):
     captured = capsys.readouterr()
     import json
     lines = [ln for ln in captured.out.splitlines() if ln.strip()]
-    assert len(lines) >= 20
+    assert lines
     for ln in lines:
         obj = json.loads(ln)
         assert obj["source_registry"] == "ai_deadlines"
