@@ -56,6 +56,22 @@ in `CLAUDE.md §0`.
   <https://d709cd24.agv-tracker.pages.dev>, branch alias
   <https://main.agv-tracker.pages.dev>. **Task 7 Done-when #2 closed** — CI
   builds and ships to Cloudflare Pages.
+- **pipeline**: **the monthly pipeline proposes real candidates for the first
+  time.** A live `monthly-fetch` dry run against the rebuilt fetchers
+  (34087818151): **58 raw records** combined, **30 candidates** after
+  normalisation (28 dropped as articles rather than venues), and a diff of
+  **30 new / 0 updated / 0 conflict / 67 stale / 0 rename** against the
+  canonical 118. The September run, for comparison, produced a candidate set
+  of size 0 and a PR proposing nothing.
+  Per-fetcher, live: OECD.AI is now the bulk of the yield across its 14
+  organisations; Tech Policy Press 15; government_pages 2 of 12 targets;
+  aideadlin.es 1 (FAccT, as its rebuild predicted); IAPP 0 and EvalCommunity
+  0, both still blocked for the reasons already recorded. The 28 dropped
+  records are the news feeds doing what news feeds do — `venue_names.py`
+  catching them is the September fix working.
+  Still to check before this becomes a real PR: the 30 candidates were
+  classified in `--mock` mode, because `ANTHROPIC_API_KEY` is not set for
+  the workflow.
 - **pipeline**: **`oecd_ai` rebuilt and operational — the discovery layer's
   highest-value fetcher is back.** It now walks the international dashboard:
   index → 14 intergovernmental organisations → each organisation's AI
