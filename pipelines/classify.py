@@ -26,6 +26,11 @@ falls back to ``mock_llm_call`` so that ``python -m pipelines.classify …``
 always produces output. Use ``--live`` to disable the fallback and
 ``--mock`` to force the mock.
 
+An API key created at the *organization* level rather than inside a
+workspace is rejected with a 400 unless the request names a workspace.
+Set ``ANTHROPIC_WORKSPACE_ID`` alongside the key in that case; a
+workspace-scoped key needs neither.
+
 CLI examples::
 
     # Classify discovery records against all six dimensions
@@ -200,8 +205,31 @@ def compute_cost(model: str, tokens_in: int, tokens_out: int) -> float:
 
 # ---- LLM backends ----
 
-def anthropic_llm_call(model: str, prompt: str, max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
-    """Live Anthropic API call. Lazy-imports the SDK."""
+# An API key created at the organization level, rather than inside a
+# workspace, carries no workspace of its own: the API rejects it with a 400
+# unless the request names one in an `anthropic-workspace-id` header. A
+# workspace-scoped key needs neither the header nor this variable.
+WORKSPACE_ID_ENV = "ANTHROPIC_WORKSPACE_ID"
+WORKSPACE_HEADER = "anthropic-workspace-id"
+
+# Substring of the API's own 400 message for the case above. Matching on it
+# lets a genuinely malformed request keep surfacing as a plain BadRequestError.
+_WORKSPACE_SCOPE_HINT = "not scoped to a workspace"
+
+
+class ClassifierAuthError(RuntimeError):
+    """The API rejected our credentials.
+
+    Distinct from a transient failure: every subsequent call in the run
+    would be rejected identically, so callers must not retry or quietly
+    degrade to the mock backend — a whole run of mock classifications is a
+    worse outcome than stopping, because it costs the reviewer a full pass
+    over values no model produced.
+    """
+
+
+def _anthropic_client():
+    """Build the Anthropic client, honouring an org-scoped API key."""
     try:
         import anthropic
     except ImportError as e:
@@ -210,12 +238,50 @@ def anthropic_llm_call(model: str, prompt: str, max_tokens: int = DEFAULT_MAX_TO
             "  uv sync --extra classifier\n"
             "or re-run with --mock."
         ) from e
-    client = anthropic.Anthropic()
-    msg = client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
-        messages=[{"role": "user", "content": prompt}],
+    workspace_id = os.environ.get(WORKSPACE_ID_ENV, "").strip()
+    headers = {WORKSPACE_HEADER: workspace_id} if workspace_id else None
+    return anthropic.Anthropic(default_headers=headers)
+
+
+def _workspace_scope_error() -> ClassifierAuthError:
+    """Turn the API's 400 into an instruction the operator can act on."""
+    workspace_id = os.environ.get(WORKSPACE_ID_ENV, "").strip()
+    if workspace_id:
+        detail = (
+            f"{WORKSPACE_ID_ENV}={workspace_id!r} was sent as "
+            f"`{WORKSPACE_HEADER}` and the API still refused it — check that "
+            "the id names a workspace this key can reach."
+        )
+    else:
+        detail = (
+            f"Set {WORKSPACE_ID_ENV} to the workspace id (in CI, a repository "
+            f"secret of that name — see .github/CI_SETUP.md), or replace "
+            "ANTHROPIC_API_KEY with a key scoped to a single workspace."
+        )
+    return ClassifierAuthError(
+        f"the API key is not scoped to a workspace. {detail}"
     )
+
+
+def anthropic_llm_call(model: str, prompt: str, max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
+    """Live Anthropic API call. Lazy-imports the SDK."""
+    client = _anthropic_client()
+    import anthropic  # _anthropic_client has already vouched for the import
+
+    try:
+        msg = client.messages.create(
+            model=model,
+            max_tokens=max_tokens,
+            messages=[{"role": "user", "content": prompt}],
+        )
+    except anthropic.BadRequestError as e:
+        if _WORKSPACE_SCOPE_HINT in str(e):
+            raise _workspace_scope_error() from e
+        raise
+    except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as e:
+        raise ClassifierAuthError(
+            f"the API rejected ANTHROPIC_API_KEY ({type(e).__name__}): {e}"
+        ) from e
     text = msg.content[0].text if msg.content else ""
     parsed = extract_json(text)
     parsed["_tokens_in"] = msg.usage.input_tokens
@@ -695,6 +761,11 @@ def _resolve_llm_call(args):
             def _live_with_fallback(model, prompt, max_tokens=DEFAULT_MAX_TOKENS):
                 try:
                     return anthropic_llm_call(model, prompt, max_tokens)
+                except ClassifierAuthError:
+                    # Not transient: the next call fails identically. Stop,
+                    # rather than spend the rest of the run producing mock
+                    # values under a flag that asked for live ones.
+                    raise
                 except Exception as e:  # noqa: BLE001
                     log.warning("live call failed (%s); falling back to mock", e)
                     return mock_llm_call(model, prompt, max_tokens)
@@ -852,9 +923,15 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.WARNING if args.quiet else logging.INFO,
         format="%(levelname)s %(name)s: %(message)s",
     )
-    if args.eval_path:
-        return _run_eval(args)
-    return _run_classify(args)
+    try:
+        if args.eval_path:
+            return _run_eval(args)
+        return _run_classify(args)
+    except ClassifierAuthError as e:
+        # A stack trace here says "the SDK raised" when what the operator
+        # needs to read is which credential to fix.
+        log.error("classifier credentials rejected: %s", e)
+        return 2
 
 
 if __name__ == "__main__":

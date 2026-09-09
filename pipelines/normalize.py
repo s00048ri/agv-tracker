@@ -33,6 +33,7 @@ import yaml
 from .classify import (
     ClassificationResult,
     Classifier,
+    ClassifierAuthError,
     anthropic_llm_call,
     mock_llm_call,
     results_to_evidence_rows,
@@ -346,7 +347,14 @@ def main(argv: list[str] | None = None) -> int:
     llm = mock_llm_call if args.mock or not args.live else anthropic_llm_call
     classifier = Classifier(cache_dir=args.cache_dir, llm_call=llm, budget_guard=None)
     normalizer = Normalizer(registry_path=args.registry, classifier=classifier)
-    outputs = normalizer.normalize(records)
+    try:
+        outputs = normalizer.normalize(records)
+    except ClassifierAuthError as e:
+        # The monthly run reaches the classifier through here, so this is
+        # where a bad credential is first seen. Say what to fix; do not
+        # write a candidates file, because there is nothing classified in it.
+        log.error("classifier credentials rejected: %s", e)
+        return 2
 
     payload = json.dumps(outputs, indent=2, ensure_ascii=False)
     if args.output:

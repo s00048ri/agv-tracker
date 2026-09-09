@@ -49,6 +49,9 @@ jobs:
       - name: Run monthly update pipeline
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Only needed when the key is scoped to the organization rather
+          # than to one workspace; harmless (and empty) otherwise.
+          ANTHROPIC_WORKSPACE_ID: ${{ secrets.ANTHROPIC_WORKSPACE_ID }}
         run: bash scripts/monthly_update.sh
 
       - name: Compute PR metadata

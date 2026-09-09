@@ -50,10 +50,38 @@ Set these in `Settings → Secrets and variables → Actions → Repository secr
 | Secret | Used by | Behaviour if unset |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | `monthly_fetch.yml` | Classifier falls back to `--mock`; the pipeline still runs and proposes candidates from the fetchers, with mock classifications. Not a substitute for a real run — the proposals carry no live classifier rationale. |
+| `ANTHROPIC_WORKSPACE_ID` | `monthly_fetch.yml` | Nothing, **if** `ANTHROPIC_API_KEY` is scoped to a workspace. If the key is org-scoped, every classifier call fails with a 400 and the run stops. See below. |
 | `CLOUDFLARE_API_TOKEN` | `deploy.yml` | Deploy step fails. Build and tests still run on every push. |
 | `CLOUDFLARE_ACCOUNT_ID` | `deploy.yml` | Deploy step fails. |
 
 All other tokens (`GITHUB_TOKEN`) are auto-provisioned per run.
+
+### Which Anthropic key, and whether you need the workspace id
+
+An API key created at the **organization** level belongs to no workspace, so
+the API cannot tell where to bill or rate-limit the call and refuses it:
+
+```
+anthropic.BadRequestError: 400 — This API key is not scoped to a workspace,
+so this request must include the anthropic-workspace-id header …
+```
+
+This is what killed the first live monthly run (34101939453, 2026-09-07),
+after the fetch and before any candidate was written. Two ways out; either
+is fine:
+
+- **Use a workspace-scoped key.** Console → *Settings* → the workspace →
+  *API keys* → create the key from inside the workspace. Set only
+  `ANTHROPIC_API_KEY`; leave `ANTHROPIC_WORKSPACE_ID` unset.
+- **Keep the org-scoped key** and set `ANTHROPIC_WORKSPACE_ID` to the
+  target workspace id (`wrkspc_…`, from that workspace's Console URL).
+  `pipelines/classify.py` sends it as the `anthropic-workspace-id` header
+  on every call.
+
+A credential the API rejects is never retried and never silently degraded
+to the mock backend — `ClassifierAuthError` stops the run and prints which
+variable to fix, because a full run of mock values costs the reviewer a
+pass over classifications no model produced.
 
 ### Creating the Cloudflare API token
 
