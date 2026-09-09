@@ -3,6 +3,39 @@
 Runtime data/decisions accepted into the repository. Spec revisions are tracked
 in `CLAUDE.md §0`.
 
+## 2026-09-09
+
+- **ci**: **the first live classifier run never reached the model.** Monthly
+  run 34101939453 (2026-09-07) fetched, normalized, and then died on the
+  first `messages.create` with
+  `400 … This API key is not scoped to a workspace, so this request must
+  include the anthropic-workspace-id header`. The repository secret holds an
+  **organization-level** key, which names no workspace, so the API cannot
+  tell where to bill the call and refuses it. `monthly_update.sh` passes
+  `--live`, which has no mock fallback by design, so the run exited 1 after
+  the fetch and before a single candidate was written — no PR, no artifact
+  worth reading, and a raw SDK traceback as the only diagnosis.
+  `pipelines/classify.py` now sends `ANTHROPIC_WORKSPACE_ID` as the
+  `anthropic-workspace-id` header when it is set, so **either** credential
+  shape works: a workspace-scoped key alone, or an org-scoped key plus the
+  workspace id. An unset or blank variable sends no header — an empty one
+  would be its own 400. `monthly_fetch.yml` passes the new secret;
+  `.github/CI_SETUP.md` documents both routes and where to find a
+  `wrkspc_…` id.
+- **pipeline**: **a rejected credential now stops the run instead of quietly
+  becoming a mock one.** The default (non-`--live`) backend wraps every call
+  in a fall-back-to-mock handler, which would have answered a 400 by
+  producing keyword-matched values for all six dimensions of all 30
+  candidates — 180 identical failures, then a PR of mock classifications.
+  Credential faults are not transient, so they are their own type
+  (`ClassifierAuthError`) and propagate: `_live_with_fallback` re-raises
+  them, and `classify.main` / `normalize.main` catch them at the top to exit
+  **2** with the variable to fix rather than a stack trace. `normalize.py`
+  writes no candidates file on that path, so a failed run cannot leave a
+  half-classified one behind for the differ to read. An unrelated 400 (a
+  malformed request) still surfaces as `BadRequestError` — only the API's
+  own workspace-scope message is re-labelled. pytest: 438 green (+6).
+
 ## 2026-09-07
 
 - **pipeline**: classifier moved to **`claude-sonnet-5`**, which is both current

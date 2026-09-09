@@ -109,6 +109,12 @@ CLASSIFY_FLAG="--live"
 if [[ -z "${ANTHROPIC_API_KEY:-}" ]]; then
     echo "::warning::ANTHROPIC_API_KEY is unset; classifier will run in --mock mode"
     CLASSIFY_FLAG="--mock"
+elif [[ -n "${ANTHROPIC_WORKSPACE_ID:-}" ]]; then
+    # An org-scoped key is refused with a 400 unless the request names a
+    # workspace; the classifier sends this as `anthropic-workspace-id`.
+    echo "  classifier: live, workspace ${ANTHROPIC_WORKSPACE_ID}"
+else
+    echo "  classifier: live, key's own workspace"
 fi
 
 echo "::group::2/4 normalize"

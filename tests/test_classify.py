@@ -6,6 +6,7 @@ out of band via ``python -m pipelines.classify --eval … --live``.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import re
 from pathlib import Path
@@ -23,10 +24,15 @@ from pipelines.classify import (
     PRICING,
     PROMPTS_DIR,
     TOPIC_FOCI,
+    WORKSPACE_HEADER,
+    WORKSPACE_ID_ENV,
     BudgetExceededError,
     BudgetGuard,
     ClassificationResult,
     Classifier,
+    ClassifierAuthError,
+    _anthropic_client,
+    _resolve_llm_call,
     anthropic_llm_call,
     compute_cost,
     extract_json,
@@ -379,3 +385,159 @@ def test_cached_mock_answers_stay_labelled_mock(tmp_path: Path):
         assert r.backend == "mock"
         assert r.reviewer.startswith("mock")
 
+
+
+# ---- Credentials: org-scoped keys and the workspace header ----
+#
+# An API key created at the organization level names no workspace, so the
+# API refuses it with a 400 asking for an `anthropic-workspace-id` header.
+# That is what stopped the first live monthly run (34101939453, 2026-09-07),
+# after the fetch and before a single candidate was classified.
+
+def _fake_anthropic_client(monkeypatch, on_create=None):
+    """Swap `anthropic.Anthropic` for a stub that records its kwargs."""
+    import anthropic
+
+    captured: dict = {}
+
+    class _Messages:
+        def create(self, **kwargs):
+            captured["create_kwargs"] = kwargs
+            if on_create is not None:
+                return on_create(**kwargs)
+            raise AssertionError("no on_create configured for this test")
+
+    class _Client:
+        def __init__(self, **kwargs):
+            captured["client_kwargs"] = kwargs
+            self.messages = _Messages()
+
+    monkeypatch.setattr(anthropic, "Anthropic", _Client)
+    return captured
+
+
+def _bad_request(message: str):
+    """A real `anthropic.BadRequestError`, as the SDK would raise it."""
+    import anthropic
+    import httpx
+
+    response = httpx.Response(
+        400, request=httpx.Request("POST", "https://api.anthropic.com/v1/messages"),
+    )
+    return anthropic.BadRequestError(message, response=response, body=None)
+
+
+def test_workspace_header_sent_only_when_the_env_var_is_set(monkeypatch):
+    captured = _fake_anthropic_client(monkeypatch)
+
+    monkeypatch.setenv(WORKSPACE_ID_ENV, "wrkspc_abc123")
+    _anthropic_client()
+    assert captured["client_kwargs"]["default_headers"] == {
+        WORKSPACE_HEADER: "wrkspc_abc123",
+    }
+
+    # A workspace-scoped key needs no header, and sending an empty one would
+    # be its own 400 — so an unset (or blank) variable sends nothing.
+    monkeypatch.delenv(WORKSPACE_ID_ENV)
+    _anthropic_client()
+    assert captured["client_kwargs"]["default_headers"] is None
+
+    monkeypatch.setenv(WORKSPACE_ID_ENV, "   ")
+    _anthropic_client()
+    assert captured["client_kwargs"]["default_headers"] is None
+
+
+def test_org_scoped_key_400_names_the_variable_to_set(monkeypatch):
+    """Without a workspace id, the error must say which one to set."""
+    api_message = (
+        "Error code: 400 - {'type': 'error', 'error': {'type': "
+        "'invalid_request_error', 'message': 'This API key is not scoped to a "
+        "workspace, so this request must include the anthropic-workspace-id "
+        "header with the ID of the workspace to use.'}}"
+    )
+
+    def _raise(**kwargs):
+        raise _bad_request(api_message)
+
+    _fake_anthropic_client(monkeypatch, on_create=_raise)
+    monkeypatch.delenv(WORKSPACE_ID_ENV, raising=False)
+
+    with pytest.raises(ClassifierAuthError) as ei:
+        anthropic_llm_call(DEFAULT_MODEL, "irrelevant prompt")
+    assert WORKSPACE_ID_ENV in str(ei.value)
+
+
+def test_rejected_workspace_id_is_quoted_back(monkeypatch):
+    """With the id set and still refused, the id itself is the suspect."""
+    def _raise(**kwargs):
+        raise _bad_request("This API key is not scoped to a workspace")
+
+    _fake_anthropic_client(monkeypatch, on_create=_raise)
+    monkeypatch.setenv(WORKSPACE_ID_ENV, "wrkspc_wrong")
+
+    with pytest.raises(ClassifierAuthError) as ei:
+        anthropic_llm_call(DEFAULT_MODEL, "irrelevant prompt")
+    assert "wrkspc_wrong" in str(ei.value)
+
+
+def test_unrelated_400_is_not_relabelled_as_a_credential_fault(monkeypatch):
+    """Only the workspace-scope 400 is a credential problem."""
+    import anthropic
+
+    def _raise(**kwargs):
+        raise _bad_request("max_tokens: must be greater than 0")
+
+    _fake_anthropic_client(monkeypatch, on_create=_raise)
+    with pytest.raises(anthropic.BadRequestError):
+        anthropic_llm_call(DEFAULT_MODEL, "irrelevant prompt")
+
+
+def test_credential_fault_is_not_degraded_to_the_mock_backend(monkeypatch):
+    """The default backend falls back to mock on a transient failure.
+
+    A rejected credential is not transient — every remaining call in the run
+    fails identically — and a run of mock values costs the reviewer a pass
+    over classifications no model produced. So it must propagate.
+    """
+    import pipelines.classify as classify_mod
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-irrelevant")
+    args = argparse.Namespace(mock=False, live=False)
+
+    def _boom(model, prompt, max_tokens=None):
+        raise ClassifierAuthError("key rejected")
+
+    monkeypatch.setattr(classify_mod, "anthropic_llm_call", _boom)
+    with pytest.raises(ClassifierAuthError):
+        _resolve_llm_call(args)(DEFAULT_MODEL, "prompt")
+
+    # A transient failure still degrades, as before.
+    def _flaky(model, prompt, max_tokens=None):
+        raise TimeoutError("upstream hiccup")
+
+    monkeypatch.setattr(classify_mod, "anthropic_llm_call", _flaky)
+    prompt = (PROMPTS_DIR / "classify_entity_type.txt").read_text(
+        encoding="utf-8",
+    ).replace("{text}", "a national AI safety institute")
+    assert _resolve_llm_call(args)(DEFAULT_MODEL, prompt)["value"] in ENTITY_TYPES
+
+
+def test_classify_cli_exits_2_on_a_credential_fault(monkeypatch, tmp_path, caplog):
+    """The operator should read an instruction, not a stack trace."""
+    import pipelines.classify as classify_mod
+
+    def _boom(model, prompt, max_tokens=None):
+        raise ClassifierAuthError(
+            f"the API key is not scoped to a workspace. Set {WORKSPACE_ID_ENV}"
+        )
+
+    monkeypatch.setattr(classify_mod, "anthropic_llm_call", _boom)
+    out = tmp_path / "classified.json"
+    rc = classify_main([
+        "--input", str(SAMPLE_INPUT), "--output", str(out),
+        "--live", "--no-cache", "--no-budget",
+    ])
+    assert rc == 2
+    assert not out.exists()
+    assert WORKSPACE_ID_ENV in caplog.text
+    assert "Traceback" not in caplog.text
